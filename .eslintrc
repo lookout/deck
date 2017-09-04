@@ -31,7 +31,7 @@
     "no-trailing-spaces": 1,
     "operator-assignment": [1, "always"],
     "no-const-assign": 1,
-    "no-console": 1,
+    "no-console": 0,
     "no-control-regex": 0,
     "no-case-declarations": 0,
     "no-empty-pattern": 0
