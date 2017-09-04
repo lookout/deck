@@ -72,6 +72,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       if ($scope.$$destroyed) {
         return;
       }
+      console.log('logging a big potato');
       let cloneStage = $scope.taskMonitor.task.execution.stages.find((stage) => stage.type === 'cloneServerGroup');
       if (cloneStage && cloneStage.context['deploy.server.groups']) {
         let newServerGroupName = cloneStage.context['deploy.server.groups'][$scope.command.region];
