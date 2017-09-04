@@ -98,7 +98,6 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.deployStage', [
     this.addCluster = function() {
       providerSelectionService.selectProvider($scope.application, 'serverGroup').then(function(selectedProvider) {
         let config = cloudProviderRegistry.getValue(selectedProvider, 'serverGroup');
-        console.log('url =' + config.cloneServerGroupTemplateUrl);
         $uibModal.open({
           templateUrl: config.cloneServerGroupTemplateUrl,
           controller: `${config.cloneServerGroupController} as ctrl`,
@@ -111,14 +110,11 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.deployStage', [
               return $scope.application;
             },
             serverGroupCommand: function () {
-              console.log('23231312312312');
               return serverGroupCommandBuilder.buildNewServerGroupCommandForPipeline(selectedProvider, $scope.stage, $scope.$parent.pipeline);
             },
           }
         }).result.then(function(command) {
             // If we don't set the provider, the serverGroupTransformer won't know which provider to delegate to.
-            console.log(command);
-            console.log('adadadasdasasdaaa');
             command.provider = selectedProvider;
             var stageCluster = serverGroupTransformer.convertServerGroupCommandToDeployConfiguration(command);
             delete stageCluster.credentials;

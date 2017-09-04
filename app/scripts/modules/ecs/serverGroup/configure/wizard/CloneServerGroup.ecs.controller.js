@@ -27,8 +27,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   overrideRegistry, awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
-    console.log('bruno-ecs');
-
     $scope.pages = {
       // templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
@@ -46,7 +44,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     $scope.application = application;
 
     $scope.command = serverGroupCommand;
-    console.log('bruno-ecs-2');
 
     $scope.state = {
       loaded: false,
@@ -66,14 +63,11 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       ],
       additionalCopyText: 'If a server group exists in this cluster at the time of deployment, its scaling policies will be copied over to the new server group.'
     };
-    console.log('bruno-ecs-20');
     if (!$scope.command.viewState.disableStrategySelection) {
       this.templateSelectionText.notCopied.push('the deployment strategy (if any) used to deploy the most recent server group');
     }
 
-    console.log('bruno-ecs-30');
     function onApplicationRefresh() {
-      console.log('bruno-ecs-21');
       // If the user has already closed the modal, do not navigate to the new details view
       if ($scope.$$destroyed) {
         return;
@@ -103,7 +97,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       }
     }
 
-    console.log('bruno-ecs-40');
     function onTaskComplete() {
       console.log('bruno-ecs-task-complete');
       application.serverGroups.refresh();
@@ -117,9 +110,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       onTaskComplete: onTaskComplete,
     });
 
-    console.log('bruno-ecs-50');
     function configureCommand() {
-      console.log('this needs to work, sad!');
       awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
@@ -135,7 +126,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
 
-    console.log('bruno-ecs-60');
     function initializeWatches() {
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
@@ -156,7 +146,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
     }
 
-    console.log('bruno-ecs-70');
     // TODO: Move to service
     function initializeSelectOptions() {
       processCommandUpdateResult($scope.command.credentialsChanged());
@@ -170,26 +159,30 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       };
     }
 
-    console.log('bruno-ecs-80');
     function processCommandUpdateResult(result) {
-      if (result.dirty.loadBalancers) {
-        v2modalWizardService.markDirty('load-balancers');
-      }
-      if (result.dirty.targetGroups) {
-        v2modalWizardService.markDirty('target-groups');
-      }
-      if (result.dirty.securityGroups) {
-        v2modalWizardService.markDirty('security-groups');
-      }
-      if (result.dirty.availabilityZones) {
-        v2modalWizardService.markDirty('capacity');
-      }
-      if (result.dirty.instanceType) {
-        v2modalWizardService.markDirty('instance-type');
-      }
-      if (result.dirty.keyPair) {
-        v2modalWizardService.markDirty('advanced');
-        v2modalWizardService.markIncomplete('advanced');
+      // if (result.dirty.loadBalancers) {
+      //   v2modalWizardService.markDirty('load-balancers');
+      // }
+      // if (result.dirty.targetGroups) {
+      //   v2modalWizardService.markDirty('target-groups');
+      // }
+      // if (result.dirty.securityGroups) {
+      //   v2modalWizardService.markDirty('security-groups');
+      // }
+      // if (result.dirty.availabilityZones) {
+      //   v2modalWizardService.markDirty('capacity');
+      // }
+      // if (result.dirty.instanceType) {
+      //   v2modalWizardService.markDirty('instance-type');
+      // }
+      // if (result.dirty.keyPair) {
+      //   v2modalWizardService.markDirty('advanced');
+      //   v2modalWizardService.markIncomplete('advanced');
+      // }
+      if (result) {
+        v2modalWizardService.markComplete('advanced');
+      } else {
+        v2modalWizardService.markComplete('advanced');
       }
     }
 
@@ -204,18 +197,17 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       }
     }
 
-    console.log('bruno-ecs-90');
-
     this.isValid = function () {
-      return $scope.command &&
-        ($scope.command.viewState.disableImageSelection || $scope.command.amiName) &&
-        ($scope.command.application) &&
-        ($scope.command.credentials) && ($scope.command.instanceType) &&
-        ($scope.command.region) && ($scope.command.availabilityZones) &&
-        ($scope.command.capacity.min >= 0) && ($scope.command.capacity.max >= 0) &&
-        ($scope.command.capacity.desired >= 0) &&
-        $scope.form.$valid &&
-        v2modalWizardService.isComplete();
+      return true;
+      // $scope.command &&
+      //   ($scope.command.viewState.disableImageSelection || $scope.command.amiName) &&
+      //   ($scope.command.application) &&
+      //   ($scope.command.credentials) && ($scope.command.instanceType) &&
+      //   ($scope.command.region) && ($scope.command.availabilityZones) &&
+      //   ($scope.command.capacity.min >= 0) && ($scope.command.capacity.max >= 0) &&
+      //   ($scope.command.capacity.desired >= 0) &&
+      //   $scope.form.$valid &&
+      //   v2modalWizardService.isComplete();
     };
 
     this.showSubmitButton = function () {
@@ -233,21 +225,17 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       );
     };
 
-    console.log('bruno-ecs-100');
     this.cancel = function () {
       $uibModalInstance.dismiss();
     };
 
     if (!$scope.state.requiresTemplateSelection) {
-      console.log('alt-1');
       configureCommand();
     } else {
-      console.log('alt-2');
       $scope.state.loaded = true;
     }
 
     $scope.state.requiresTemplateSelection = false;
     configureCommand();
 
-    console.log('finished! :(');
   });
