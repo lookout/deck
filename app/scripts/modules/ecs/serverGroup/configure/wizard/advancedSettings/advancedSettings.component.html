@@ -1,7 +1,98 @@
 <div class="container-fluid form-horizontal">
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Stack
+      <help-field key="aws.serverGroup.stack"></help-field>
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.stackPattern"
+                                 name="stack"
+                                 ng-model="command.stack"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Detail
+      <help-field key="aws.serverGroup.detail"></help-field>
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.freeFormDetails"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Container Security Group
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.securityGroup"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Application Load Balancer
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.applicationLoadBalancer"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Application Load Balancer
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.containerPort"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Reserved compute units
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.computeUnits"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Reserved Memory (MB RAM)
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.reservedMemory"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Number of deployed containers
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="command.reservedMemory"/></div>
+  </div>
+
   <div class="form-group">
     <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile (optional)</b></div>
-    <div class="col-md-6"><input type="text"
+    <div class="col-md-7"><input type="text"
                                  class="form-control input-sm no-spel"
                                  ng-model="$ctrl.command.iamRole"/></div>
   </div>
