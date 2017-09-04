@@ -3,30 +3,30 @@
 const angular = require('angular');
 
 import {
-  OVERRIDE_REGISTRY,
+  // OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
-  SERVER_GROUP_WRITER,
-  TASK_MONITOR_BUILDER,
-  V2_MODAL_WIZARD_SERVICE
+  // SERVER_GROUP_WRITER,
+  // TASK_MONITOR_BUILDER,
+  // V2_MODAL_WIZARD_SERVICE
 } from '@spinnaker/core';
 
-// import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
-import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/src/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from 'ecs/serverGroup/configure/serverGroupConfiguration.service';
 
 module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   require('@uirouter/angularjs').default,
-  AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
-  SERVER_GROUP_WRITER,
-  TASK_MONITOR_BUILDER,
-  V2_MODAL_WIZARD_SERVICE,
-  OVERRIDE_REGISTRY,
+  ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  // SERVER_GROUP_WRITER,
+  // TASK_MONITOR_BUILDER,
+  // V2_MODAL_WIZARD_SERVICE,
+  // OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
-])
+  ])
   .controller('ecsCloneServerGroupCtrl', function($scope, $uibModalInstance, $q, $state,
                                                   serverGroupWriter, v2modalWizardService, taskMonitorBuilder,
-                                                  overrideRegistry, awsServerGroupConfigurationService,
+                                                  overrideRegistry, ecsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
+    console.log('yooo1');
     $scope.pages = {
       // templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
@@ -35,7 +35,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       // instanceType: overrideRegistry.getTemplate('aws.serverGroup.instanceType', require('./instanceType/instanceType.html')),
       // capacity: overrideRegistry.getTemplate('aws.serverGroup.capacity', require('./capacity/capacity.html')),
       // zones: overrideRegistry.getTemplate('aws.serverGroup.zones', require('./capacity/zones.html')),
-      advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/ecsAdvancedSettings.html')),
+      ecsAdvancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/ecsAdvancedSettings.html')),
     };
 
     $scope.title = title;
@@ -50,9 +50,11 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
     };
 
+    console.log('yooo');
+
     this.templateSelectionText = {
       copied: [
-        'account, region, subnet, cluster name (stack, details)',
+        'bruno',
         'load balancers',
         'security groups',
         'instance type',
@@ -73,15 +75,15 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       if ($scope.$$destroyed) {
         return;
       }
-      let cloneStage = $scope.taskMonitor.task.execution.stages.find((stage) => stage.type === 'cloneServerGroup');
+      const cloneStage = $scope.taskMonitor.task.execution.stages.find((stage) => stage.type === 'cloneServerGroup');
       if (cloneStage && cloneStage.context['deploy.server.groups']) {
-        let newServerGroupName = cloneStage.context['deploy.server.groups'][$scope.command.region];
+        const newServerGroupName = cloneStage.context['deploy.server.groups'][$scope.command.region];
         if (newServerGroupName) {
-          var newStateParams = {
+          const newStateParams = {
             serverGroup: newServerGroupName,
             accountId: $scope.command.credentials,
             region: $scope.command.region,
-            provider: 'aws',
+            provider: 'ecs',
           };
           var transitionTo = '^.^.^.clusters.serverGroup';
           if ($state.includes('**.clusters.serverGroup')) {  // clone via details, all view
@@ -111,86 +113,87 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
 
     function configureCommand() {
-      awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
-        var mode = serverGroupCommand.viewState.mode;
-        if (mode === 'clone' || mode === 'create') {
-          if (!serverGroupCommand.backingData.packageImages.length) {
-            serverGroupCommand.viewState.useAllImageSelection = true;
-          }
-        }
-        $scope.state.loaded = true;
-        initializeCommand();
-        initializeSelectOptions();
-        initializeWatches();
-      });
+      // ecsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
+      //   var mode = serverGroupCommand.viewState.mode;
+      //   if (mode === 'clone' || mode === 'create') {
+      //     if (!serverGroupCommand.backingData.packageImages.length) {
+      //       serverGroupCommand.viewState.useAllImageSelection = true;
+      //     }
+      //   }
+      //   $scope.state.loaded = true;
+      //   initializeCommand();
+      //   initializeSelectOptions();
+      //   initializeWatches();
+      // });
     }
 
 
-    function initializeWatches() {
-      $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
-      $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
-      $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
-      $scope.$watch('command.viewState.usePreferredZones', createResultProcessor($scope.command.usePreferredZonesChanged));
-      $scope.$watch('command.virtualizationType', createResultProcessor($scope.command.imageChanged));
-      $scope.$watch('command.stack', $scope.command.clusterChanged);
-      $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
-      $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
+    // function initializeWatches() {
+    //   $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
+      // $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
+      // $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
+      // $scope.$watch('command.viewState.usePreferredZones', createResultProcessor($scope.command.usePreferredZonesChanged));
+      // $scope.$watch('command.virtualizationType', createResultProcessor($scope.command.imageChanged));
+      // $scope.$watch('command.stack', $scope.command.clusterChanged);
+      // $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
+      // $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
-      serverGroupCommandRegistry.getCommandOverrides('aws').forEach((override) => {
-        if (override.addWatches) {
-        override.addWatches($scope.command).forEach((watchConfig) => {
-          $scope.$watch(watchConfig.property, watchConfig.method);
-      });
-      }
-    });
-    }
+      // serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
+      //   if (override.addWatches) {
+      //     override.addWatches($scope.command).forEach((watchConfig) => {
+      //       $scope.$watch(watchConfig.property, watchConfig.method);
+      //     });
+      //   }
+      // });
+    // }
 
     // TODO: Move to service
-    function initializeSelectOptions() {
-      processCommandUpdateResult($scope.command.credentialsChanged());
-      processCommandUpdateResult($scope.command.regionChanged());
-      awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
-    }
+    // function initializeSelectOptions() {
+      // processCommandUpdateResult($scope.command.credentialsChanged());
+      // processCommandUpdateResult($scope.command.regionChanged());
+      // ecsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
+    // }
 
-    function createResultProcessor(method) {
-      return function() {
-        processCommandUpdateResult(method());
-      };
-    }
+    // function createResultProcessor(method) {
+    //   return function() {
+    //     processCommandUpdateResult(method());
+    //   };
+    // }
 
-    function processCommandUpdateResult(result) {
-      if (result.dirty.loadBalancers) {
-        v2modalWizardService.markDirty('load-balancers');
-      }
-      if (result.dirty.targetGroups) {
-        v2modalWizardService.markDirty('target-groups');
-      }
-      if (result.dirty.securityGroups) {
-        v2modalWizardService.markDirty('security-groups');
-      }
-      if (result.dirty.availabilityZones) {
-        v2modalWizardService.markDirty('capacity');
-      }
-      if (result.dirty.instanceType) {
-        v2modalWizardService.markDirty('instance-type');
-      }
-      if (result.dirty.keyPair) {
-        v2modalWizardService.markDirty('advanced');
-        v2modalWizardService.markIncomplete('advanced');
-      }
-    }
+    // function processCommandUpdateResult(result) {
+    //   console.log(result);
+      // if (result.dirty.loadBalancers) {
+      //   v2modalWizardService.markDirty('load-balancers');
+      // }
+      // if (result.dirty.targetGroups) {
+      //   v2modalWizardService.markDirty('target-groups');
+      // }
+      // if (result.dirty.securityGroups) {
+      //   v2modalWizardService.markDirty('security-groups');
+      // }
+      // if (result.dirty.availabilityZones) {
+      //   v2modalWizardService.markDirty('capacity');
+      // }
+      // if (result.dirty.instanceType) {
+      //   v2modalWizardService.markDirty('instance-type');
+      // }
+      // if (result.dirty.keyPair) {
+      //   v2modalWizardService.markDirty('advanced');
+      //   v2modalWizardService.markIncomplete('advanced');
+      // }
+    // }
 
-    function initializeCommand() {
-      if (serverGroupCommand.viewState.imageId) {
-        var foundImage = $scope.command.backingData.packageImages.filter(function(image) {
-          return image.amis[serverGroupCommand.region] && image.amis[serverGroupCommand.region].includes(serverGroupCommand.viewState.imageId);
-        });
-        if (foundImage.length) {
-          serverGroupCommand.amiName = foundImage[0].imageName;
-        }
-      }
-    }
+    // function initializeCommand() {
+    //   if (serverGroupCommand.viewState.imageId) {
+    //     var foundImage = $scope.command.backingData.packageImages.filter(function(image) {
+    //       return image.amis[serverGroupCommand.region] && image.amis[serverGroupCommand.region].includes(serverGroupCommand.viewState.imageId);
+    //     });
+    //     if (foundImage.length) {
+    //       serverGroupCommand.amiName = foundImage[0].imageName;
+    //     }
+    //   }
+    // }
 
     this.isValid = function () {
       return $scope.command &&

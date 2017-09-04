@@ -13,7 +13,7 @@ templates.keys().forEach(function(key) {
 
 module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
-  // require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
+  require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',

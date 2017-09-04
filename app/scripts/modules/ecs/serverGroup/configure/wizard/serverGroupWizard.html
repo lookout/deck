@@ -8,7 +8,7 @@
   <div ng-if="!state.requiresTemplateSelection">
     <v2-modal-wizard ng-show="state.loaded" heading="{{title}}" task-monitor="taskMonitor" dismiss="$dismiss()">
       <v2-wizard-page key="advanced" label="Advanced Settings" mark-complete-on-view="false" done="true">
-        <ng-include src="pages.ecsAdvancedSettings"></ng-include>  <!-- TODO Seems like changing this src tag will be hard.  See upsert.controller.js to see how a page gets added to the available pages in the scope -->
+        <ng-include src="pages.advancedSettings"></ng-include>  <!-- TODO Seems like changing this src tag will be hard.  See upsert.controller.js to see how a page gets added to the available pages in the scope -->
       </v2-wizard-page>
       abcsds
     </v2-modal-wizard>
