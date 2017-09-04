@@ -27,6 +27,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   overrideRegistry, awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
+    console.log('bruno-ecs');
+
     $scope.pages = {
       // templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
@@ -35,7 +37,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       // instanceType: overrideRegistry.getTemplate('aws.serverGroup.instanceType', require('./instanceType/instanceType.html')),
       // capacity: overrideRegistry.getTemplate('aws.serverGroup.capacity', require('./capacity/capacity.html')),
       // zones: overrideRegistry.getTemplate('aws.serverGroup.zones', require('./capacity/zones.html')),
-      advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
+      advancedSettings: overrideRegistry.getTemplate('aws.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
 
     $scope.title = title;
@@ -44,6 +46,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     $scope.application = application;
 
     $scope.command = serverGroupCommand;
+    console.log('bruno-ecs-2');
 
     $scope.state = {
       loaded: false,
@@ -63,12 +66,14 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       ],
       additionalCopyText: 'If a server group exists in this cluster at the time of deployment, its scaling policies will be copied over to the new server group.'
     };
-
+    console.log('bruno-ecs-20');
     if (!$scope.command.viewState.disableStrategySelection) {
       this.templateSelectionText.notCopied.push('the deployment strategy (if any) used to deploy the most recent server group');
     }
 
+    console.log('bruno-ecs-30');
     function onApplicationRefresh() {
+      console.log('bruno-ecs-21');
       // If the user has already closed the modal, do not navigate to the new details view
       if ($scope.$$destroyed) {
         return;
@@ -81,7 +86,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
             serverGroup: newServerGroupName,
             accountId: $scope.command.credentials,
             region: $scope.command.region,
-            provider: 'ecs',
+            provider: 'aws',
           };
           var transitionTo = '^.^.^.clusters.serverGroup';
           if ($state.includes('**.clusters.serverGroup')) {  // clone via details, all view
@@ -98,7 +103,9 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       }
     }
 
+    console.log('bruno-ecs-40');
     function onTaskComplete() {
+      console.log('bruno-ecs-task-complete');
       application.serverGroups.refresh();
       application.serverGroups.onNextRefresh($scope, onApplicationRefresh);
     }
@@ -110,7 +117,9 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       onTaskComplete: onTaskComplete,
     });
 
+    console.log('bruno-ecs-50');
     function configureCommand() {
+      console.log('this needs to work, sad!');
       awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
@@ -126,6 +135,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
 
+    console.log('bruno-ecs-60');
     function initializeWatches() {
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
@@ -137,7 +147,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
-      serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
+      serverGroupCommandRegistry.getCommandOverrides('aws').forEach((override) => {
         if (override.addWatches) {
         override.addWatches($scope.command).forEach((watchConfig) => {
           $scope.$watch(watchConfig.property, watchConfig.method);
@@ -146,6 +156,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
     }
 
+    console.log('bruno-ecs-70');
     // TODO: Move to service
     function initializeSelectOptions() {
       processCommandUpdateResult($scope.command.credentialsChanged());
@@ -159,6 +170,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       };
     }
 
+    console.log('bruno-ecs-80');
     function processCommandUpdateResult(result) {
       if (result.dirty.loadBalancers) {
         v2modalWizardService.markDirty('load-balancers');
@@ -192,6 +204,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       }
     }
 
+    console.log('bruno-ecs-90');
+
     this.isValid = function () {
       return $scope.command &&
         ($scope.command.viewState.disableImageSelection || $scope.command.amiName) &&
@@ -219,18 +233,21 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       );
     };
 
+    console.log('bruno-ecs-100');
     this.cancel = function () {
       $uibModalInstance.dismiss();
     };
 
     if (!$scope.state.requiresTemplateSelection) {
+      console.log('alt-1');
       configureCommand();
     } else {
+      console.log('alt-2');
       $scope.state.loaded = true;
     }
 
-    this.templateSelected = () => {
-      $scope.state.requiresTemplateSelection = false;
-      configureCommand();
-    };
+    $scope.state.requiresTemplateSelection = false;
+    configureCommand();
+
+    console.log('finished! :(');
   });

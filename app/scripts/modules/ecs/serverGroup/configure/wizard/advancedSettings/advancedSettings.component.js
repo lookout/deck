@@ -4,8 +4,6 @@ const angular = require('angular');
 
 import { V2_MODAL_WIZARD_SERVICE } from '@spinnaker/core';
 
-import { AWSProviderSettings } from 'amazon/aws.settings';
-
 module.exports = angular
   .module('spinnaker.ecs.serverGroup.configure.wizard.advancedSettings.component', [
     V2_MODAL_WIZARD_SERVICE,

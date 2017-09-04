@@ -26,6 +26,8 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
                                                   overrideRegistry, awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
+
+    console.log('yolo!');
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
@@ -72,6 +74,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
       if ($scope.$$destroyed) {
         return;
       }
+      console.log('yolo!5121');
       let cloneStage = $scope.taskMonitor.task.execution.stages.find((stage) => stage.type === 'cloneServerGroup');
       if (cloneStage && cloneStage.context['deploy.server.groups']) {
         let newServerGroupName = cloneStage.context['deploy.server.groups'][$scope.command.region];
@@ -98,6 +101,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
     }
 
     function onTaskComplete() {
+      console.log('yolo!2');
       application.serverGroups.refresh();
       application.serverGroups.onNextRefresh($scope, onApplicationRefresh);
     }
@@ -110,6 +114,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
     });
 
     function configureCommand() {
+      console.log('yolo!3');
       awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
@@ -126,6 +131,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
 
 
     function initializeWatches() {
+      console.log('yolo!4');
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
       $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
@@ -147,6 +153,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
 
     // TODO: Move to service
     function initializeSelectOptions() {
+      console.log('yolo!5');
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
       awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
@@ -159,6 +166,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
     }
 
     function processCommandUpdateResult(result) {
+      console.log('yolo!6');
       if (result.dirty.loadBalancers) {
         v2modalWizardService.markDirty('load-balancers');
       }
@@ -229,6 +237,7 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
     }
 
     this.templateSelected = () => {
+      console.log('wow');
       $scope.state.requiresTemplateSelection = false;
       configureCommand();
     };
