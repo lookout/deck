@@ -35,7 +35,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       // instanceType: overrideRegistry.getTemplate('aws.serverGroup.instanceType', require('./instanceType/instanceType.html')),
       // capacity: overrideRegistry.getTemplate('aws.serverGroup.capacity', require('./capacity/capacity.html')),
       // zones: overrideRegistry.getTemplate('aws.serverGroup.zones', require('./capacity/zones.html')),
-      advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/ecsAdvancedSettings.html')),
+      advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
 
     $scope.title = title;
@@ -81,7 +81,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
             serverGroup: newServerGroupName,
             accountId: $scope.command.credentials,
             region: $scope.command.region,
-            provider: 'aws',
+            provider: 'ecs',
           };
           var transitionTo = '^.^.^.clusters.serverGroup';
           if ($state.includes('**.clusters.serverGroup')) {  // clone via details, all view
@@ -137,7 +137,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
-      serverGroupCommandRegistry.getCommandOverrides('aws').forEach((override) => {
+      serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
         if (override.addWatches) {
         override.addWatches($scope.command).forEach((watchConfig) => {
           $scope.$watch(watchConfig.property, watchConfig.method);

@@ -15,7 +15,7 @@ module.exports = angular
       command: '=',
       application: '=',
     },
-    templateUrl: require('./ecsAdvancedSettings.component.html'),
+    templateUrl: require('./advancedSettings.component.html'),
     controller: function(v2modalWizardService) {
       this.fieldChanged = () => {
         if (this.command.keyPair) {
