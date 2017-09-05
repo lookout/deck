@@ -14,11 +14,4 @@ module.exports = angular
       application: '=',
     },
     templateUrl: require('./advancedSettings.component.html'),
-    controller: function(v2modalWizardService) {
-      this.fieldChanged = () => {
-        if (this.command.keyPair) {
-          v2modalWizardService.markComplete('advanced');
-        }
-      };
-    }
   });

@@ -151,7 +151,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     function initializeSelectOptions() {
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
-      awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
+      // awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
     }
 
     function createResultProcessor(method) {

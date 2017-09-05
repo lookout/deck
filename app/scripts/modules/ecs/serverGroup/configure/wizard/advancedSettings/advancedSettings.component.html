@@ -37,6 +37,17 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
+      ECS Cluster name
+    </div>
+    <div class="col-md-7"><input type="text"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="details"
+                                 ng-model="$ctrl.command.ecsClusterName"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
       Container Security Group
     </div>
     <div class="col-md-7"><input type="text"
