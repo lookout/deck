@@ -28,7 +28,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
     $scope.pages = {
-      // templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
+      templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
       // loadBalancers: overrideRegistry.getTemplate('aws.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
       // securityGroups: overrideRegistry.getTemplate('aws.serverGroup.securityGroups', require('./securityGroups/securityGroups.html')),
@@ -81,7 +81,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
             serverGroup: newServerGroupName,
             accountId: $scope.command.credentials,
             region: $scope.command.region,
-            provider: 'aws',
+            provider: 'ecs',
           };
           var transitionTo = '^.^.^.clusters.serverGroup';
           if ($state.includes('**.clusters.serverGroup')) {  // clone via details, all view
@@ -236,7 +236,12 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.state.loaded = true;
     }
 
-    $scope.state.requiresTemplateSelection = false;
-    configureCommand();
-
+    // TODO - why did i have to remove a framgent here which is found in CloneServerGroup.aws.controller.js so this would work ???!
+    // $scope.state.requiresTemplateSelection = false;
+    // configureCommand();
+    this.templateSelected = () => {
+      console.log('wow');
+      $scope.state.requiresTemplateSelection = false;
+      configureCommand();
+    };
   });

@@ -15,6 +15,8 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
+  require('./serverGroup/configure/serverGroupCommandBuilder.service'),
+  // require('./serverGroup/serverGroup.transformer'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
@@ -27,7 +29,7 @@ module.exports = angular.module('spinnaker.ecs', [
           // detailsController: 'awsServerGroupDetailsCtrl',
           cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
           cloneServerGroupController: 'ecsCloneServerGroupCtrl',
-          commandBuilder: 'awsServerGroupCommandBuilder',
+          commandBuilder: 'ecsServerGroupCommandBuilder',
           // configurationService: 'awsServerGroupConfigurationService',
           scalingActivitiesEnabled: false,
         },
