@@ -81,7 +81,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             spotPrice: null,
             tags: {},
             viewState: {
-              instanceProfile: 'custom',
               useAllImageSelection: false,
               useSimpleCapacity: true,
               usePreferredZones: true,
@@ -103,9 +102,9 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
       var pipelineCluster = _.cloneDeep(originalCluster);
       var region = Object.keys(pipelineCluster.availabilityZones)[0];
-      var instanceTypeCategoryLoader = instanceTypeService.getCategoryForInstanceType('ecs', pipelineCluster.instanceType);
+      // var instanceTypeCategoryLoader = instanceTypeService.getCategoryForInstanceType('ecs', pipelineCluster.instanceType);
       var commandOptions = { account: pipelineCluster.account, region: region };
-      var asyncLoader = $q.all({command: buildNewServerGroupCommand(application, commandOptions), instanceProfile: instanceTypeCategoryLoader});
+      var asyncLoader = $q.all({command: buildNewServerGroupCommand(application, commandOptions)});
 
       return asyncLoader.then(function(asyncData) {
         var command = asyncData.command;
@@ -169,12 +168,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
       var serverGroupName = namingService.parseServerGroupName(serverGroup.asg.autoScalingGroupName);
 
-      var instanceType = serverGroup.launchConfig ? serverGroup.launchConfig.instanceType : null;
-      var instanceTypeCategoryLoader = instanceTypeService.getCategoryForInstanceType('aws', instanceType);
-
       var asyncLoader = $q.all({
         preferredZones: preferredZonesLoader,
-        instanceProfile: instanceTypeCategoryLoader,
       });
 
       return asyncLoader.then(function(asyncData) {
