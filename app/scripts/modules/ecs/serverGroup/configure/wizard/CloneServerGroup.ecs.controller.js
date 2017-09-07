@@ -28,14 +28,14 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
     $scope.pages = {
-      templateSelection: overrideRegistry.getTemplate('aws.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
+      templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
       // loadBalancers: overrideRegistry.getTemplate('aws.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
       // securityGroups: overrideRegistry.getTemplate('aws.serverGroup.securityGroups', require('./securityGroups/securityGroups.html')),
       // instanceType: overrideRegistry.getTemplate('aws.serverGroup.instanceType', require('./instanceType/instanceType.html')),
       // capacity: overrideRegistry.getTemplate('aws.serverGroup.capacity', require('./capacity/capacity.html')),
       // zones: overrideRegistry.getTemplate('aws.serverGroup.zones', require('./capacity/zones.html')),
-      advancedSettings: overrideRegistry.getTemplate('aws.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
+      advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
 
     $scope.title = title;
@@ -138,7 +138,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
-      serverGroupCommandRegistry.getCommandOverrides('aws').forEach((override) => {
+      serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
         if (override.addWatches) {
         override.addWatches($scope.command).forEach((watchConfig) => {
           $scope.$watch(watchConfig.property, watchConfig.method);

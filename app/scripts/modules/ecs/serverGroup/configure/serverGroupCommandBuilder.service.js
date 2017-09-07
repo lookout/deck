@@ -45,14 +45,12 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
           var credentials = asyncData.credentialsKeyedByAccount[defaultCredentials];
           var keyPair = credentials ? credentials.defaultKeyPair : null;
-          var applicationAwsSettings = _.get(application, 'attributes.providerSettings.ecs', {});
 
           var defaultIamRole =
             // AWSProviderSettings.defaults.iamRole ||
-            'BaseIAMRole';
+            'Cucumber';
           defaultIamRole = defaultIamRole.replace('{{application}}', application.name);
 
-          var useAmiBlockDeviceMappings = applicationAwsSettings.useAmiBlockDeviceMappings || false;
 
           var command = {
             application: application.name,
@@ -82,8 +80,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             securityGroups: [],
             spotPrice: null,
             tags: {},
-            useAmiBlockDeviceMappings: useAmiBlockDeviceMappings,
-            copySourceCustomBlockDeviceMappings: !useAmiBlockDeviceMappings,
             viewState: {
               instanceProfile: 'custom',
               useAllImageSelection: false,
@@ -193,8 +189,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         // These processes should never be copied over, as the affect launching instances and enabling traffic
         let enabledProcesses = ['Launch', 'Terminate', 'AddToLoadBalancer'];
 
-        var applicationAwsSettings = _.get(application, 'attributes.providerSettings.aws', {});
-        var useAmiBlockDeviceMappings = applicationAwsSettings.useAmiBlockDeviceMappings || false;
 
         var command = {
           application: application.name,
@@ -229,8 +223,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             .filter((name) => !enabledProcesses.includes(name)),
           tags: serverGroup.tags || {},
           targetGroups: serverGroup.targetGroups,
-          useAmiBlockDeviceMappings: useAmiBlockDeviceMappings,
-          copySourceCustomBlockDeviceMappings: !useAmiBlockDeviceMappings,
           viewState: {
             instanceProfile: asyncData.instanceProfile,
             useAllImageSelection: false,

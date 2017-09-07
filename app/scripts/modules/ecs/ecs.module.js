@@ -16,7 +16,6 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
-  // require('./serverGroup/serverGroup.transformer'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
@@ -24,7 +23,7 @@ module.exports = angular.module('spinnaker.ecs', [
         name: 'EC2 Container Service',
         logo: { path: require('./logo/ecs.icon.svg')},
         serverGroup: {
-          transformer: 'awsServerGroupTransformer',
+          transformer: 'ecsServerGroupTransformer',
           // detailsTemplateUrl: require('../amazon/src/serverGroup/details/serverGroupDetails.html'),
           // detailsController: 'awsServerGroupDetailsCtrl',
           cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
@@ -35,3 +34,6 @@ module.exports = angular.module('spinnaker.ecs', [
         },
       });
   });
+
+require('./serverGroup/serverGroup.transformer.ts');
+

@@ -1,6 +1,5 @@
 import { module, IPromise } from 'angular';
 import { defaults } from 'lodash';
-require('angular');
 
 import { IVpc } from '@spinnaker/core';
 
@@ -8,7 +7,7 @@ import {
   IScalingAdjustmentView, IScalingPolicyView, IScalingPolicyAlarmView, IAmazonServerGroup, IStepAdjustmentView,
   IScalingPolicy, IAmazonServerGroupView, ITargetTrackingPolicy
 } from '../../amazon/src/domain';
-import { VpcReader } from '../../amazon/src/vpc/vpc.read.service';
+import { VPC_READ_SERVICE, VpcReader } from '../../amazon/src/vpc/vpc.read.service';
 
 export class EcsServerGroupTransformer {
   public constructor(private vpcReader: VpcReader) { 'ngInject'; }
@@ -140,6 +139,6 @@ export class EcsServerGroupTransformer {
 
 export const ECS_SERVER_GROUP_TRANSFORMER = 'spinnaker.ecs.serverGroup.transformer';
 module(ECS_SERVER_GROUP_TRANSFORMER, [
-
+  VPC_READ_SERVICE,
 ])
   .service('ecsServerGroupTransformer', EcsServerGroupTransformer);

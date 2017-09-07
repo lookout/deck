@@ -38,7 +38,7 @@ window.spinnakerSettings = {
       defaults: {
         account: 'test',
         region: 'us-east-1',
-        iamRole: 'BaseIAMRole',
+        iamRole: 'ABCADASDA',
       },
       defaultSecurityGroups: [],
       loadBalancers: {
@@ -52,7 +52,7 @@ window.spinnakerSettings = {
       defaults: {
         account: 'test',
         region: 'us-east-1',
-        iamRole: 'BaseIAMRole',
+        iamRole: 'BaseRole',
       },
       defaultSecurityGroups: [],
     },
