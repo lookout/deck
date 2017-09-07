@@ -1,5 +1,7 @@
 'use strict';
 
+import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
+
 let angular = require('angular');
 
 require('./logo/ecs.logo.less');
@@ -14,6 +16,7 @@ templates.keys().forEach(function(key) {
 module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
+  ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
 ])
@@ -34,6 +37,4 @@ module.exports = angular.module('spinnaker.ecs', [
         },
       });
   });
-
-require('./serverGroup/serverGroup.transformer.ts');
 
