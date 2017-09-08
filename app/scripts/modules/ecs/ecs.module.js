@@ -27,12 +27,12 @@ module.exports = angular.module('spinnaker.ecs', [
         logo: { path: require('./logo/ecs.icon.svg')},
         serverGroup: {
           transformer: 'ecsServerGroupTransformer',
-          // detailsTemplateUrl: require('../amazon/src/serverGroup/details/serverGroupDetails.html'),
-          // detailsController: 'awsServerGroupDetailsCtrl',
+          // detailsTemplateUrl: require('../ecs/src/serverGroup/details/serverGroupDetails.html'),
+          // detailsController: 'ecsServerGroupDetailsCtrl',
           cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
           cloneServerGroupController: 'ecsCloneServerGroupCtrl',
           commandBuilder: 'ecsServerGroupCommandBuilder',
-          // configurationService: 'awsServerGroupConfigurationService',
+          // configurationService: 'ecsServerGroupConfigurationService',
           scalingActivitiesEnabled: false,
         },
       });
