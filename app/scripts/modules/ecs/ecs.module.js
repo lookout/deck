@@ -3,6 +3,8 @@
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
 import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
 
+import { DeploymentStrategyRegistry } from '@spinnaker/core';
+
 let angular = require('angular');
 
 require('./logo/ecs.logo.less');
@@ -40,3 +42,4 @@ module.exports = angular.module('spinnaker.ecs', [
       });
   });
 
+DeploymentStrategyRegistry.registerProvider('ecs', ['redblack']);
