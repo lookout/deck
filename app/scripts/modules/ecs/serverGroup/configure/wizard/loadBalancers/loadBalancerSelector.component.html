@@ -46,54 +46,16 @@
       </p>
     </div>
   </div>
-  <div class="form-group">
-    <div class="col-md-4 sm-label-right">
-      <b>Classic Load Balancers</b>
-      <help-field key="aws.loadBalancer.loadBalancers"></help-field>
-    </div>
-    <div class="col-md-8">
-      <ui-select ng-if="$ctrl.command.backingData.filtered.loadBalancers.length"
-                 multiple
-                 ng-model="$ctrl.command.loadBalancers"
-                 class="form-control input-sm">
-        <ui-select-match>{{$item}}</ui-select-match>
-        <ui-select-choices repeat="loadBalancer in $ctrl.command.backingData.filtered.loadBalancers | filter: $select.search">
-          <span ng-bind-html="loadBalancer | highlight: $select.search"></span>
-        </ui-select-choices>
-      </ui-select>
-    </div>
-  </div>
-  <div class="form-group" ng-if="!$ctrl.command.vpcId">
-    <div ng-if="!$ctrl.command.vpcLoadBalancers.length && !$ctrl.showVpcLoadBalancers">
-      <div class="col-md-8 col-md-offset-3">
-        <a href ng-click="$ctrl.showVpcLoadBalancers = true">Add VPC Load Balancers</a>
-      </div>
-    </div>
-    <div ng-if="$ctrl.command.vpcLoadBalancers.length || $ctrl.showVpcLoadBalancers">
-      <div class="col-md-4 sm-label-right"><b>VPC Load Balancers</b></div>
-      <div class="col-md-8">
-        <ui-select ng-if="$ctrl.command.backingData.filtered.vpcLoadBalancers.length"
-                   multiple
-                   ng-model="$ctrl.command.vpcLoadBalancers"
-                   class="form-control input-sm">
-          <ui-select-match>{{$item}}</ui-select-match>
-          <ui-select-choices repeat="loadBalancer in $ctrl.command.backingData.filtered.vpcLoadBalancers | filter: $select.search">
-            <span ng-bind-html="loadBalancer | highlight: $select.search"></span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
-    </div>
-  </div>
 
   <div class="form-group small" style="margin-top: 20px">
     <div class="col-md-8 col-md-offset-4">
       <p>
         <span ng-if="$ctrl.refreshing"><span class="fa fa-refresh fa-spin"></span></span>
-        Load balancers
+        Target groups
         <span ng-if="!$ctrl.refreshing">last refreshed {{ $ctrl.refreshTime | timestamp }}</span>
         <span ng-if="$ctrl.refreshing"> refreshing...</span>
       </p>
-      <p>If you're not finding a target group or classic load balancer that was recently added,
+      <p>If you're not finding a target group that was recently added,
         <a href ng-click="$ctrl.refreshLoadBalancers()">click here</a> to refresh the list.
       </p>
     </div>

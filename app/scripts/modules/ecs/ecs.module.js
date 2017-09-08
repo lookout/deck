@@ -1,6 +1,7 @@
 'use strict';
 
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
+import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
 
 let angular = require('angular');
 
@@ -18,6 +19,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
+  ECS_LOAD_BALANCER_SELECTOR,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
 ])
   .config(function(cloudProviderRegistryProvider) {

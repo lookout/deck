@@ -30,7 +30,7 @@ class LoadBalancerSelectorController implements IController {
   }
 }
 
-export class LoadBalancerSelectorComponent implements IComponentOptions {
+export class ApplicationLoadBalancerSelectorComponent implements IComponentOptions {
   public bindings: any = {
     command: '='
   };
@@ -38,9 +38,9 @@ export class LoadBalancerSelectorComponent implements IComponentOptions {
   public templateUrl = require('./loadBalancerSelector.component.html');
 }
 
-export const LOAD_BALANCER_SELECTOR = 'spinnaker.ecs.serverGroup.configure.wizard.loadBalancers.selector.component';
-module (LOAD_BALANCER_SELECTOR, [
+export const ECS_LOAD_BALANCER_SELECTOR = 'spinnaker.ecs.serverGroup.configure.wizard.loadBalancers.selector.component';
+module (ECS_LOAD_BALANCER_SELECTOR, [
   AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
   INFRASTRUCTURE_CACHE_SERVICE
 ])
-  .component('ecsServerGroupLoadBalancerSelector', new LoadBalancerSelectorComponent());
+  .component('ecsServerGroupLoadBalancerSelector', new ApplicationLoadBalancerSelectorComponent());
