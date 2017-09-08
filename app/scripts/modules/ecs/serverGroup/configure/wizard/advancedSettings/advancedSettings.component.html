@@ -1,52 +1,6 @@
 <div class="container-fluid form-horizontal">
 
   <div class="form-group">
-    <div class="col-md-3 sm-label-right">
-      Account
-    </div>
-    <div class="col-md-7">
-      <account-select-field read-only="$ctrl.command.viewState.readOnlyFields.credentials" component="$ctrl.command" field="credentials" accounts="$ctrl.command.backingData.accounts" provider="'ecs'"></account-select-field>
-    </div>
-  </div>
-
-  <region-select-field read-only="$ctrl.command.viewState.readOnlyFields.region" label-columns="3" component="$ctrl.command" field="region" account="$ctrl.command.credentials" provider="'ecs'" regions="$ctrl.command.backingData.filtered.regions"></region-select-field>
-
-  <div class="form-group">
-    <div class="col-md-5 sm-label-right">
-      Stack
-      <help-field key="aws.serverGroup.stack"></help-field>
-    </div>
-    <div class="col-md-7"><input type="text"
-                                 class="form-control input-sm no-spel"
-                                 ng-pattern="basicSettingsCtrl.stackPattern"
-                                 name="stack"
-                                 ng-model="$ctrl.command.stack"/></div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-md-5 sm-label-right">
-      Detail
-      <help-field key="aws.serverGroup.detail"></help-field>
-    </div>
-    <div class="col-md-7"><input type="text"
-                                 class="form-control input-sm no-spel"
-                                 ng-pattern="basicSettingsCtrl.detailPattern"
-                                 name="details"
-                                 ng-model="$ctrl.command.freeFormDetails"/></div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-md-5 sm-label-right">
-      ECS Cluster name
-    </div>
-    <div class="col-md-7"><input type="text"
-                                 class="form-control input-sm no-spel"
-                                 ng-pattern="basicSettingsCtrl.detailPattern"
-                                 name="details"
-                                 ng-model="$ctrl.command.ecsClusterName"/></div>
-  </div>
-
-  <div class="form-group">
     <div class="col-md-5 sm-label-right">
       Container Security Group
     </div>
@@ -55,17 +9,6 @@
                                  ng-pattern="basicSettingsCtrl.detailPattern"
                                  name="details"
                                  ng-model="$ctrl.command.securityGroup"/></div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-md-5 sm-label-right">
-      Application Load Balancer
-    </div>
-    <div class="col-md-7"><input type="text"
-                                 class="form-control input-sm no-spel"
-                                 ng-pattern="basicSettingsCtrl.detailPattern"
-                                 name="details"
-                                 ng-model="$ctrl.command.applicationLoadBalancer"/></div>
   </div>
 
   <div class="form-group">
