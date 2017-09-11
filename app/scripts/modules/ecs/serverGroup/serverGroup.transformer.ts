@@ -5,7 +5,7 @@ import { IVpc } from '@spinnaker/core';
 
 import {
   IScalingAdjustmentView, IScalingPolicyView, IScalingPolicyAlarmView, IAmazonServerGroup, IStepAdjustmentView,
-  IScalingPolicy, IAmazonServerGroupView, ITargetTrackingPolicy
+  IScalingPolicy, IAmazonServerGroupView
 } from '../../amazon/src/domain';
 import { VPC_READ_SERVICE, VpcReader } from '../../amazon/src/vpc/vpc.read.service';
 
@@ -89,9 +89,7 @@ export class EcsServerGroupTransformer {
     if (base.viewState.mode !== 'clone') {
       delete command.source;
     }
-    if (!command.ramdiskId) {
-      delete command.ramdiskId; // TODO: clean up in kato? - should ignore if empty string
-    }
+
     delete command.region;
     delete command.viewState;
     delete command.backingData;
@@ -102,39 +100,6 @@ export class EcsServerGroupTransformer {
     return command;
   }
 
-  public constructNewStepScalingPolicyTemplate(serverGroup: IAmazonServerGroup): IScalingPolicy {
-    return {
-      alarms: [{
-        namespace: 'AWS/EC2',
-        metricName: 'CPUUtilization',
-        threshold: 50,
-        statistic: 'Average',
-        comparisonOperator: 'GreaterThanThreshold',
-        evaluationPeriods: 1,
-        dimensions: [{ name: 'AutoScalingGroupName', value: serverGroup.name}],
-        period: 60,
-      }],
-      adjustmentType: 'ChangeInCapacity',
-      stepAdjustments: [{
-        scalingAdjustment: 1,
-        metricIntervalLowerBound: 0,
-      }],
-      estimatedInstanceWarmup: 600,
-    };
-  }
-
-  public constructNewTargetTrackingPolicyTemplate(): ITargetTrackingPolicy {
-    return {
-      alarms: [],
-      estimatedInstanceWarmup: 300,
-      targetTrackingConfiguration: {
-        targetValue: null,
-        predefinedMetricSpecification: {
-          predefinedMetricType: 'ASGAverageCPUUtilization'
-        }
-      }
-    };
-  }
 }
 
 export const ECS_SERVER_GROUP_TRANSFORMER = 'spinnaker.ecs.serverGroup.transformer';

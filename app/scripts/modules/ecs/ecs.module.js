@@ -1,6 +1,10 @@
 'use strict';
 
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
+import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
+import { ECS_SECURITY_GROUPS_REMOVED } from './serverGroup/configure/wizard/securityGroups/securityGroupsRemoved.component';
+
+import { DeploymentStrategyRegistry } from '@spinnaker/core';
 
 let angular = require('angular');
 
@@ -18,6 +22,10 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
+  require('./serverGroup/configure/wizard/capacity/capacity.component'),
+  ECS_LOAD_BALANCER_SELECTOR,
+  ECS_SECURITY_GROUPS_REMOVED,
+  require('./serverGroup/configure/wizard/securityGroups/securityGroupSelector.directive.js'),
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
 ])
   .config(function(cloudProviderRegistryProvider) {
@@ -27,14 +35,15 @@ module.exports = angular.module('spinnaker.ecs', [
         logo: { path: require('./logo/ecs.icon.svg')},
         serverGroup: {
           transformer: 'ecsServerGroupTransformer',
-          // detailsTemplateUrl: require('../amazon/src/serverGroup/details/serverGroupDetails.html'),
-          // detailsController: 'awsServerGroupDetailsCtrl',
+          // detailsTemplateUrl: require('../ecs/src/serverGroup/details/serverGroupDetails.html'),
+          // detailsController: 'ecsServerGroupDetailsCtrl',
           cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
           cloneServerGroupController: 'ecsCloneServerGroupCtrl',
           commandBuilder: 'ecsServerGroupCommandBuilder',
-          // configurationService: 'awsServerGroupConfigurationService',
+          // configurationService: 'ecsServerGroupConfigurationService',
           scalingActivitiesEnabled: false,
         },
       });
   });
 
+DeploymentStrategyRegistry.registerProvider('ecs', ['redblack']);

@@ -39,6 +39,7 @@ export class V2ModalWizardService {
   }
 
   public markClean(key: string): void {
+    console.log('page key: ' + key);
     this.getPage(key).state.dirty = false;
   }
 
