@@ -22,6 +22,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
+  require('./serverGroup/configure/wizard/capacity/capacity.component'),
   ECS_LOAD_BALANCER_SELECTOR,
   ECS_SECURITY_GROUPS_REMOVED,
   require('./serverGroup/configure/wizard/securityGroups/securityGroupSelector.directive.js'),
