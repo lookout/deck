@@ -27,6 +27,7 @@ module.exports = angular.module('spinnaker.ecs', [
   ECS_SECURITY_GROUPS_REMOVED,
   require('./serverGroup/configure/wizard/securityGroups/securityGroupSelector.directive.js'),
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
+  require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
