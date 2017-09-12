@@ -24,6 +24,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/capacity/capacity.component'),
   ECS_LOAD_BALANCER_SELECTOR,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
+  require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
