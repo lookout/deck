@@ -33,7 +33,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       basicSettings: overrideRegistry.getTemplate('ecs.serverGroup.basicSettings', require('./location/basicSettings.html')),
       capacity: overrideRegistry.getTemplate('ecs.serverGroup.capacity', require('./capacity/capacity.html')),
       loadBalancers: overrideRegistry.getTemplate('ecs.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
-      securityGroups: overrideRegistry.getTemplate('ecs.serverGroup.securityGroups', require('./securityGroups/securityGroups.html')),
       advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
 
