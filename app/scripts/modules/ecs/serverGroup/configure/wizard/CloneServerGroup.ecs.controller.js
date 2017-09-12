@@ -27,14 +27,13 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   overrideRegistry, awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand, application, title) {
+    console.log('ecs controller 1');
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
-      // basicSettings: overrideRegistry.getTemplate('aws.serverGroup.basicSettings', require('./location/basicSettings.html')),
-      // loadBalancers: overrideRegistry.getTemplate('aws.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
-      // securityGroups: overrideRegistry.getTemplate('aws.serverGroup.securityGroups', require('./securityGroups/securityGroups.html')),
-      // instanceType: overrideRegistry.getTemplate('aws.serverGroup.instanceType', require('./instanceType/instanceType.html')),
-      // capacity: overrideRegistry.getTemplate('aws.serverGroup.capacity', require('./capacity/capacity.html')),
-      // zones: overrideRegistry.getTemplate('aws.serverGroup.zones', require('./capacity/zones.html')),
+      basicSettings: overrideRegistry.getTemplate('ecs.serverGroup.basicSettings', require('./location/basicSettings.html')),
+      capacity: overrideRegistry.getTemplate('ecs.serverGroup.capacity', require('./capacity/capacity.html')),
+      loadBalancers: overrideRegistry.getTemplate('ecs.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
+      securityGroups: overrideRegistry.getTemplate('ecs.serverGroup.securityGroups', require('./securityGroups/securityGroups.html')),
       advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
 
@@ -50,6 +49,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
     };
 
+    console.log('ecs controller 2');
     this.templateSelectionText = {
       copied: [
         'account, region, subnet, cluster name (stack, details)',
@@ -69,6 +69,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function onApplicationRefresh() {
       // If the user has already closed the modal, do not navigate to the new details view
+      console.log('ecs controller 3');
       if ($scope.$$destroyed) {
         return;
       }
@@ -112,6 +113,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
 
     function configureCommand() {
+      console.log('ecs controller 4');
       awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
@@ -188,6 +190,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     function initializeCommand() {
+      console.log('ecs controller 5');
       if (serverGroupCommand.viewState.imageId) {
         var foundImage = $scope.command.backingData.packageImages.filter(function(image) {
           return image.amis[serverGroupCommand.region] && image.amis[serverGroupCommand.region].includes(serverGroupCommand.viewState.imageId);
@@ -236,6 +239,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.state.loaded = true;
     }
 
+    console.log('ecs controller 6');
     // TODO - why did i have to remove a framgent here which is found in CloneServerGroup.aws.controller.js so this would work ???!
     // $scope.state.requiresTemplateSelection = false;
     // configureCommand();
