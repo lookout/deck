@@ -25,6 +25,13 @@ module.exports = angular.module('spinnaker.ecs', [
   ECS_LOAD_BALANCER_SELECTOR,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
   require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
+  require('./pipeline/stages/destroyAsg/ecsDestroyAsgStage'),
+  require('./pipeline/stages/disableAsg/ecsDisableAsgStage'),
+  require('./pipeline/stages/disableCluster/ecsDisableClusterStage'),
+  require('./pipeline/stages/enableAsg/ecsEnableAsgStage'),
+  require('./pipeline/stages/resizeAsg/ecsResizeAsgStage'),
+  require('./pipeline/stages/scaleDownCluster/ecsScaleDownClusterStage'),
+  require('./pipeline/stages/shrinkCluster/awsShrinkClusterStage'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
