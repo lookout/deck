@@ -29,7 +29,7 @@
       </h3>
     </div>
     <div>
-      <div class="actions" ng-class="{ insights: instance.insightActions.length > 0 }" ng-if="instance.placement">
+      <div class="actions" ng-class="{ insights: instance.insightActions.length > 0 }" > <!-- TODO - find out what I should do with ng-if="instance.placement" -->
         <div class="dropdown" uib-dropdown dropdown-append-to-body>
           <button type="button" class="btn btn-sm btn-primary dropdown-toggle" ng-disabled="disabled" uib-dropdown-toggle>
             Instance Actions <span class="caret"></span>
