@@ -24,6 +24,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/capacity/capacity.component'),
   ECS_LOAD_BALANCER_SELECTOR,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
+  require('./instance/details/instance.details.controller'),
   require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
   require('./pipeline/stages/destroyAsg/ecsDestroyAsgStage'),
   require('./pipeline/stages/disableAsg/ecsDisableAsgStage'),
@@ -47,6 +48,10 @@ module.exports = angular.module('spinnaker.ecs', [
           commandBuilder: 'ecsServerGroupCommandBuilder',
           // configurationService: 'ecsServerGroupConfigurationService',
           scalingActivitiesEnabled: false,
+        },
+        instance: {
+          detailsTemplateUrl: require('./instance/details/instanceDetails.html'),
+          detailsController: 'ecsInstanceDetailsCtrl',
         },
       });
   });
