@@ -169,21 +169,21 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       }
     });
 
-    let configureEntityTagTargets = () => {
-      this.entityTagTargets = clusterTargetBuilder.buildClusterTargets(this.serverGroup);
-    };
-
-    this.isEnableLocked = () => {
-      if (this.serverGroup.isDisabled) {
-        let resizeTasks = (this.serverGroup.runningTasks || [])
-          .filter(task => get(task, 'execution.stages', []).some(
-            stage => stage.type === 'resizeServerGroup'));
-        if (resizeTasks.length) {
-          return true;
-        }
-      }
-      return false;
-    };
+    // let configureEntityTagTargets = () => {
+    //   this.entityTagTargets = clusterTargetBuilder.buildClusterTargets(this.serverGroup);
+    // };
+    //
+    // this.isEnableLocked = () => {
+    //   if (this.serverGroup.isDisabled) {
+    //     let resizeTasks = (this.serverGroup.runningTasks || [])
+    //       .filter(task => get(task, 'execution.stages', []).some(
+    //         stage => stage.type === 'resizeServerGroup'));
+    //     if (resizeTasks.length) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // };
 
     this.destroyServerGroup = () => {
       var serverGroup = this.serverGroup;
