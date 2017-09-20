@@ -1,7 +1,7 @@
 'use strict';
 
 const angular = require('angular');
-import { chain, filter, find, get, has, isEmpty } from 'lodash';
+import { chain, filter, find, has, isEmpty } from 'lodash';
 
 import { AWS_SCHEDULED_ACTION_COMPONENT } from './scheduledAction/scheduledAction.component';
 import { AWS_SERVER_GROUP_TRANSFORMER } from '../../../amazon/src/serverGroup/serverGroup.transformer';
