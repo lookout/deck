@@ -37,6 +37,9 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
 
     $scope.application = app;
 
+    const cloudProvider = 'ecs';
+    const defaultRequestParams = {cloudProvider: cloudProvider};
+
     function extractHealthMetrics(instance, latest) {
       // do not backfill on standalone instances
       if (app.isStandalone) {
@@ -275,7 +278,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.terminateInstance(instance, app);
+        return amazonInstanceWriter.terminateInstance(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -302,7 +305,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.terminateInstanceAndShrinkServerGroup(instance, app);
+        return amazonInstanceWriter.terminateInstanceAndShrinkServerGroup(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -326,7 +329,9 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       var submitMethod = (params = {}) => {
         if (app.attributes && app.attributes.platformHealthOnlyShowOverride && app.attributes.platformHealthOnly) {
           params.interestingHealthProviderNames = ['Amazon'];
+          params.cloudProvider = cloudProvider;
         }
+
 
         return amazonInstanceWriter.rebootInstance(instance, app, params);
       };
@@ -351,7 +356,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.registerInstanceWithLoadBalancer(instance, app);
+        return amazonInstanceWriter.registerInstanceWithLoadBalancer(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -373,7 +378,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.deregisterInstanceFromLoadBalancer(instance, app);
+        return amazonInstanceWriter.deregisterInstanceFromLoadBalancer(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -396,7 +401,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.registerInstanceWithTargetGroup(instance, app);
+        return amazonInstanceWriter.registerInstanceWithTargetGroup(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -418,7 +423,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.deregisterInstanceFromTargetGroup(instance, app);
+        return amazonInstanceWriter.deregisterInstanceFromTargetGroup(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -440,7 +445,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.enableInstanceInDiscovery(instance, app);
+        return amazonInstanceWriter.enableInstanceInDiscovery(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -461,7 +466,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.disableInstanceInDiscovery(instance, app);
+        return amazonInstanceWriter.disableInstanceInDiscovery(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
