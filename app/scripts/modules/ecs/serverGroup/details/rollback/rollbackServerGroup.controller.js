@@ -4,11 +4,11 @@ const angular = require('angular');
 
 import { SERVER_GROUP_WRITER, TASK_MONITOR_BUILDER } from '@spinnaker/core';
 
-module.exports = angular.module('spinnaker.amazon.serverGroup.details.rollback.controller', [
+module.exports = angular.module('spinnaker.ecs.serverGroup.details.rollback.controller', [
       SERVER_GROUP_WRITER,
       TASK_MONITOR_BUILDER,
     ])
-    .controller('awsRollbackServerGroupCtrl', function ($scope, $uibModalInstance, serverGroupWriter,
+    .controller('ecsRollbackServerGroupCtrl', function ($scope, $uibModalInstance, serverGroupWriter,
                                                         taskMonitorBuilder,
                                                         application, serverGroup, disabledServerGroups, allServerGroups) {
       $scope.serverGroup = serverGroup;
