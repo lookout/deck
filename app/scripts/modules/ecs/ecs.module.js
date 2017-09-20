@@ -2,6 +2,7 @@
 
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
 import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
+import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDetails.module';
 
 import { DeploymentStrategyRegistry } from '@spinnaker/core';
 
@@ -19,6 +20,7 @@ templates.keys().forEach(function(key) {
 module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
+  SERVER_GROUP_DETAILS_MODULE,
   ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
   require('./serverGroup/configure/wizard/capacity/capacity.component'),
@@ -41,8 +43,8 @@ module.exports = angular.module('spinnaker.ecs', [
         logo: { path: require('./logo/ecs.logo.svg')},
         serverGroup: {
           transformer: 'ecsServerGroupTransformer',
-          // detailsTemplateUrl: require('../ecs/src/serverGroup/details/serverGroupDetails.html'),
-          // detailsController: 'ecsServerGroupDetailsCtrl',
+          detailsTemplateUrl: require('./serverGroup/details/serverGroupDetails.html'),
+          detailsController: 'ecsServerGroupDetailsCtrl',
           cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
           cloneServerGroupController: 'ecsCloneServerGroupCtrl',
           commandBuilder: 'ecsServerGroupCommandBuilder',
