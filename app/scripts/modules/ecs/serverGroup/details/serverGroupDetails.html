@@ -202,67 +202,14 @@
       </ul>
       <a href ng-click="ctrl.updateSecurityGroups()" ng-if="ctrl.serverGroup.vpcId">Edit Security Groups</a>
     </collapsible-section>
-    <collapsible-section cache-key="Scaling Processes">
-      <section-heading>
-        <span ng-if="ctrl.scalingPoliciesDisabled" class="fa fa-exclamation-circle warning-text"
-              uib-tooltip="Some scaling processes are disabled that may prevent scaling policies from working"></span>
-        <span ng-if="ctrl.scheduledActionsDisabled" class="fa fa-exclamation-circle warning-text"
-              uib-tooltip="Some scaling processes are disabled that may prevent scheduled actions from working"></span>
-        Scaling Processes
-      </section-heading>
-      <section-body>
-        <ul class="scaling-processes">
-          <li ng-repeat="process in ctrl.autoScalingProcesses">
-            <span is-visible="process.enabled" class="fa fa-check small"></span>
-            <span ng-class="{'text-disabled': !process.enabled}">{{process.name}}</span>
-            <help-field content="{{process.description}}" placement="bottom"></help-field>
-            <div ng-if="process.suspensionDate" class="text-disabled small" style="margin-left: 35px">
-              Suspended {{process.suspensionDate | timestamp}}
-            </div>
-          </li>
-        </ul>
-        <a href ng-click="ctrl.toggleScalingProcesses()">Edit Scaling Processes</a>
-      </section-body>
+    <collapsible-section heading="Scaling Policies">
+      <ul>
+        <li>
+            To be implemented
+        </li>
+      </ul>
     </collapsible-section>
-    <collapsible-section cache-key="Scaling Policies">
-      <section-heading>
-        <span ng-if="ctrl.scalingPoliciesDisabled" class="fa fa-exclamation-circle warning-text"
-              uib-tooltip="Some scaling processes are disabled that may prevent scaling policies from working"></span>
-        Scaling Policies
-      </section-heading>
-      <section-body>
-        <div class="band band-warning" ng-if="ctrl.scalingPoliciesDisabled">
-          Some scaling processes are disabled that may prevent scaling policies from working.
-        </div>
-        <scaling-policy-summary ng-repeat="policy in ctrl.scalingPolicies track by policy.policyARN"
-                                policy="policy"
-                                server-group="ctrl.serverGroup"
-                                application="ctrl.application"></scaling-policy-summary>
-        <create-scaling-policy-button server-group="ctrl.serverGroup"
-                                      application="ctrl.application"></create-scaling-policy-button>
-      </section-body>
-    </collapsible-section>
-    <collapsible-section cache-key="Scheduled Actions">
-      <section-heading>
-        <span ng-if="ctrl.scheduledActionsDisabled" class="fa fa-exclamation-circle warning-text"
-              uib-tooltip="Some scaling processes are disabled that may prevent scheduled actions from working"></span>
-        Scheduled Actions
-      </section-heading>
-      <section-body>
-        <scheduled-action ng-repeat="action in ctrl.serverGroup.scheduledActions" action="action"></scheduled-action>
-        <p ng-if="ctrl.serverGroup.scheduledActions.length"><strong>Note:</strong> Schedules are evaluated in UTC.</p>
-        <p ng-if="!ctrl.serverGroup.scheduledActions.length">No Scheduled Actions are configured for this server group.</p>
-        <a href ng-click="ctrl.editScheduledActions()">Edit Scheduled Actions</a>
-      </section-body>
-    </collapsible-section>
-    <collapsible-section heading="Tags">
-      <div ng-if=" !ctrl.serverGroup.asg.tags.length">No tags associated with this server group</div>
-      <dl ng-if="ctrl.serverGroup.asg.tags.length">
-        <dt ng-repeat-start="tag in ctrl.serverGroup.asg.tags | orderBy: 'key.toLowerCase()'">{{tag.key}}</dt>
-        <dd ng-repeat-end>{{tag.value}}</dd>
-      </dl>
-    </collapsible-section>
-    <collapsible-section heading="Package" ng-if="ctrl.serverGroup.buildInfo && ctrl.serverGroup.buildInfo.jenkins">
+    <collapsible-section heading="Build data" ng-if="ctrl.serverGroup.buildInfo && ctrl.serverGroup.buildInfo.jenkins">
       <dl class="horizontal-when-filters-collapsed">
         <dt>Job</dt>
         <dd>{{ctrl.serverGroup.buildInfo.jenkins.name}}</dd>
@@ -277,10 +224,6 @@
         <dt>Build Link</dt>
         <dd><a target=_blank href="{{ctrl.buildJenkinsLink()}}">{{ctrl.buildJenkinsLink()}}</a></dd>
       </dl>
-    </collapsible-section>
-    <collapsible-section heading="Advanced Settings">
-      <aws-advanced-settings-view server-group="ctrl.serverGroup"></aws-advanced-settings-view>
-      <a href ng-click="ctrl.editAdvancedSettings()">Edit Advanced Settings</a>
     </collapsible-section>
     <collapsible-section heading="Logs">
       <ul>
