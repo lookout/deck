@@ -1,14 +1,15 @@
 'use strict';
 
+const angular = require('angular');
+
+import { CLOUD_PROVIDER_REGISTRY, DeploymentStrategyRegistry } from '@spinnaker/core';
+
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
 import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
 import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDetails.module';
 
-import { DeploymentStrategyRegistry } from '@spinnaker/core';
+import './logo/ecs.logo.less';
 
-let angular = require('angular');
-
-require('./logo/ecs.logo.less');
 require('./ecs.settings.ts');
 
 // load all templates into the $templateCache
@@ -21,6 +22,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
   require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
   SERVER_GROUP_DETAILS_MODULE,
+  CLOUD_PROVIDER_REGISTRY,
   ECS_SERVER_GROUP_TRANSFORMER,
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
   require('./serverGroup/configure/wizard/capacity/capacity.component'),
