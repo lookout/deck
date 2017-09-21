@@ -14,7 +14,6 @@ import {
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
   SERVER_GROUP_WRITER,
-  ServerGroupTemplates,
 } from '@spinnaker/core';
 
 module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', [
@@ -302,18 +301,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       });
     };
 
-    this.toggleScalingProcesses = () => {
-      $uibModal.open({
-        templateUrl: require('./scalingProcesses/modifyScalingProcesses.html'),
-        controller: 'ModifyScalingProcessesCtrl as ctrl',
-        resolve: {
-          serverGroup: () => this.serverGroup,
-          application: () => app,
-          processes: () => this.autoScalingProcesses,
-        }
-      });
-    };
-
     this.resizeServerGroup = () => {
       $uibModal.open({
         templateUrl: overrideRegistry.getTemplate('ecs.resize.modal', require('./resize/resizeServerGroup.html')),
@@ -335,17 +322,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
           application: () => app,
           serverGroupCommand: () => ecsServerGroupCommandBuilder.buildServerGroupCommandFromExisting(app, serverGroup),
         }
-      });
-    };
-
-    this.showUserData = () => {
-      // TODO: Provide a custom controller so we don't have to stick this on the scope
-      $scope.userData = window.atob(this.serverGroup.launchConfig.userData);
-      $scope.serverGroup = { name: this.serverGroup.name };
-      $uibModal.open({
-        templateUrl: ServerGroupTemplates.userData,
-        controller: 'CloseableModalCtrl',
-        scope: $scope
       });
     };
 
