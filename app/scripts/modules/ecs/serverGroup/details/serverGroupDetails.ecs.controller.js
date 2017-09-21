@@ -3,11 +3,8 @@
 const angular = require('angular');
 import { chain, filter, find, has, isEmpty } from 'lodash';
 
-import { AWS_SCHEDULED_ACTION_COMPONENT } from './scheduledAction/scheduledAction.component';
 import { AWS_SERVER_GROUP_TRANSFORMER } from '../../../amazon/src/serverGroup/serverGroup.transformer';
 import { SERVER_GROUP_CONFIGURE_MODULE } from '../../../amazon/src/serverGroup/configure/serverGroup.configure.aws.module';
-import { CREATE_SCALING_POLICY_BUTTON } from './scalingPolicy/createScalingPolicyButton.component';
-import { ADVANCED_SETTINGS_VIEW } from './advancedSettings/advancedSettingsView.component';
 
 import {
   ACCOUNT_SERVICE,
@@ -17,24 +14,19 @@ import {
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
   SERVER_GROUP_WRITER,
-  ServerGroupTemplates,
 } from '@spinnaker/core';
 
 module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', [
   require('@uirouter/angularjs').default,
   ACCOUNT_SERVICE,
-  ADVANCED_SETTINGS_VIEW,
-  AWS_SCHEDULED_ACTION_COMPONENT,
   AWS_SERVER_GROUP_TRANSFORMER,
   CLUSTER_TARGET_BUILDER,
   CONFIRMATION_MODAL_SERVICE,
-  CREATE_SCALING_POLICY_BUTTON,
   OVERRIDE_REGISTRY,
   SERVER_GROUP_CONFIGURE_MODULE,
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
   SERVER_GROUP_WRITER,
-  require('./scalingProcesses/autoScalingProcess.service.js'),
   require('../configure/serverGroupCommandBuilder.service.js'),
   require('./resize/resizeServerGroup.controller'),
   require('./rollback/rollbackServerGroup.controller'),
@@ -42,7 +34,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
   .controller('ecsServerGroupDetailsCtrl', function ($scope, $state, app, serverGroup,
                                                      serverGroupReader, ecsServerGroupCommandBuilder, $uibModal,
                                                      confirmationModalService, serverGroupWriter, subnetReader,
-                                                     autoScalingProcessService, clusterTargetBuilder,
+                                                     clusterTargetBuilder,
                                                      awsServerGroupTransformer, accountService,
                                                      serverGroupWarningMessageService, overrideRegistry) {
 
@@ -131,8 +123,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
                   }
                 }
 
-                this.autoScalingProcesses = autoScalingProcessService.normalizeScalingProcesses(this.serverGroup);
-                this.disabledDate = autoScalingProcessService.getDisabledDate(this.serverGroup);
                 this.scalingPolicies = this.serverGroup.scalingPolicies;
                 // TODO - figure out whether we need the commented out block below, or not.  IF we do, then we need to make it stop crashing
 
@@ -311,18 +301,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       });
     };
 
-    this.toggleScalingProcesses = () => {
-      $uibModal.open({
-        templateUrl: require('./scalingProcesses/modifyScalingProcesses.html'),
-        controller: 'ModifyScalingProcessesCtrl as ctrl',
-        resolve: {
-          serverGroup: () => this.serverGroup,
-          application: () => app,
-          processes: () => this.autoScalingProcesses,
-        }
-      });
-    };
-
     this.resizeServerGroup = () => {
       $uibModal.open({
         templateUrl: overrideRegistry.getTemplate('ecs.resize.modal', require('./resize/resizeServerGroup.html')),
@@ -347,17 +325,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       });
     };
 
-    this.showUserData = () => {
-      // TODO: Provide a custom controller so we don't have to stick this on the scope
-      $scope.userData = window.atob(this.serverGroup.launchConfig.userData);
-      $scope.serverGroup = { name: this.serverGroup.name };
-      $uibModal.open({
-        templateUrl: ServerGroupTemplates.userData,
-        controller: 'CloseableModalCtrl',
-        scope: $scope
-      });
-    };
-
     this.buildJenkinsLink = () => {
       if (has(this, 'serverGroup.buildInfo.buildInfoUrl')) {
         return this.serverGroup.buildInfo.buildInfoUrl;
@@ -366,28 +333,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
         return jenkins.host + 'job/' + jenkins.name + '/' + jenkins.number;
       }
       return null;
-    };
-
-    this.editScheduledActions = () => {
-      $uibModal.open({
-        templateUrl: require('./scheduledAction/editScheduledActions.modal.html'),
-        controller: 'EditScheduledActionsCtrl as ctrl',
-        resolve: {
-          application: () => app,
-          serverGroup: () => this.serverGroup
-        }
-      });
-    };
-
-    this.editAdvancedSettings = () => {
-      $uibModal.open({
-        templateUrl: require('./advancedSettings/editAsgAdvancedSettings.modal.html'),
-        controller: 'EditAsgAdvancedSettingsCtrl as ctrl',
-        resolve: {
-          application: () => app,
-          serverGroup: () => this.serverGroup
-        }
-      });
     };
 
     this.truncateCommitHash = () => {
