@@ -139,8 +139,10 @@
       </dl>
     </collapsible-section>
     <collapsible-section heading="Environment Variables" expanded="false">
-      <dl class="dl-horizontal dl-flex">
-        To be implemented
+      <div ng-if="!ctrl.serverGroup.taskDefinition.environmentVariables.length">This server group has no environment variables</div>
+      <dl ng-if="ctrl.serverGroup.taskDefinition.environmentVariables.length">
+        <dt ng-repeat-start="variable in ctrl.serverGroup.taskDefinition.environmentVariables">{{variable.name}}</dt>
+        <dd ng-repeat-end>{{variable.value}}</dd>
       </dl>
     </collapsible-section>
     <collapsible-section heading="Health" expanded="true" ng-if="ctrl.serverGroup.instanceCounts.total > 0">
