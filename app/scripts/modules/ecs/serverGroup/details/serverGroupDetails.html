@@ -107,6 +107,8 @@
         </dd>
         <dt>ECS Cluster</dt>
         <dd>{{ctrl.serverGroup.ecsCluster}}</dd>
+        <dt>VPC ID</dt>
+        <dd>{{ctrl.serverGroup.vpcId}}</dd>
       </dl>
     </collapsible-section>
     <collapsible-section heading="Definitions" expanded="true">
@@ -147,18 +149,22 @@
     </collapsible-section>
     <collapsible-section heading="Security Groups" expanded="false">
       <ul>
-        <li ng-repeat="securityGroup in ctrl.securityGroups | orderBy:'name'">
-          <a ui-sref="^.securityGroupDetails({name: securityGroup.name, accountId: securityGroup.accountName, region: ctrl.serverGroup.region, vpcId: ctrl.serverGroup.vpcId, provider: ctrl.serverGroup.type})">
-            {{securityGroup.name}} ({{securityGroup.id}})
-          </a>
+        <li ng-repeat="securityGroup in ctrl.serverGroup.securityGroups">
+            {{securityGroup}}
         </li>
       </ul>
-      <a href ng-click="ctrl.updateSecurityGroups()" ng-if="ctrl.serverGroup.vpcId">Edit Security Groups</a>
     </collapsible-section>
     <collapsible-section heading="Scaling Policies" expanded="false">
       <ul>
         <li>
             To be implemented
+        </li>
+      </ul>
+    </collapsible-section>
+    <collapsible-section heading="Metrics" expanded="false">
+      <ul>
+        <li>
+          To be implemented (CPU and Memory Utilization)
         </li>
       </ul>
     </collapsible-section>
