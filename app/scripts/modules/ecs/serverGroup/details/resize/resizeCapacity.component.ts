@@ -9,5 +9,5 @@ const resizeCapacityComponent: IComponentOptions = {
   controller: () => {}
 };
 
-export const AWS_RESIZE_CAPACITY_COMPONENT = 'spinnaker.amazon.serverGroup.resize';
-module(AWS_RESIZE_CAPACITY_COMPONENT, []).component('awsResizeCapacity', resizeCapacityComponent);
+export const ECS_RESIZE_CAPACITY_COMPONENT = 'spinnaker.ecs.serverGroup.resize';
+module(ECS_RESIZE_CAPACITY_COMPONENT, []).component('ecsResizeCapacity', resizeCapacityComponent);
