@@ -4,28 +4,28 @@ const angular = require('angular');
 
 import { SERVER_GROUP_WRITER, TASK_MONITOR_BUILDER } from '@spinnaker/core';
 
-import { AWS_RESIZE_CAPACITY_COMPONENT } from './resizeCapacity.component';
+import { ECS_RESIZE_CAPACITY_COMPONENT } from './resizeCapacity.component';
 
-module.exports = angular.module('spinnaker.amazon.serverGroup.details.resize.controller', [
+module.exports = angular.module('spinnaker.ecs.serverGroup.details.resize.controller', [
   SERVER_GROUP_WRITER,
   TASK_MONITOR_BUILDER,
-  AWS_RESIZE_CAPACITY_COMPONENT,
+  ECS_RESIZE_CAPACITY_COMPONENT,
 ])
-  .controller('awsResizeServerGroupCtrl', function($scope, $uibModalInstance, serverGroupWriter,
+  .controller('ecsResizeServerGroupCtrl', function($scope, $uibModalInstance, serverGroupWriter,
                                                    taskMonitorBuilder,
                                                    application, serverGroup) {
     $scope.serverGroup = serverGroup;
     $scope.currentSize = {
-      min: serverGroup.asg.minSize,
-      max: serverGroup.asg.maxSize,
-      desired: serverGroup.asg.desiredCapacity,
+      min: serverGroup.capacity.min,
+      max: serverGroup.capacity.max,
+      desired: serverGroup.capacity.desired,
       newSize: null
     };
 
     $scope.verification = {};
 
     $scope.command = angular.copy($scope.currentSize);
-    $scope.command.advancedMode = serverGroup.asg.minSize !== serverGroup.asg.maxSize;
+    $scope.command.advancedMode = serverGroup.capacity.min !== serverGroup.capacity.max;
 
     if (application && application.attributes) {
       if (application.attributes.platformHealthOnlyShowOverride && application.attributes.platformHealthOnly) {
