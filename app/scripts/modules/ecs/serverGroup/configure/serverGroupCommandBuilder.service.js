@@ -48,7 +48,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
           var defaultIamRole =
             // AWSProviderSettings.defaults.iamRole ||
-            'Cucumber';
+            'poc-role';
           defaultIamRole = defaultIamRole.replace('{{application}}', application.name);
 
 
