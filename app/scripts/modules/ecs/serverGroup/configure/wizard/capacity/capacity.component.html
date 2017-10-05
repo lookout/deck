@@ -13,6 +13,30 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
+      Minimal number of deployed containers
+    </div>
+    <div class="col-md-2"><input type="number"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="min"
+                                 ng-model="$ctrl.command.capacity.min"/></div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      Maximal number of containers
+    </div>
+    <div class="col-md-2"><input type="number"
+                                 class="form-control input-sm no-spel"
+                                 ng-pattern="basicSettingsCtrl.detailPattern"
+                                 name="max"
+                                 ng-model="$ctrl.command.capacity.max"/></div>
+  </div>
+
+  <br />
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
       Reserved compute units
     </div>
     <div class="col-md-2"><input type="number"
@@ -35,11 +59,21 @@
 
 
   <br />
-  Here, engineers will easily be able to select autoscaling rules based on the CPU utilization of their containers,
-  which will allow for fast scaling (less than 30 seconds to start new instances as opposed to 5 minutes with EC2).
-  <br />
-  <br />
-  If an engineer wants to autoscale based on different parameters, such as a message queue length, custom metrics can be
-  defined in Cloudwatch and selected here.  This solution will be greatly and easily customizable, and a first-class
-  citizen of ECS deployments
+
+  <div class="form-group">
+    <div class="col-md-4 sm-label-right">
+      <b>Autoscaling policy</b>
+    </div>
+    <div class="col-md-8">
+      <ui-select multiple
+                 ng-model="command.autoscalingPolicies"
+                 class="form-control input-sm">
+        <ui-select-match>{{$item}}</ui-select-match>
+        <ui-select-choices repeat="item in ['Scale down 1 - CPU usage < 50% - 10 minute window', 'Scale up 1 - CPU usage > 80% - 5 minute window']">
+          <span ng-bind-html="item"></span>
+        </ui-select-choices>
+      </ui-select>
+      <!-- TODO - implement auto-scaling with real values, using a real controller, here! -->
+    </div>
+  </div>
 </div>
