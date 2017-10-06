@@ -131,12 +131,6 @@
         <dd>{{ctrl.serverGroup.taskDefinition.memoryReservation}} mb</dd>
       </dl>
     </collapsible-section>
-    <collapsible-section heading="Capacity" expanded="false">
-      <dl class="dl-horizontal dl-flex">
-        <dt>Current</dt>
-        <dd>{{ctrl.serverGroup.instances.length}}</dd>
-      </dl>
-    </collapsible-section>
     <collapsible-section heading="Environment Variables" expanded="false">
       <div ng-if="!ctrl.serverGroup.taskDefinition.environmentVariables.length">This server group has no environment variables</div>
       <dl ng-if="ctrl.serverGroup.taskDefinition.environmentVariables.length">
@@ -156,23 +150,47 @@
     <collapsible-section heading="Security Groups" expanded="false">
       <ul>
         <li ng-repeat="securityGroup in ctrl.serverGroup.securityGroups">
-            {{securityGroup}}
+          {{securityGroup}}
         </li>
       </ul>
+    </collapsible-section>
+    <collapsible-section heading="Capacity" expanded="false">
+      <dl class="dl-horizontal dl-flex">
+        <dt>Current</dt>
+        <dd>{{ctrl.serverGroup.instances.length}}</dd>
+
+        <dt>Desired</dt> <!-- TODO - Make the values reflect the current state of the server group -->
+        <dd><i>1</i></dd>
+
+        <dt>Min</dt>
+        <dd><i>1</i></dd> <!-- TODO - Make the values reflect the current state of the server group -->
+
+        <dt>Max</dt>
+        <dd><i>1</i></dd> <!-- TODO - Make the values reflect the current state of the server group -->
+      </dl>
     </collapsible-section>
     <collapsible-section heading="Scaling Policies" expanded="false">
-      <ul>
-        <li>
-            To be implemented
-        </li>
-      </ul>
+      <dl class="horizontal-when-filters-collapsed">
+        <dd>scale-up-1-when-cpu-above-80-2-min-refresh-15-min</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+        <dd>scale-down-1-when-cpu-below-40-5-min-refresh-30-min</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+      </dl>
     </collapsible-section>
     <collapsible-section heading="Metrics" expanded="false">
-      <ul>
-        <li>
-          To be implemented (CPU and Memory Utilization)
-        </li>
-      </ul>
+      <i>Example values below</i>
+
+      <dl class="horizontal-when-filters-collapsed">
+        <dt>Average CPU Utilization last 15 minutes</dt>
+        <dd>90%</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+
+        <dt>Average CPU Utilization last 24 hours</dt>
+        <dd>30%</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+
+        <dt>Average memory Utilization last 15 minutes</dt>
+        <dd>40%</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+
+        <dt>Average memory Utilization last 24 hours</dt>
+        <dd>45%</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+      </dl>
     </collapsible-section>
     <collapsible-section heading="Build data" ng-if="ctrl.serverGroup.buildInfo && ctrl.serverGroup.buildInfo.jenkins">
       <dl class="horizontal-when-filters-collapsed">
@@ -193,7 +211,7 @@
     <collapsible-section heading="Server Group Logs">
       <ul>
         <li>
-          To be implemented
+          To be implemented <!-- TODO - Implement this based on service events from the AWS API -->
         </li>
       </ul>
     </collapsible-section>
