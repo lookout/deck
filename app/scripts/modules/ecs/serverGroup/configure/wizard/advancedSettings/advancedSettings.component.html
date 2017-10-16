@@ -8,4 +8,21 @@
                                  ng-model="$ctrl.command.iamRole"
                                  name="iamRole"/></div>
   </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      <b>Placement strategy</b>
+    </div>
+    <div class="col-md-7">
+      <ui-select multiple
+                 ng-model="$ctrl.command.placementStrategy"
+                 class="form-control input-sm">
+        <ui-select-match>{{$item}}</ui-select-match>
+        <ui-select-choices repeat="item in ['AZ Balanced Spread', 'AZ Balanced BinPack', 'BinPack', 'One Task Per Host']">
+          <span ng-bind-html="item"></span>
+        </ui-select-choices>
+      </ui-select>
+      <!-- TODO - implement this , using a real controller providing the data, here! -->
+    </div>
+  </div>
 </div>
