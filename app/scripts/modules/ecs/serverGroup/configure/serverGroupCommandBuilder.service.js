@@ -7,6 +7,7 @@ import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SER
 
 // import { AWSProviderSettings } from 'amazon/aws.settings';
 import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from 'amazon/serverGroup/configure/serverGroupConfiguration.service';
+import { IAM_ROLE_READ_SERVICE } from '../../iamRoles/iamRole.read.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
   ACCOUNT_SERVICE,
@@ -14,13 +15,22 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
   AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  IAM_ROLE_READ_SERVICE,
 ])
-  .factory('ecsServerGroupCommandBuilder', function ($q, accountService, namingService, instanceTypeService,
-                                                     awsServerGroupConfigurationService) {
+  .factory('ecsServerGroupCommandBuilder', function ($q,
+                                                     accountService,
+                                                     namingService,
+                                                     instanceTypeService,
+                                                     awsServerGroupConfigurationService,
+                                                     iamRoleReader) {
 
     const CLOUD_PROVIDER = 'ecs';
 
     function buildNewServerGroupCommand (application, defaults) {
+
+      var result = iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2');
+      console.log(result);
+
       defaults = defaults || {};
       var credentialsLoader = accountService.getCredentialsKeyedByAccount('ecs');
 

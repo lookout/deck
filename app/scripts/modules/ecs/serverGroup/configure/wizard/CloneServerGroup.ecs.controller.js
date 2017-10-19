@@ -12,6 +12,7 @@ import {
 
 // import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
 import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/src/serverGroup/configure/serverGroupConfiguration.service';
+import { IAM_ROLE_READ_SERVICE } from '../../../iamRoles/iamRole.read.service';
 
 module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   require('@uirouter/angularjs').default,
@@ -21,12 +22,19 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   V2_MODAL_WIZARD_SERVICE,
   OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
+  IAM_ROLE_READ_SERVICE
 ])
   .controller('ecsCloneServerGroupCtrl', function($scope, $uibModalInstance, $q, $state,
-                                                  serverGroupWriter, v2modalWizardService, taskMonitorBuilder,
-                                                  overrideRegistry, awsServerGroupConfigurationService,
+                                                  serverGroupWriter,
+                                                  v2modalWizardService,
+                                                  taskMonitorBuilder,
+                                                  overrideRegistry,
+                                                  awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
-                                                  serverGroupCommand, application, title) {
+                                                  serverGroupCommand,
+                                                  iamRoleReader,
+                                                  application,
+                                                  title) {
     console.log('ecs controller 1');
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
@@ -157,11 +165,17 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function createResultProcessor(method) {
       return function() {
+        let someValue = iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2');
+        console.log(someValue);
+
         processCommandUpdateResult(method());
       };
     }
 
     function processCommandUpdateResult(result) {
+      let someValue = iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2');
+      console.log(someValue);
+
       // if (result.dirty.loadBalancers) {
       //   v2modalWizardService.markDirty('load-balancers');
       // }

@@ -6,9 +6,9 @@ import { IRoleDescriptor } from './IRole';
 export class IamRoleReader {
   public constructor(private API: Api) { 'ngInject'; }
 
-  public listRoles(provider: string, account: string, region: string, filters: any): ng.IPromise<IRoleDescriptor[]> {
+  public listRoles(provider: string, account: string, region: string): ng.IPromise<IRoleDescriptor[]> {
     return this.API.all('role').all(provider).all(account).all(region)
-      .withParams(filters).getList();
+      .getList();
   }
 
 }
