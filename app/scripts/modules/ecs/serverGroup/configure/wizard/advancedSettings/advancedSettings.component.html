@@ -3,11 +3,21 @@
   <div class="form-group">
     <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile (must-have if you use a load balancer)</b></div>
     <!-- TODO - Add a help box that explains that the container does not share profiles with the host -->
-    <div class="col-md-7"><input type="text"
-                                 class="form-control input-sm no-spel"
-                                 ng-model="$ctrl.command.iamRole"
-                                 name="iamRole"/></div>
+    <div class="col-md-7">
+      <ui-select ng-model="$ctrl.command.iamRole" class="form-control input-sm" required on-select="$ctrl.fieldChanged()">
+        <ui-select-match>{{$select.selected}}</ui-select-match>
+        <ui-select-choices repeat="iamRole in $ctrl.command.iamRoles | filter: $select.search">
+          <span ng-bind-html="iamRole"></span>
+        </ui-select-choices>
+      </ui-select>
+
+    </div>
   </div>
+
+  <!--<input type="text"-->
+         <!--class="form-control input-sm no-spel"-->
+         <!--ng-model="$ctrl.command.iamRole"-->
+         <!--name="iamRole"/>-->
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">

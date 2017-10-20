@@ -119,7 +119,10 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.deployStage', [
             var stageCluster = serverGroupTransformer.convertServerGroupCommandToDeployConfiguration(command);
             delete stageCluster.credentials;
             $scope.stage.clusters.push(stageCluster);
-          });
+          }).catch(function (err) {
+          console.log(err.message);
+          console.log(err.stack);
+        });
       });
     };
 
