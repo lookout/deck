@@ -21,7 +21,8 @@
       <div class="form-control-static" ng-if="!$ctrl.command.backingData.filtered.targetGroups.length">
         No target groups found in the selected account/region/VPC
       </div>
-      <ui-select single
+      <ui-select ng-if="$ctrl.command.backingData.filtered.targetGroups.length"
+                 single
                  ng-model="$ctrl.command.targetGroups"
                  class="form-control input-sm">
         <ui-select-match>{{$item}}</ui-select-match>
@@ -58,9 +59,5 @@
   </div>
 
 
-  Backing data: {{$ctrl.command.backingData}}
-  <br />
-  <br />
-  <br />
-  Command: {{$ctrl.command}}
+
 </div>
