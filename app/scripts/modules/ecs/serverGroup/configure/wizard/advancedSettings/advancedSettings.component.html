@@ -6,13 +6,20 @@
     <div class="col-md-7">
       <ui-select ng-model="$ctrl.command.iamRole" class="form-control input-sm" required on-select="$ctrl.fieldChanged()">
         <ui-select-match>{{$select.selected}}</ui-select-match>
-        <ui-select-choices repeat="iamRole in $ctrl.command.iamRoles | filter: $select.search">
+        <ui-select-choices repeat="iamRole in $ctrl.command.backingData.filtered.iamRoles | filter: $select.search">
           <span ng-bind-html="iamRole"></span>
         </ui-select-choices>
       </ui-select>
-
     </div>
   </div>
+
+
+
+  Backing data: {{$ctrl.command.backingData}}
+  <br />
+  <br />
+  <br />
+  Command: {{$ctrl.command}}
 
   <!--<input type="text"-->
          <!--class="form-control input-sm no-spel"-->

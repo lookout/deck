@@ -11,12 +11,12 @@ import {
 } from '@spinnaker/core';
 
 // import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
-import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/src/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../serverGroupConfiguration.service';
 import { IAM_ROLE_READ_SERVICE } from '../../../iamRoles/iamRole.read.service';
 
 module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   require('@uirouter/angularjs').default,
-  AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
   SERVER_GROUP_WRITER,
   TASK_MONITOR_BUILDER,
   V2_MODAL_WIZARD_SERVICE,
@@ -29,7 +29,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   v2modalWizardService,
                                                   taskMonitorBuilder,
                                                   overrideRegistry,
-                                                  awsServerGroupConfigurationService,
+                                                  ecsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand,
                                                   iamRoleReader,
@@ -121,7 +121,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function configureCommand() {
       console.log('ecs controller 4');
-      awsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
+      ecsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
           if (!serverGroupCommand.backingData.packageImages.length) {
@@ -158,6 +158,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     // TODO: Move to service
     function initializeSelectOptions() {
+      console.log('what is the command here?');
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
       // awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
@@ -252,12 +253,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.state.loaded = true;
     }
 
-    console.log('ecs controller 6');
-    // TODO - why did i have to remove a framgent here which is found in CloneServerGroup.aws.controller.js so this would work ???!
-    // $scope.state.requiresTemplateSelection = false;
-    // configureCommand();
     this.templateSelected = () => {
-      console.log('wow');
       $scope.state.requiresTemplateSelection = false;
       configureCommand();
     };

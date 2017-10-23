@@ -1,4 +1,4 @@
-import {module} from 'angular';
+import {IPromise, module} from 'angular';
 
 import {API_SERVICE, Api} from 'core/api/api.service';
 import { IRoleDescriptor } from './IRole';
@@ -6,7 +6,7 @@ import { IRoleDescriptor } from './IRole';
 export class IamRoleReader {
   public constructor(private API: Api) { 'ngInject'; }
 
-  public listRoles(provider: string, account: string, region: string): ng.IPromise<IRoleDescriptor[]> {
+  public listRoles(provider: string, account: string, region: string): IPromise<IRoleDescriptor[]> {
     return this.API.all('roles').all(provider).all(account).all(region)
       .getList();
   }
