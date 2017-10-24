@@ -24,7 +24,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
   IAM_ROLE_READ_SERVICE,
-  ECS_CLUSTER_READ_SERVICE,
+  ECS_CLUSTER_READ_SERVICE
 ])
   .controller('ecsCloneServerGroupCtrl', function($scope, $uibModalInstance, $q, $state,
                                                   serverGroupWriter,
