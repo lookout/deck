@@ -30,6 +30,7 @@ import {
 import { IAmazonLoadBalancer, IKeyPair } from 'amazon/domain';
 import { KEY_PAIRS_READ_SERVICE, KeyPairsReader } from 'amazon/keyPairs/keyPairs.read.service';
 import { IamRoleReader } from '../../iamRoles/iamRole.read.service';
+import { EscClusterReader } from '../../ecsCluster/ecsCluster.read.service';
 import { IRoleDescriptor } from '../../iamRoles/IRole';
 
 export type IBlockDeviceMappingSource = 'source' | 'ami' | 'default';
@@ -46,12 +47,14 @@ export interface IAmazonServerGroupCommandBackingDataFiltered extends IServerGro
   keyPairs: string[];
   targetGroups: string[];
   iamRoles: string[];
+  ecsClusters: string[];
 }
 
 export interface IAmazonServerGroupCommandBackingData extends IServerGroupCommandBackingData {
   filtered: IAmazonServerGroupCommandBackingDataFiltered;
   keyPairs: IKeyPair[];
   targetGroups: string[];
+  ecsClusters: string[];
   iamRoles: IRoleDescriptor[];
 }
 
@@ -89,6 +92,7 @@ export class EcsServerGroupConfigurationService {
               private serverGroupCommandRegistry: ServerGroupCommandRegistry,
               private autoScalingProcessService: any,
               private iamRoleReader: IamRoleReader,
+              private ecsClusterReader: EscClusterReader,
               ) {
     'ngInject';
   }
@@ -169,6 +173,7 @@ export class EcsServerGroupConfigurationService {
       keyPairs: this.keyPairsReader.listKeyPairs(),
       packageImages: imageLoader,
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
+      ecsClusters: this.ecsClusterReader.listClusters('ecs', 'continuous-delivery-ecs', 'us-west-2'),
       instanceTypes: this.awsInstanceTypeService.getAllTypesByRegion(),
       enabledMetrics: this.$q.when(clone(this.enabledMetrics)),
       healthCheckTypes: this.$q.when(clone(this.healthCheckTypes)),
