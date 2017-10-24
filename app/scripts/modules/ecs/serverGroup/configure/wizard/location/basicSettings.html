@@ -18,11 +18,14 @@
         <div class="col-md-3 sm-label-right">
           ECS Cluster name
         </div>
-        <div class="col-md-7"><input type="text"
-                                     class="form-control input-sm no-spel"
-                                     ng-pattern="basicSettingsCtrl.detailPattern"
-                                     name="details"
-                                     ng-model="command.ecsClusterName"/></div>
+        <div class="col-md-7">
+          <ui-select ng-model="command.ecsClusterName" class="form-control input-sm" required on-select="fieldChanged()">
+            <ui-select-match>{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="ecsClusterName in command.backingData.ecsClusters | filter: $select.search">
+              <span ng-bind-html="ecsClusterName"></span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
       </div>
       <div class="form-group">
         <div class="col-md-3 sm-label-right">

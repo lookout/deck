@@ -12,6 +12,7 @@ import {
 
 // import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../serverGroupConfiguration.service';
+import { ECS_CLUSTER_READ_SERVICE } from '../../../ecsCluster/ecsCluster.read.service';
 import { IAM_ROLE_READ_SERVICE } from '../../../iamRoles/iamRole.read.service';
 
 module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
@@ -22,7 +23,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   V2_MODAL_WIZARD_SERVICE,
   OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
-  IAM_ROLE_READ_SERVICE
+  IAM_ROLE_READ_SERVICE,
+  ECS_CLUSTER_READ_SERVICE
 ])
   .controller('ecsCloneServerGroupCtrl', function($scope, $uibModalInstance, $q, $state,
                                                   serverGroupWriter,
@@ -33,6 +35,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   serverGroupCommandRegistry,
                                                   serverGroupCommand,
                                                   iamRoleReader,
+                                                  ecsClusterReader,
                                                   application,
                                                   title) {
     $scope.pages = {

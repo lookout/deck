@@ -39,6 +39,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
       var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('aws', defaultCredentials, defaultRegion);
 
+
       return $q.all({
         preferredZones: preferredZonesLoader,
         credentialsKeyedByAccount: credentialsLoader,
@@ -83,6 +84,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             iamRoles: [],
             suspendedProcesses: [],
             securityGroups: [],
+            ecsClusterName: '',
+            ecsClusters: [],
             spotPrice: null,
             tags: {},
             viewState: {
