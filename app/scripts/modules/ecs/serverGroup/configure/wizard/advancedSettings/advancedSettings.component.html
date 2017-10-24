@@ -14,17 +14,6 @@
   </div>
 
 
-  <ui-select ng-if="$ctrl.command.backingData.filtered.targetGroups.length"
-             single
-             ng-model="$ctrl.command.targetGroups"
-             class="form-control input-sm">
-    <ui-select-match>{{$item}}</ui-select-match>
-    <ui-select-choices repeat="targetGroup in $ctrl.command.backingData.filtered.targetGroups | filter: $select.search">
-      <span ng-bind-html="targetGroup | highlight: $select.search"></span>
-    </ui-select-choices>
-  </ui-select>
-
-
   <!--Backing data: {{$ctrl.command.backingData}}-->
   <br />
   <br />

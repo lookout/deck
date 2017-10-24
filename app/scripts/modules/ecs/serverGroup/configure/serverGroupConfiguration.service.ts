@@ -168,7 +168,7 @@ export class EcsServerGroupConfigurationService {
       preferredZones: this.accountService.getPreferredZonesByAccount('aws'),
       keyPairs: this.keyPairsReader.listKeyPairs(),
       packageImages: imageLoader,
-      iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2'),
+      iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
       instanceTypes: this.awsInstanceTypeService.getAllTypesByRegion(),
       enabledMetrics: this.$q.when(clone(this.enabledMetrics)),
       healthCheckTypes: this.$q.when(clone(this.healthCheckTypes)),
@@ -187,7 +187,7 @@ export class EcsServerGroupConfigurationService {
       if (command.viewState.disableImageSelection) {
         this.configureInstanceTypes(command);
       }
-      backingData.filtered.iamRoles = backingData.filtered.instanceTypes;  // TODO(Bruno Carrier) - These strings should be a filter of IAM Roles, instead of some other dummy data
+      backingData.filtered.iamRoles = this.getIamRoleNames(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
         // verify all load balancers are accounted for; otherwise, try refreshing load balancers cache
@@ -468,6 +468,12 @@ export class EcsServerGroupConfigurationService {
     const loadBalancersV2 = this.getLoadBalancerMap(command).filter((lb) => lb.loadBalancerType !== 'classic') as any[];
     const allTargetGroups = flatten(loadBalancersV2.map<string[]>((lb) => lb.targetGroups));
     return allTargetGroups.sort();
+  }
+
+  public getIamRoleNames(command: IAmazonServerGroupCommand): string[] {
+    const iamRoles = command.backingData.iamRoles as any[];
+    const iamRoleNames = flatten(iamRoles.map<string[]>((role) => role.name));
+    return iamRoleNames.sort();
   }
 
   public configureLoadBalancerOptions(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
