@@ -237,7 +237,6 @@ module.exports = angular.module('spinnaker.amazon.cloneServerGroup.controller', 
     }
 
     this.templateSelected = () => {
-      console.log('wow');
       $scope.state.requiresTemplateSelection = false;
       configureCommand();
     };

@@ -6,17 +6,20 @@ import _ from 'lodash';
 import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SERVICE } from '@spinnaker/core';
 
 // import { AWSProviderSettings } from 'amazon/aws.settings';
-import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from 'amazon/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from './serverGroupConfiguration.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
   ACCOUNT_SERVICE,
   SUBNET_READ_SERVICE,
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
-  AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
 ])
-  .factory('ecsServerGroupCommandBuilder', function ($q, accountService, namingService, instanceTypeService,
-                                                     awsServerGroupConfigurationService) {
+  .factory('ecsServerGroupCommandBuilder', function ($q,
+                                                     accountService,
+                                                     namingService,
+                                                     instanceTypeService,
+                                                     ecsServerGroupConfigurationService) {
 
     const CLOUD_PROVIDER = 'ecs';
 
@@ -45,6 +48,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
           var credentials = asyncData.credentialsKeyedByAccount[defaultCredentials];
           var keyPair = credentials ? credentials.defaultKeyPair : null;
+
 
           var defaultIamRole =
             // AWSProviderSettings.defaults.iamRole ||
@@ -76,6 +80,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             subnetType: defaultSubnet,
             availabilityZones: availabilityZones,
             keyPair: keyPair,
+            iamRoles: [],
             suspendedProcesses: [],
             securityGroups: [],
             spotPrice: null,
@@ -159,7 +164,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         terminationPolicies: angular.copy(serverGroup.asg.terminationPolicies),
         credentials: serverGroup.account
       };
-      awsServerGroupConfigurationService.configureUpdateCommand(command);
+      ecsServerGroupConfigurationService.configureUpdateCommand(command);
       return command;
     }
 
