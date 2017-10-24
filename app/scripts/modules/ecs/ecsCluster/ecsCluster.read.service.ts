@@ -5,8 +5,8 @@ import {API_SERVICE, Api} from 'core/api/api.service';
 export class EscClusterReader {
 public constructor(private API: Api) { 'ngInject'; }
 
-  public listClusters(provider: string, account: string, region: string): ng.IPromise<string[]> {
-    return this.API.all('ecsClusters').all(provider).all(account).all(region).getList();
+  public listClusters(account: string, region: string): ng.IPromise<string[]> {
+    return this.API.all('ecsClusters').all(account).all(region).getList();
   }
 
 }

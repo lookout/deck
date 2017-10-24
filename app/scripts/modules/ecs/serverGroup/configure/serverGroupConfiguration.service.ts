@@ -173,7 +173,7 @@ export class EcsServerGroupConfigurationService {
       keyPairs: this.keyPairsReader.listKeyPairs(),
       packageImages: imageLoader,
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
-      ecsClusters: this.ecsClusterReader.listClusters('ecs', 'continuous-delivery-ecs', 'us-west-2'),
+      ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
       instanceTypes: this.awsInstanceTypeService.getAllTypesByRegion(),
       enabledMetrics: this.$q.when(clone(this.enabledMetrics)),
       healthCheckTypes: this.$q.when(clone(this.healthCheckTypes)),
