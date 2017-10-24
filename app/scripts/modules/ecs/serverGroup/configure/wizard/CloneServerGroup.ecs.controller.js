@@ -12,6 +12,7 @@ import {
 
 // import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
 import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/src/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_CLUSTER_READ_SERVICE } from '../../../ecsCluster/ecsCluster.read.service';
 
 module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   require('@uirouter/angularjs').default,
@@ -21,12 +22,13 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
   V2_MODAL_WIZARD_SERVICE,
   OVERRIDE_REGISTRY,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
+  ECS_CLUSTER_READ_SERVICE,
 ])
   .controller('ecsCloneServerGroupCtrl', function($scope, $uibModalInstance, $q, $state,
                                                   serverGroupWriter, v2modalWizardService, taskMonitorBuilder,
                                                   overrideRegistry, awsServerGroupConfigurationService,
                                                   serverGroupCommandRegistry,
-                                                  serverGroupCommand, application, title) {
+                                                  serverGroupCommand, application, title, ecsClusterReader) {
     console.log('ecs controller 1');
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),

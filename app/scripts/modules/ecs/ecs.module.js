@@ -7,6 +7,7 @@ import { CLOUD_PROVIDER_REGISTRY, DeploymentStrategyRegistry } from '@spinnaker/
 import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
 import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
 import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDetails.module';
+import { ECS_CLUSTER_READ_SERVICE } from './ecsCluster/ecsCluster.read.service';
 
 import './logo/ecs.logo.less';
 
@@ -27,6 +28,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
   require('./serverGroup/configure/wizard/capacity/capacity.component'),
   ECS_LOAD_BALANCER_SELECTOR,
+  ECS_CLUSTER_READ_SERVICE,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
   require('./instance/details/instance.details.controller'),
   require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),

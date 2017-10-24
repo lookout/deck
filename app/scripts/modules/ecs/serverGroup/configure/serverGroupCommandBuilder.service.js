@@ -7,6 +7,7 @@ import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SER
 
 // import { AWSProviderSettings } from 'amazon/aws.settings';
 import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from 'amazon/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_CLUSTER_READ_SERVICE } from '../../ecsCluster/ecsCluster.read.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
   ACCOUNT_SERVICE,
@@ -14,15 +15,17 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
   AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  ECS_CLUSTER_READ_SERVICE,
 ])
   .factory('ecsServerGroupCommandBuilder', function ($q, accountService, namingService, instanceTypeService,
-                                                     awsServerGroupConfigurationService) {
+                                                     awsServerGroupConfigurationService, ecsClusterReader) {
 
     const CLOUD_PROVIDER = 'ecs';
 
     function buildNewServerGroupCommand (application, defaults) {
       defaults = defaults || {};
       var credentialsLoader = accountService.getCredentialsKeyedByAccount('ecs');
+      var ecsClusterLoader = ecsClusterReader.listClusters('ecs', 'continuous-delivery-ecs', 'us-west-2');
 
       var defaultCredentials = defaults.account || application.defaultCredentials.ecs
         // || AWSProviderSettings.defaults.account
@@ -36,15 +39,31 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
       var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('aws', defaultCredentials, defaultRegion);
 
+      /*console.log('about to query gate');
+      var escClusterPromise = ecsClusterReader.listClusters('ecs', 'continuous-delivery-ecs', 'us-west-2');
+      var ecsClusterList = [];
+      Promise.resolve(escClusterPromise).then(function(result) {
+        console.log('inside the promised lands');
+        console.log(result);
+        ecsClusterList.concat(result);
+        return result;
+      });
+      console.log('after query: ');
+      console.log(ecsClusterList);*/
+
       return $q.all({
         preferredZones: preferredZonesLoader,
         credentialsKeyedByAccount: credentialsLoader,
+        ecsClustersData: ecsClusterLoader,
       })
         .then(function (asyncData) {
           var availabilityZones = asyncData.preferredZones;
 
           var credentials = asyncData.credentialsKeyedByAccount[defaultCredentials];
           var keyPair = credentials ? credentials.defaultKeyPair : null;
+          var asyncClusters = asyncData.ecsClustersData;
+          var ecsClusters = asyncClusters ? asyncClusters : [];
+          console.log(ecsClusters);
 
           var defaultIamRole =
             // AWSProviderSettings.defaults.iamRole ||
@@ -78,6 +97,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             keyPair: keyPair,
             suspendedProcesses: [],
             securityGroups: [],
+            ecsCluster: '',
+            ecsClusters: ecsClusters,
             spotPrice: null,
             tags: {},
             viewState: {
