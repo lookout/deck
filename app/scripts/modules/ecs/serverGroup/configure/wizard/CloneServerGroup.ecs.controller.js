@@ -35,7 +35,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
                                                   iamRoleReader,
                                                   application,
                                                   title) {
-    console.log('ecs controller 1');
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       basicSettings: overrideRegistry.getTemplate('ecs.serverGroup.basicSettings', require('./location/basicSettings.html')),
@@ -56,7 +55,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
     };
 
-    console.log('ecs controller 2');
     this.templateSelectionText = {
       copied: [
         'account, region, subnet, cluster name (stack, details)',
@@ -76,11 +74,9 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function onApplicationRefresh() {
       // If the user has already closed the modal, do not navigate to the new details view
-      console.log('ecs controller 3');
       if ($scope.$$destroyed) {
         return;
       }
-      console.log('logging a big potato');
       let cloneStage = $scope.taskMonitor.task.execution.stages.find((stage) => stage.type === 'cloneServerGroup');
       if (cloneStage && cloneStage.context['deploy.server.groups']) {
         let newServerGroupName = cloneStage.context['deploy.server.groups'][$scope.command.region];
@@ -107,7 +103,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     function onTaskComplete() {
-      console.log('bruno-ecs-task-complete');
       application.serverGroups.refresh();
       application.serverGroups.onNextRefresh($scope, onApplicationRefresh);
     }
@@ -120,7 +115,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
 
     function configureCommand() {
-      console.log('ecs controller 4');
       ecsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
         var mode = serverGroupCommand.viewState.mode;
         if (mode === 'clone' || mode === 'create') {
@@ -158,7 +152,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     // TODO: Move to service
     function initializeSelectOptions() {
-      console.log('what is the command here?');
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
       // awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
@@ -166,17 +159,11 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function createResultProcessor(method) {
       return function() {
-        let someValue = iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2');
-        console.log(someValue);
-
         processCommandUpdateResult(method());
       };
     }
 
     function processCommandUpdateResult(result) {
-      let someValue = iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'us-west-2');
-      console.log(someValue);
-
       // if (result.dirty.loadBalancers) {
       //   v2modalWizardService.markDirty('load-balancers');
       // }
@@ -204,7 +191,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     function initializeCommand() {
-      console.log('ecs controller 5');
       if (serverGroupCommand.viewState.imageId) {
         var foundImage = $scope.command.backingData.packageImages.filter(function(image) {
           return image.amis[serverGroupCommand.region] && image.amis[serverGroupCommand.region].includes(serverGroupCommand.viewState.imageId);

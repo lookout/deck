@@ -22,7 +22,6 @@
         No target groups found in the selected account/region/VPC
       </div>
       <ui-select ng-if="$ctrl.command.backingData.filtered.targetGroups.length"
-                 single
                  ng-model="$ctrl.command.targetGroups"
                  class="form-control input-sm">
         <ui-select-match>{{$item}}</ui-select-match>
@@ -57,7 +56,4 @@
                                  name="targetContainerPort"
                                  ng-model="$ctrl.command.containerPort"/></div>
   </div>
-
-
-
 </div>

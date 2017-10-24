@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SERVICE } from '@spinnaker/core';
 
 // import { AWSProviderSettings } from 'amazon/aws.settings';
-// import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from 'amazon/serverGroup/configure/serverGroupConfiguration.service';
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from './serverGroupConfiguration.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
@@ -15,13 +14,11 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
   ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
-  // AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
 ])
   .factory('ecsServerGroupCommandBuilder', function ($q,
                                                      accountService,
                                                      namingService,
                                                      instanceTypeService,
-                                                     // awsServerGroupConfigurationService,
                                                      ecsServerGroupConfigurationService) {
 
     const CLOUD_PROVIDER = 'ecs';
@@ -168,7 +165,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         credentials: serverGroup.account
       };
       ecsServerGroupConfigurationService.configureUpdateCommand(command);
-      // awsServerGroupConfigurationService.configureUpdateCommand(command);
       return command;
     }
 

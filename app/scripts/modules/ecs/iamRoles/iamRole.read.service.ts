@@ -10,9 +10,7 @@ export class IamRoleReader {
     return this.API.all('roles').all(provider).all(account).all(region)
       .getList();
   }
-
 }
-
 
 export const IAM_ROLE_READ_SERVICE = 'spinnaker.ecs.iamRole.read.service';
 
