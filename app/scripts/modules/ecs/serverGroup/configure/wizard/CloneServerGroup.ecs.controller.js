@@ -10,7 +10,6 @@ import {
   V2_MODAL_WIZARD_SERVICE
 } from '@spinnaker/core';
 
-// import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../../../../amazon/serverGroup/configure/serverGroupConfiguration.service';
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../serverGroupConfiguration.service';
 import { ECS_CLUSTER_READ_SERVICE } from '../../../ecsCluster/ecsCluster.read.service';
 import { IAM_ROLE_READ_SERVICE } from '../../../iamRoles/iamRole.read.service';
@@ -157,7 +156,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     function initializeSelectOptions() {
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
-      // awsServerGroupConfigurationService.configureSubnetPurposes($scope.command);
     }
 
     function createResultProcessor(method) {

@@ -40,7 +40,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./pipeline/stages/enableAsg/ecsEnableAsgStage'),
   require('./pipeline/stages/resizeAsg/ecsResizeAsgStage'),
   require('./pipeline/stages/scaleDownCluster/ecsScaleDownClusterStage'),
-  require('./pipeline/stages/shrinkCluster/awsShrinkClusterStage'),
+  require('./pipeline/stages/shrinkCluster/ecsShrinkClusterStage'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
