@@ -68,12 +68,12 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
 
     function retrieveInstance() {
       var extraData = {};
-      var instanceSummary, loadBalancers, targetGroups, account, region, vpcId;
+      var instanceSummary, loadBalancers, targetGroup, account, region, vpcId;
       if (!app.serverGroups) {
         // standalone instance
         instanceSummary = {};
         loadBalancers = [];
-        targetGroups = [];
+        targetGroup = [];
         account = instance.account;
         region = instance.region;
       } else {
@@ -82,7 +82,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
             if (possibleInstance.id === instance.instanceId) {
               instanceSummary = possibleInstance;
               loadBalancers = serverGroup.loadBalancers;
-              targetGroups = serverGroup.targetGroups;
+              targetGroup = serverGroup.targetGroup;
               account = serverGroup.account;
               region = serverGroup.region;
               vpcId = serverGroup.vpcId;
@@ -105,11 +105,11 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
                 return true;
               }
             }) ||
-            loadBalancer.targetGroups.some(function (targetGroup) {
+            loadBalancer.targetGroup.some(function (targetGroup) {
               return targetGroup.instances.some(function (possibleInstance) {
                 if (possibleInstance.id === instance.instanceId) {
                   instanceSummary = possibleInstance;
-                  targetGroups = [targetGroup.name];
+                  targetGroup = targetGroup.name;
                   account = loadBalancer.account;
                   region = loadBalancer.region;
                   vpcId = loadBalancer.vpcId;
@@ -136,7 +136,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
                   }
                 });
               }) ||
-              loadBalancer.targetGroups.some(function(targetGroup) {
+              loadBalancer.targetGroup.some(function(targetGroup) {
                 targetGroup.serverGroups.some(function(serverGroup) {
                   if (!serverGroup.isDisabled) {
                     return false;
@@ -174,7 +174,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
             $scope.instance.region = region;
             $scope.instance.vpcId = vpcId;
             $scope.instance.loadBalancers = loadBalancers;
-            $scope.instance.targetGroups = targetGroups;
+            $scope.instance.targetGroup = targetGroup;
             if($scope.instance.networkInterfaces) {
               var permanentNetworkInterfaces = $scope.instance.networkInterfaces.filter(f => f.attachment.deleteOnTermination === false);
               if (permanentNetworkInterfaces.length) {
@@ -243,7 +243,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
     this.canRegisterWithTargetGroup = function() {
       var instance = $scope.instance,
           healthMetrics = instance.health || [];
-      if (!instance.targetGroups || !instance.targetGroups.length) {
+      if (!instance.targetGroup) {
         return false;
       }
       var outOfService = healthMetrics.some(function(health) {
@@ -393,11 +393,11 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
 
     this.registerInstanceWithTargetGroup = function registerInstanceWithTargetGroup() {
       var instance = $scope.instance;
-      var targetGroupNames = instance.targetGroups.join(' and ');
+      var targetGroupName = instance.targetGroup;
 
       var taskMonitor = {
         application: app,
-        title: 'Registering ' + instance.instanceId + ' with ' + targetGroupNames
+        title: 'Registering ' + instance.instanceId + ' with ' + targetGroupName
       };
 
       var submitMethod = function () {
@@ -405,7 +405,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       confirmationModalService.confirm({
-        header: 'Really register ' + instance.instanceId + ' with ' + targetGroupNames + '?',
+        header: 'Really register ' + instance.instanceId + ' with ' + targetGroupName + '?',
         buttonText: 'Register ' + instance.instanceId,
         account: instance.account,
         taskMonitorConfig: taskMonitor,
@@ -415,11 +415,11 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
 
     this.deregisterInstanceFromTargetGroup = function deregisterInstanceFromTargetGroup() {
       var instance = $scope.instance;
-      var targetGroupNames = instance.targetGroups.join(' and ');
+      var targetGroupName = instance.targetGroup;
 
       var taskMonitor = {
         application: app,
-        title: 'Deregistering ' + instance.instanceId + ' from ' + targetGroupNames
+        title: 'Deregistering ' + instance.instanceId + ' from ' + targetGroupName
       };
 
       var submitMethod = function () {
@@ -427,7 +427,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       confirmationModalService.confirm({
-        header: 'Really deregister ' + instance.instanceId + ' from ' + targetGroupNames + '?',
+        header: 'Really deregister ' + instance.instanceId + ' from ' + targetGroupName + '?',
         buttonText: 'Deregister ' + instance.instanceId,
         provider: 'ecs',
         account: instance.account,

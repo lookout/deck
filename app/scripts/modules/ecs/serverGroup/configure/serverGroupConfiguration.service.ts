@@ -36,7 +36,7 @@ import { IRoleDescriptor } from '../../iamRoles/IRole';
 export type IBlockDeviceMappingSource = 'source' | 'ami' | 'default';
 
 export interface IAmazonServerGroupCommandDirty extends IServerGroupCommandDirty {
-  targetGroups?: string[];
+  targetGroup?: string;
 }
 
 export interface IAmazonServerGroupCommandResult extends IServerGroupCommandResult {
@@ -68,7 +68,7 @@ export interface IAmazonServerGroupCommand extends IServerGroupCommand {
   spotPrice: string;
   targetHealthyDeployPercentage: number;
   useAmiBlockDeviceMappings: boolean;
-  targetGroups: string[];
+  targetGroup: string;
 
   getBlockDeviceMappingsSource: () => IBlockDeviceMappingSource;
   selectBlockDeviceMappingsSource: (selection: string) => void;
@@ -484,7 +484,7 @@ export class EcsServerGroupConfigurationService {
   public configureLoadBalancerOptions(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
     const result: IAmazonServerGroupCommandResult = { dirty: {} };
     const currentLoadBalancers = (command.loadBalancers || []).concat(command.vpcLoadBalancers || []);
-    const currentTargetGroups = command.targetGroups || [];
+    // const currentTargetGroups = command.targetGroup || [];
     const newLoadBalancers = this.getLoadBalancerNames(command);
     const vpcLoadBalancers = this.getVpcLoadBalancerNames(command);
     const allTargetGroups = this.getTargetGroupNames(command);
@@ -504,14 +504,14 @@ export class EcsServerGroupConfigurationService {
       }
     }
 
-    if (currentTargetGroups && command.targetGroups) {
-      const matched = intersection(allTargetGroups, currentTargetGroups);
-      const removedTargetGroups = xor(matched, currentTargetGroups);
-      command.targetGroups = intersection(allTargetGroups, matched);
-      if (removedTargetGroups.length) {
-        result.dirty.targetGroups = removedTargetGroups;
-      }
-    }
+    // if (currentTargetGroups && command.targetGroup) {
+    //   const matched = intersection(allTargetGroups, currentTargetGroups);
+    //   const removedTargetGroups = xor(matched, currentTargetGroups);
+    //   command.targetGroup = intersection(allTargetGroups, matched);
+    //   if (removedTargetGroups.length) {
+    //     result.dirty.targetGroup = removedTargetGroups;
+    //   }
+    // }
 
     command.backingData.filtered.loadBalancers = newLoadBalancers;
     command.backingData.filtered.vpcLoadBalancers = vpcLoadBalancers;
