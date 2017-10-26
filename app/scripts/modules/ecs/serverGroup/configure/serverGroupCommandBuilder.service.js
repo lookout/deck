@@ -86,6 +86,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             securityGroups: [],
             ecsClusterName: '',
             ecsClusters: [],
+            targetGroup: '',
             spotPrice: null,
             tags: {},
             viewState: {
@@ -225,7 +226,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             .map((process) => process.processName)
             .filter((name) => !enabledProcesses.includes(name)),
           tags: serverGroup.tags || {},
-          targetGroups: serverGroup.targetGroups,
+          targetGroup: serverGroup.targetGroup,
           viewState: {
             instanceProfile: asyncData.instanceProfile,
             useAllImageSelection: false,

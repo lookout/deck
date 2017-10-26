@@ -82,7 +82,7 @@ export class EcsServerGroupTransformer {
     command.availabilityZones = {};
     command.availabilityZones[command.region] = base.availabilityZones;
     command.loadBalancers = (base.loadBalancers || []).concat(base.vpcLoadBalancers || []);
-    command.targetGroups = base.targetGroups || [];
+    command.targetGroup = base.targetGroup || '';
     command.account = command.credentials;
     command.subnetType = command.subnetType || '';
 
