@@ -31,12 +31,21 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
   require('./resize/resizeServerGroup.controller'),
   require('./rollback/rollbackServerGroup.controller'),
 ])
-  .controller('ecsServerGroupDetailsCtrl', function ($scope, $state, app, serverGroup,
-                                                     serverGroupReader, ecsServerGroupCommandBuilder, $uibModal,
-                                                     confirmationModalService, serverGroupWriter, subnetReader,
+  .controller('ecsServerGroupDetailsCtrl', function ($scope, $state,
+                                                     app,
+                                                     serverGroup,
+                                                     serverGroupReader,
+                                                     ecsServerGroupCommandBuilder,
+                                                     $uibModal,
+                                                     confirmationModalService,
+                                                     serverGroupWriter,
+                                                     subnetReader,
                                                      clusterTargetBuilder,
-                                                     ecsServerGroupTransformer, accountService,
-                                                     serverGroupWarningMessageService, overrideRegistry) {
+                                                     ecsServerGroupTransformer,
+                                                     accountService,
+                                                     serverGroupWarningMessageService,
+                                                     overrideRegistry
+  ) {
 
     this.state = {
       loading: true
