@@ -3,7 +3,7 @@
 const angular = require('angular');
 import { chain, filter, find, has, isEmpty } from 'lodash';
 
-import { AWS_SERVER_GROUP_TRANSFORMER } from '../../../amazon/src/serverGroup/serverGroup.transformer';
+import { ECS_SERVER_GROUP_TRANSFORMER } from '../serverGroup.transformer';
 import { SERVER_GROUP_CONFIGURE_MODULE } from '../../../amazon/src/serverGroup/configure/serverGroup.configure.aws.module';
 
 import {
@@ -19,7 +19,7 @@ import {
 module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', [
   require('@uirouter/angularjs').default,
   ACCOUNT_SERVICE,
-  AWS_SERVER_GROUP_TRANSFORMER,
+  ECS_SERVER_GROUP_TRANSFORMER,
   CLUSTER_TARGET_BUILDER,
   CONFIRMATION_MODAL_SERVICE,
   OVERRIDE_REGISTRY,
@@ -35,7 +35,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
                                                      serverGroupReader, ecsServerGroupCommandBuilder, $uibModal,
                                                      confirmationModalService, serverGroupWriter, subnetReader,
                                                      clusterTargetBuilder,
-                                                     awsServerGroupTransformer, accountService,
+                                                     ecsServerGroupTransformer, accountService,
                                                      serverGroupWarningMessageService, overrideRegistry) {
 
     this.state = {
@@ -89,7 +89,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
               // it's possible the summary was not found because the clusters are still loading
               angular.extend(details, summary, { account: serverGroup.accountId });
 
-              this.serverGroup = awsServerGroupTransformer.normalizeServerGroupDetails(details);
+              this.serverGroup = ecsServerGroupTransformer.normalizeServerGroupDetails(details);
               this.applyAccountDetails(this.serverGroup);
 
               if (!isEmpty(this.serverGroup)) {
