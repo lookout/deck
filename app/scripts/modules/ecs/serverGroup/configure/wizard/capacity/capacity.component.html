@@ -2,7 +2,8 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      Desired containers
+      Desired capacity
+      <help-field key="ecs.capacity.desired"></help-field>
     </div>
     <div class="col-md-2"><input type="number"
                                  class="form-control input-sm no-spel"
@@ -13,7 +14,8 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      Minimal number of deployed containers
+      Minimum
+      <help-field key="ecs.capacity.minimum"></help-field>
     </div>
     <div class="col-md-2"><input type="number"
                                  class="form-control input-sm no-spel"
@@ -24,7 +26,8 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      Maximal number of containers
+      Maximum
+      <help-field key="ecs.capacity.maximum"></help-field>
     </div>
     <div class="col-md-2"><input type="number"
                                  class="form-control input-sm no-spel"
@@ -39,6 +42,7 @@
         <input type="checkbox" ng-checked="true" ng-model="$ctrl.command.capacity.usePreviousCapacityIfAvailable"/> <!-- TODO: Use the controller to set a default, just like there are many defaults on this page -->
         <b>If available, use the previous server group's capacity</b>
       </label>
+      <help-field key="ecs.capacity.overwrite"></help-field>
     </div>
   </div>
 
@@ -46,7 +50,7 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      Reserved compute units (1024 ≈ 1 core)
+      Reserved compute units <help-field key="ecs.capacity.reserved.computeUnits"></help-field>
     </div>
     <div class="col-md-2"><input type="number"
                                  class="form-control input-sm no-spel"
@@ -57,7 +61,7 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      Reserved Memory (MB RAM)
+      Reserved Memory <help-field key="ecs.capacity.reserved.memory"></help-field>
     </div>
     <div class="col-md-2"><input type="number"
                                  class="form-control input-sm no-spel"

@@ -16,7 +16,7 @@
       <region-select-field read-only="command.viewState.readOnlyFields.region" label-columns="3" component="command" field="region" account="command.credentials" provider="'ecs'" regions="command.backingData.filtered.regions"></region-select-field>
       <div class="form-group">
         <div class="col-md-3 sm-label-right">
-          ECS Cluster name
+          ECS Cluster name <help-field key="ecs.serverGroup.clusterName"></help-field>
         </div>
         <div class="col-md-7">
           <ui-select ng-model="command.ecsClusterName" class="form-control input-sm" required on-select="fieldChanged()">
