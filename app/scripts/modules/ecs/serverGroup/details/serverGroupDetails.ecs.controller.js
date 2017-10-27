@@ -3,8 +3,7 @@
 const angular = require('angular');
 import { chain, filter, find, has, isEmpty } from 'lodash';
 
-import { AWS_SERVER_GROUP_TRANSFORMER } from '../../../amazon/src/serverGroup/serverGroup.transformer';
-import { SERVER_GROUP_CONFIGURE_MODULE } from '../../../amazon/src/serverGroup/configure/serverGroup.configure.aws.module';
+import { ECS_SERVER_GROUP_TRANSFORMER } from '../serverGroup.transformer';
 
 import {
   ACCOUNT_SERVICE,
@@ -19,11 +18,10 @@ import {
 module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', [
   require('@uirouter/angularjs').default,
   ACCOUNT_SERVICE,
-  AWS_SERVER_GROUP_TRANSFORMER,
+  ECS_SERVER_GROUP_TRANSFORMER,
   CLUSTER_TARGET_BUILDER,
   CONFIRMATION_MODAL_SERVICE,
   OVERRIDE_REGISTRY,
-  SERVER_GROUP_CONFIGURE_MODULE,
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
   SERVER_GROUP_WRITER,
@@ -31,12 +29,21 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
   require('./resize/resizeServerGroup.controller'),
   require('./rollback/rollbackServerGroup.controller'),
 ])
-  .controller('ecsServerGroupDetailsCtrl', function ($scope, $state, app, serverGroup,
-                                                     serverGroupReader, ecsServerGroupCommandBuilder, $uibModal,
-                                                     confirmationModalService, serverGroupWriter, subnetReader,
+  .controller('ecsServerGroupDetailsCtrl', function ($scope, $state,
+                                                     app,
+                                                     serverGroup,
+                                                     serverGroupReader,
+                                                     ecsServerGroupCommandBuilder,
+                                                     $uibModal,
+                                                     confirmationModalService,
+                                                     serverGroupWriter,
+                                                     subnetReader,
                                                      clusterTargetBuilder,
-                                                     awsServerGroupTransformer, accountService,
-                                                     serverGroupWarningMessageService, overrideRegistry) {
+                                                     ecsServerGroupTransformer,
+                                                     accountService,
+                                                     serverGroupWarningMessageService,
+                                                     overrideRegistry
+  ) {
 
     this.state = {
       loading: true
@@ -89,7 +96,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
               // it's possible the summary was not found because the clusters are still loading
               angular.extend(details, summary, { account: serverGroup.accountId });
 
-              this.serverGroup = awsServerGroupTransformer.normalizeServerGroupDetails(details);
+              this.serverGroup = ecsServerGroupTransformer.normalizeServerGroupDetails(details);
               this.applyAccountDetails(this.serverGroup);
 
               if (!isEmpty(this.serverGroup)) {

@@ -1,7 +1,7 @@
 <div class="container-fluid form-horizontal">
 
   <div class="form-group">
-    <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile (must-have if you use a load balancer)</b></div>
+    <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile</b> <help-field key="ecs.loadbalancing.targetPort"></help-field></div>
     <!-- TODO - Add a help box that explains that the container does not share profiles with the host -->
     <div class="col-md-7">
       <ui-select ng-model="$ctrl.command.iamRole" class="form-control input-sm" required on-select="$ctrl.fieldChanged()">
@@ -15,7 +15,7 @@
 
   <div class="form-group">
     <div class="col-md-5 sm-label-right">
-      <b>Placement strategy</b>
+      <b>Placement strategy</b> <help-field key="ecs.placementStrategy"></help-field>
     </div>
     <div class="col-md-7">
       <ui-select multiple

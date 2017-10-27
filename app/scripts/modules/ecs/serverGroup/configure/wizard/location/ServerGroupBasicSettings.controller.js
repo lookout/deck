@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { IMAGE_READER, NAMING_SERVICE, V2_MODAL_WIZARD_SERVICE } from '@spinnaker/core';
 import { SUBNET_SELECT_FIELD_COMPONENT } from 'amazon/subnet/subnetSelectField.component';
 
-module.exports = angular.module('spinnaker.amazon.serverGroup.configure.basicSettings', [
+module.exports = angular.module('spinnaker.ecs.serverGroup.configure.basicSettings', [
   require('@uirouter/angularjs').default,
   require('angular-ui-bootstrap'),
   V2_MODAL_WIZARD_SERVICE,
@@ -14,7 +14,7 @@ module.exports = angular.module('spinnaker.amazon.serverGroup.configure.basicSet
   NAMING_SERVICE,
   SUBNET_SELECT_FIELD_COMPONENT,
 ])
-  .controller('awsServerGroupBasicSettingsCtrl', function($scope, $controller, $uibModalStack, $state,
+  .controller('ecsServerGroupBasicSettingsCtrl', function($scope, $controller, $uibModalStack, $state,
                                                           v2modalWizardService, imageReader, namingService) {
 
     function searchImages(q) {
