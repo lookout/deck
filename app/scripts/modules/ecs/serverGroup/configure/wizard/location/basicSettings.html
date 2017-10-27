@@ -10,10 +10,10 @@
           Account
         </div>
         <div class="col-md-7">
-          <account-select-field read-only="command.viewState.readOnlyFields.credentials" component="command" field="credentials" accounts="command.backingData.accounts" provider="'aws'"></account-select-field>
+          <account-select-field read-only="command.viewState.readOnlyFields.credentials" component="command" field="credentials" accounts="command.backingData.accounts" provider="'ecs'"></account-select-field>
         </div>
       </div>
-      <region-select-field read-only="command.viewState.readOnlyFields.region" label-columns="3" component="command" field="region" account="command.credentials" provider="'aws'" regions="command.backingData.filtered.regions"></region-select-field>
+      <region-select-field read-only="command.viewState.readOnlyFields.region" label-columns="3" component="command" field="region" account="command.credentials" provider="'ecs'" regions="command.backingData.filtered.regions"></region-select-field>
       <div class="form-group">
         <div class="col-md-3 sm-label-right">
           ECS Cluster name
