@@ -4,7 +4,6 @@ const angular = require('angular');
 import { chain, filter, find, has, isEmpty } from 'lodash';
 
 import { ECS_SERVER_GROUP_TRANSFORMER } from '../serverGroup.transformer';
-import { SERVER_GROUP_CONFIGURE_MODULE } from '../../../amazon/src/serverGroup/configure/serverGroup.configure.aws.module';
 
 import {
   ACCOUNT_SERVICE,
@@ -23,7 +22,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
   CLUSTER_TARGET_BUILDER,
   CONFIRMATION_MODAL_SERVICE,
   OVERRIDE_REGISTRY,
-  SERVER_GROUP_CONFIGURE_MODULE,
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
   SERVER_GROUP_WRITER,

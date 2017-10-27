@@ -35,6 +35,7 @@ module.exports = angular.module('spinnaker.ecs', [
   ECS_CLUSTER_READ_SERVICE,
   ECS_HELP,
   COMMON_MODULE,
+  require('./serverGroup/configure/wizard/location/ServerGroupBasicSettings.controller'),
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
   require('./instance/details/instance.details.controller'),
   require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
