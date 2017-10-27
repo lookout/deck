@@ -30,7 +30,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
       var defaultRegion = defaults.region || application.defaultRegions.ecs;
       var defaultSubnet = defaults.subnet || '';
 
-      var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('aws', defaultCredentials, defaultRegion);
+      var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('ecs', defaultCredentials, defaultRegion);
 
 
       return $q.all({
@@ -44,9 +44,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
           var keyPair = credentials ? credentials.defaultKeyPair : null;
 
 
-          var defaultIamRole =
-            // AWSProviderSettings.defaults.iamRole ||
-            'poc-role';
+          var defaultIamRole = 'poc-role';
           defaultIamRole = defaultIamRole.replace('{{application}}', application.name);
 
 
@@ -166,7 +164,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
     }
 
     function buildServerGroupCommandFromExisting(application, serverGroup, mode = 'clone') {
-      var preferredZonesLoader = accountService.getPreferredZonesByAccount('aws');
+      var preferredZonesLoader = accountService.getPreferredZonesByAccount('ecs');
 
       var serverGroupName = namingService.parseServerGroupName(serverGroup.asg.autoScalingGroupName);
 
