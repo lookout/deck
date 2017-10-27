@@ -10,6 +10,7 @@ import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDe
 import { IAM_ROLE_READ_SERVICE } from './iamRoles/iamRole.read.service';
 import { ECS_CLUSTER_READ_SERVICE } from './ecsCluster/ecsCluster.read.service';
 import { ECS_HELP } from './ecs.help';
+import { COMMON_MODULE } from './common/common.module';
 
 import './logo/ecs.logo.less';
 
@@ -33,6 +34,7 @@ module.exports = angular.module('spinnaker.ecs', [
   ECS_LOAD_BALANCER_SELECTOR,
   ECS_CLUSTER_READ_SERVICE,
   ECS_HELP,
+  COMMON_MODULE,
   require('./serverGroup/configure/serverGroupCommandBuilder.service'),
   require('./instance/details/instance.details.controller'),
   require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
