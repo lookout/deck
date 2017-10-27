@@ -2,7 +2,8 @@ import { IController, IComponentOptions, module } from 'angular';
 
 import { INFRASTRUCTURE_CACHE_SERVICE, InfrastructureCacheService } from '@spinnaker/core';
 
-import { AWS_SERVER_GROUP_CONFIGURATION_SERVICE, AwsServerGroupConfigurationService } from 'amazon/serverGroup/configure/serverGroupConfiguration.service';
+import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE, EcsServerGroupConfigurationService } from '../../serverGroupConfiguration.service';
+
 
 class LoadBalancerSelectorController implements IController {
   public command: any;
@@ -10,7 +11,7 @@ class LoadBalancerSelectorController implements IController {
   public refreshTime: number;
   public refreshing = false;
 
-  constructor(private awsServerGroupConfigurationService: AwsServerGroupConfigurationService,
+  constructor(private ecsServerGroupConfigurationService: EcsServerGroupConfigurationService,
               private infrastructureCaches: InfrastructureCacheService) {
     'ngInject';
 
@@ -23,7 +24,7 @@ class LoadBalancerSelectorController implements IController {
 
   public refreshLoadBalancers(): void {
     this.refreshing = true;
-    this.awsServerGroupConfigurationService.refreshLoadBalancers(this.command).then(() => {
+    this.ecsServerGroupConfigurationService.refreshLoadBalancers(this.command).then(() => {
       this.refreshing = false;
       this.setLoadBalancerRefreshTime();
     });
@@ -40,7 +41,7 @@ export class ApplicationLoadBalancerSelectorComponent implements IComponentOptio
 
 export const ECS_LOAD_BALANCER_SELECTOR = 'spinnaker.ecs.serverGroup.configure.wizard.loadBalancers.selector.component';
 module (ECS_LOAD_BALANCER_SELECTOR, [
-  AWS_SERVER_GROUP_CONFIGURATION_SERVICE,
+  ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
   INFRASTRUCTURE_CACHE_SERVICE
 ])
   .component('ecsServerGroupLoadBalancerSelector', new ApplicationLoadBalancerSelectorComponent());
