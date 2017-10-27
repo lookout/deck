@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SERVICE } from '@spinnaker/core';
 
-// import { AWSProviderSettings } from 'amazon/aws.settings';
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from './serverGroupConfiguration.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
@@ -27,15 +26,9 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
       defaults = defaults || {};
       var credentialsLoader = accountService.getCredentialsKeyedByAccount('ecs');
 
-      var defaultCredentials = defaults.account || application.defaultCredentials.ecs
-        // || AWSProviderSettings.defaults.account
-      ;
-      var defaultRegion = defaults.region || application.defaultRegions.ecs
-        // || AWSProviderSettings.defaults.region
-      ;
-      var defaultSubnet = defaults.subnet
-        // || AWSProviderSettings.defaults.subnetType
-        || '';
+      var defaultCredentials = defaults.account || application.defaultCredentials.ecs;
+      var defaultRegion = defaults.region || application.defaultRegions.ecs;
+      var defaultSubnet = defaults.subnet || '';
 
       var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('aws', defaultCredentials, defaultRegion);
 
