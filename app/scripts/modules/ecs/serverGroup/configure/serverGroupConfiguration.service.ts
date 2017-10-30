@@ -54,17 +54,9 @@ export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBa
 
 export interface IEcsServerGroupCommand extends IServerGroupCommand {
   backingData: IEcsServerGroupCommandBackingData;
-  copySourceCustomBlockDeviceMappings: boolean;
-  ebsOptimized: boolean;
-  healthCheckGracePeriod: number;
-  instanceMonitoring: boolean;
-  spotPrice: string;
   targetHealthyDeployPercentage: number;
-  useAmiBlockDeviceMappings: boolean;
   targetGroup: string;
 
-  getBlockDeviceMappingsSource: () => IBlockDeviceMappingSource;
-  selectBlockDeviceMappingsSource: (selection: string) => void;
   usePreferredZonesChanged: () => IEcsServerGroupCommandResult;
 }
 
@@ -116,31 +108,6 @@ export class EcsServerGroupConfigurationService {
       // Any strategy other than None or Custom should force traffic to be enabled
       if (strategy.key !== '' && strategy.key !== 'custom') {
         command.suspendedProcesses = (command.suspendedProcesses || []).filter(p => p !== 'AddToLoadBalancer');
-      }
-    };
-
-    command.getBlockDeviceMappingsSource = (): IBlockDeviceMappingSource  => {
-      if (command.copySourceCustomBlockDeviceMappings) {
-        return 'source';
-      } else if (command.useAmiBlockDeviceMappings) {
-        return 'ami';
-      }
-      return 'default';
-    };
-
-    command.selectBlockDeviceMappingsSource = (selection: string): void => {
-      if (selection === 'source') {
-        // copy block device mappings from source asg
-        command.copySourceCustomBlockDeviceMappings = true;
-        command.useAmiBlockDeviceMappings = false;
-      } else if (selection === 'ami') {
-        // use block device mappings from selected ami
-        command.copySourceCustomBlockDeviceMappings = false;
-        command.useAmiBlockDeviceMappings = true;
-      } else {
-        // use default block device mappings for selected instance type
-        command.copySourceCustomBlockDeviceMappings = false;
-        command.useAmiBlockDeviceMappings = false;
       }
     };
 
@@ -385,7 +352,6 @@ module(ECS_SERVER_GROUP_CONFIGURATION_SERVICE, [
   require('amazon/image/image.reader.js'),
   ACCOUNT_SERVICE,
   SUBNET_READ_SERVICE,
-  require('amazon/instance/awsInstanceType.service.js'),
   LOAD_BALANCER_READ_SERVICE,
   CACHE_INITIALIZER_SERVICE,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
