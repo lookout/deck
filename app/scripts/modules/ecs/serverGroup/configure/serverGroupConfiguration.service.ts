@@ -1,5 +1,5 @@
 import { module, IPromise, IQService } from 'angular';
-import { chain, clone, cloneDeep, extend, find, flatten, has, intersection, keys, map, some, xor } from 'lodash';
+import { chain, clone, cloneDeep, extend, find, flatten, has, intersection, keys, some, xor } from 'lodash';
 
 import {
   ACCOUNT_SERVICE,
@@ -10,7 +10,6 @@ import {
   IAccountDetails,
   IDeploymentStrategy,
   IRegion,
-  ISecurityGroup,
   IServerGroupCommand,
   IServerGroupCommandBackingData,
   IServerGroupCommandBackingDataFiltered,
@@ -19,8 +18,6 @@ import {
   ISubnet,
   LOAD_BALANCER_READ_SERVICE,
   LoadBalancerReader,
-  SECURITY_GROUP_READER,
-  SecurityGroupReader,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
   ServerGroupCommandRegistry,
   SUBNET_READ_SERVICE,
@@ -82,7 +79,6 @@ export class EcsServerGroupConfigurationService {
 
   constructor(private $q: IQService,
               private accountService: AccountService,
-              private securityGroupReader: SecurityGroupReader,
               private cacheInitializer: CacheInitializerService,
               private subnetReader: SubnetReader,
               private keyPairsReader: KeyPairsReader,
@@ -107,7 +103,7 @@ export class EcsServerGroupConfigurationService {
 
   public configureCommand(application: Application, command: IAmazonServerGroupCommand): IPromise<void> {
     this.applyOverrides('beforeConfiguration', command);
-    console.log(application); //TODO(Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
+    console.log(application); // TODO (Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
 
     command.toggleSuspendedProcess = (process: string): void => {
       command.suspendedProcesses = command.suspendedProcesses || [];
@@ -160,7 +156,6 @@ export class EcsServerGroupConfigurationService {
 
     return this.$q.all({
       credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'),
-      securityGroups: this.securityGroupReader.getAllSecurityGroups(),
       loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
       subnets: this.subnetReader.listSubnets(),
       preferredZones: this.accountService.getPreferredZonesByAccount('aws'),
@@ -172,14 +167,12 @@ export class EcsServerGroupConfigurationService {
       terminationPolicies: this.$q.when(clone(this.terminationPolicies)),
     }).then((backingData: Partial<IAmazonServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
-      let securityGroupReloader = this.$q.when(null);
       console.log('bruno look over here!');
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IAmazonServerGroupCommandBackingDataFiltered;
       backingData.scalingProcesses = this.autoScalingProcessService.listProcesses();
       command.backingData = backingData as IAmazonServerGroupCommandBackingData;
       this.configureVpcId(command);
-      backingData.filtered.securityGroups = this.getRegionalSecurityGroups(command);
       backingData.filtered.iamRoles = this.getIamRoleNames(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
@@ -189,14 +182,8 @@ export class EcsServerGroupConfigurationService {
           loadBalancerReloader = this.refreshLoadBalancers(command, true);
         }
       }
-      if (command.securityGroups && command.securityGroups.length) {
-        const regionalSecurityGroupIds = map(this.getRegionalSecurityGroups(command), 'id');
-        if (intersection(command.securityGroups, regionalSecurityGroupIds).length < command.securityGroups.length) {
-          securityGroupReloader = this.refreshSecurityGroups(command, true);
-        }
-      }
 
-      return this.$q.all([loadBalancerReloader, securityGroupReloader]).then(() => {
+      return this.$q.all([loadBalancerReloader]).then(() => {
         this.applyOverrides('afterConfiguration', command);
         this.attachEventHandlers(command);
       });
@@ -269,65 +256,6 @@ export class EcsServerGroupConfigurationService {
       result.dirty.subnetType = true;
     }
     return result;
-  }
-
-  public getRegionalSecurityGroups(command: IAmazonServerGroupCommand): ISecurityGroup[] {
-    const newSecurityGroups = command.backingData.securityGroups[command.credentials] || { aws: {} };
-    return chain(newSecurityGroups.aws[command.region])
-      .filter({vpcId: command.vpcId || null})
-      .sortBy('name')
-      .value();
-  }
-
-  public configureSecurityGroupOptions(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
-    const result: IAmazonServerGroupCommandResult = { dirty: {} };
-    const currentOptions: ISecurityGroup[] = command.backingData.filtered.securityGroups;
-    const newRegionalSecurityGroups = this.getRegionalSecurityGroups(command);
-    if (currentOptions && command.securityGroups) {
-      // not initializing - we are actually changing groups
-      const currentGroupNames = command.securityGroups.map((groupId) => {
-        const match = find(currentOptions, {id: groupId});
-        return match ? match.name : groupId;
-      });
-
-      const matchedGroups = command.securityGroups.map((groupId) => {
-        const securityGroup = find(currentOptions, {id: groupId}) ||
-          find(currentOptions, {name: groupId});
-        return securityGroup ? securityGroup.name : null;
-      })
-        .map((groupName) => find(newRegionalSecurityGroups, {name: groupName}))
-        .filter((group) => group);
-
-      const matchedGroupNames = map(matchedGroups, 'name');
-      const removed = xor(currentGroupNames, matchedGroupNames);
-      command.securityGroups = map(matchedGroups, 'id');
-      if (removed.length) {
-        result.dirty.securityGroups = removed;
-      }
-    }
-    command.backingData.filtered.securityGroups = newRegionalSecurityGroups.sort((a, b) => {
-      if (command.securityGroups) {
-        if (command.securityGroups.includes(a.id)) {
-          return -1;
-        }
-        if (command.securityGroups.includes(b.id)) {
-          return 1;
-        }
-      }
-      return a.name.localeCompare(b.name);
-    });
-    return result;
-  }
-
-  public refreshSecurityGroups(command: IAmazonServerGroupCommand, skipCommandReconfiguration?: boolean): IPromise<void> {
-    return this.cacheInitializer.refreshCache('securityGroups').then(() => {
-      return this.securityGroupReader.getAllSecurityGroups().then((securityGroups) => {
-        command.backingData.securityGroups = securityGroups;
-        if (!skipCommandReconfiguration) {
-          this.configureSecurityGroupOptions(command);
-        }
-      });
-    });
   }
 
   private getLoadBalancerMap(command: IAmazonServerGroupCommand): IAmazonLoadBalancer[] {
@@ -447,7 +375,6 @@ export class EcsServerGroupConfigurationService {
 
     command.subnetChanged = (): IServerGroupCommandResult => {
       const result = this.configureVpcId(command);
-      extend(result.dirty, this.configureSecurityGroupOptions(command).dirty);
       extend(result.dirty, this.configureLoadBalancerOptions(command).dirty);
       command.viewState.dirty = command.viewState.dirty || {};
       extend(command.viewState.dirty, result.dirty);
@@ -499,7 +426,6 @@ export const ECS_SERVER_GROUP_CONFIGURATION_SERVICE = 'spinnaker.ecs.serverGroup
 module(ECS_SERVER_GROUP_CONFIGURATION_SERVICE, [
   require('amazon/image/image.reader.js'),
   ACCOUNT_SERVICE,
-  SECURITY_GROUP_READER,
   SUBNET_READ_SERVICE,
   require('amazon/instance/awsInstanceType.service.js'),
   KEY_PAIRS_READ_SERVICE,
