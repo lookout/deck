@@ -71,7 +71,6 @@ export class EcsServerGroupConfigurationService {
               private subnetReader: SubnetReader,
               private loadBalancerReader: LoadBalancerReader,
               private serverGroupCommandRegistry: ServerGroupCommandRegistry,
-              private autoScalingProcessService: any,
               private iamRoleReader: IamRoleReader,
               private ecsClusterReader: EscClusterReader,
               ) {
@@ -131,7 +130,6 @@ export class EcsServerGroupConfigurationService {
       console.log('bruno look over here!');
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
-      backingData.scalingProcesses = this.autoScalingProcessService.listProcesses();
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
       this.configureVpcId(command);
       backingData.filtered.iamRoles = this.getIamRoleNames(command);
@@ -355,6 +353,5 @@ module(ECS_SERVER_GROUP_CONFIGURATION_SERVICE, [
   LOAD_BALANCER_READ_SERVICE,
   CACHE_INITIALIZER_SERVICE,
   SERVER_GROUP_COMMAND_REGISTRY_PROVIDER,
-  require('../../../amazon/src/serverGroup/details/scalingProcesses/autoScalingProcess.service.js'),
 ])
   .service('ecsServerGroupConfigurationService', EcsServerGroupConfigurationService);
