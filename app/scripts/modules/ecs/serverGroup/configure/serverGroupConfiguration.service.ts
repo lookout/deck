@@ -1,5 +1,5 @@
 import { module, IPromise, IQService } from 'angular';
-import { chain, clone, cloneDeep, extend, find, flatten, has, intersection, keys, some, xor } from 'lodash';
+import { chain, cloneDeep, extend, find, flatten, has, intersection, keys, some, xor } from 'lodash';
 
 import {
   ACCOUNT_SERVICE,
@@ -61,9 +61,9 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
 }
 
 export class EcsServerGroupConfigurationService {
-  private enabledMetrics = ['GroupMinSize', 'GroupMaxSize', 'GroupDesiredCapacity', 'GroupInServiceInstances', 'GroupPendingInstances', 'GroupStandbyInstances', 'GroupTerminatingInstances', 'GroupTotalInstances'];
-  private healthCheckTypes = ['EC2', 'ELB'];
-  private terminationPolicies = ['OldestInstance', 'NewestInstance', 'OldestLaunchConfiguration', 'ClosestToNextInstanceHour', 'Default'];
+  // private enabledMetrics = ['GroupMinSize', 'GroupMaxSize', 'GroupDesiredCapacity', 'GroupInServiceInstances', 'GroupPendingInstances', 'GroupStandbyInstances', 'GroupTerminatingInstances', 'GroupTotalInstances'];
+  // private healthCheckTypes = ['EC2', 'ELB'];
+  // private terminationPolicies = ['OldestInstance', 'NewestInstance', 'OldestLaunchConfiguration', 'ClosestToNextInstanceHour', 'Default'];
 
   constructor(private $q: IQService,
               private accountService: AccountService,
@@ -81,9 +81,7 @@ export class EcsServerGroupConfigurationService {
     console.log('bruno bruno bruno');
 
     command.backingData = {
-      enabledMetrics: clone(this.enabledMetrics),
-      healthCheckTypes: clone(this.healthCheckTypes),
-      terminationPolicies: clone(this.terminationPolicies)
+      // terminationPolicies: clone(this.terminationPolicies)
     } as IEcsServerGroupCommandBackingData;
   }
 
@@ -122,9 +120,6 @@ export class EcsServerGroupConfigurationService {
       preferredZones: this.accountService.getPreferredZonesByAccount('aws'),
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
-      enabledMetrics: this.$q.when(clone(this.enabledMetrics)),
-      healthCheckTypes: this.$q.when(clone(this.healthCheckTypes)),
-      terminationPolicies: this.$q.when(clone(this.terminationPolicies)),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
       console.log('bruno look over here!');
