@@ -1,5 +1,5 @@
 import { module, IPromise, IQService } from 'angular';
-import { chain, cloneDeep, extend, find, flatten, has, intersection, keys, some, xor } from 'lodash';
+import { chain, extend, find, flatten, has, intersection, keys, some, xor } from 'lodash';
 
 import {
   ACCOUNT_SERVICE,
@@ -56,8 +56,6 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   backingData: IEcsServerGroupCommandBackingData;
   targetHealthyDeployPercentage: number;
   targetGroup: string;
-
-  usePreferredZonesChanged: () => IEcsServerGroupCommandResult;
 }
 
 export class EcsServerGroupConfigurationService {
@@ -117,7 +115,6 @@ export class EcsServerGroupConfigurationService {
       credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'),
       loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
       subnets: this.subnetReader.listSubnets(),
-      preferredZones: this.accountService.getPreferredZonesByAccount('aws'),
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
@@ -277,22 +274,6 @@ export class EcsServerGroupConfigurationService {
   public attachEventHandlers(command: IEcsServerGroupCommand): void {
     console.log('bruno look at these handlers attaching');
 
-    command.usePreferredZonesChanged = (): IEcsServerGroupCommandResult => {
-      const currentZoneCount = command.availabilityZones ? command.availabilityZones.length : 0;
-      const result: IEcsServerGroupCommandResult = { dirty: {} };
-      const preferredZonesForAccount = command.backingData.preferredZones[command.credentials];
-      if (preferredZonesForAccount && preferredZonesForAccount[command.region] && command.viewState.usePreferredZones) {
-        command.availabilityZones = cloneDeep(preferredZonesForAccount[command.region].sort());
-      } else {
-        command.availabilityZones = intersection(command.availabilityZones, command.backingData.filtered.availabilityZones);
-        const newZoneCount = command.availabilityZones ? command.availabilityZones.length : 0;
-        if (currentZoneCount !== newZoneCount) {
-          result.dirty.availabilityZones = true;
-        }
-      }
-      return result;
-    };
-
     command.subnetChanged = (): IServerGroupCommandResult => {
       const result = this.configureVpcId(command);
       extend(result.dirty, this.configureLoadBalancerOptions(command).dirty);
@@ -309,7 +290,6 @@ export class EcsServerGroupConfigurationService {
         extend(result.dirty, command.subnetChanged().dirty);
 
         this.configureAvailabilityZones(command);
-        extend(result.dirty, command.usePreferredZonesChanged().dirty);
       } else {
         filteredData.regionalAvailabilityZones = null;
       }
