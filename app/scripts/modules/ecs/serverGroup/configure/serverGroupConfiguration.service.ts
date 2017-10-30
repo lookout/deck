@@ -145,7 +145,7 @@ export class EcsServerGroupConfigurationService {
   }
 
   public applyOverrides(phase: string, command: IEcsServerGroupCommand): void {
-    this.serverGroupCommandRegistry.getCommandOverrides('aws').forEach((override: any) => {
+    this.serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override: any) => {
       if (override[phase]) {
         override[phase](command);
       }
