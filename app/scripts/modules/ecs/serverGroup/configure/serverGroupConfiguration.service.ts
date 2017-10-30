@@ -81,10 +81,8 @@ export class EcsServerGroupConfigurationService {
   private terminationPolicies = ['OldestInstance', 'NewestInstance', 'OldestLaunchConfiguration', 'ClosestToNextInstanceHour', 'Default'];
 
   constructor(private $q: IQService,
-              private awsImageReader: any,
               private accountService: AccountService,
               private securityGroupReader: SecurityGroupReader,
-              private awsInstanceTypeService: any,
               private cacheInitializer: CacheInitializerService,
               private subnetReader: SubnetReader,
               private keyPairsReader: KeyPairsReader,
@@ -109,12 +107,8 @@ export class EcsServerGroupConfigurationService {
 
   public configureCommand(application: Application, command: IAmazonServerGroupCommand): IPromise<void> {
     this.applyOverrides('beforeConfiguration', command);
-    let imageLoader;
-    if (command.viewState.disableImageSelection) {
-      imageLoader = this.$q.when(null);
-    } else {
-      imageLoader = command.viewState.imageId ? this.loadImagesFromAmi(command) : this.loadImagesFromApplicationName(application, command.selectedProvider);
-    }
+    console.log(application); //TODO(Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
+
     command.toggleSuspendedProcess = (process: string): void => {
       command.suspendedProcesses = command.suspendedProcesses || [];
       const processIndex = command.suspendedProcesses.indexOf(process);
@@ -171,17 +165,14 @@ export class EcsServerGroupConfigurationService {
       subnets: this.subnetReader.listSubnets(),
       preferredZones: this.accountService.getPreferredZonesByAccount('aws'),
       keyPairs: this.keyPairsReader.listKeyPairs(),
-      packageImages: imageLoader,
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
-      instanceTypes: this.awsInstanceTypeService.getAllTypesByRegion(),
       enabledMetrics: this.$q.when(clone(this.enabledMetrics)),
       healthCheckTypes: this.$q.when(clone(this.healthCheckTypes)),
       terminationPolicies: this.$q.when(clone(this.terminationPolicies)),
     }).then((backingData: Partial<IAmazonServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
       let securityGroupReloader = this.$q.when(null);
-      let instanceTypeReloader = this.$q.when(null);
       console.log('bruno look over here!');
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IAmazonServerGroupCommandBackingDataFiltered;
@@ -189,9 +180,6 @@ export class EcsServerGroupConfigurationService {
       command.backingData = backingData as IAmazonServerGroupCommandBackingData;
       this.configureVpcId(command);
       backingData.filtered.securityGroups = this.getRegionalSecurityGroups(command);
-      if (command.viewState.disableImageSelection) {
-        this.configureInstanceTypes(command);
-      }
       backingData.filtered.iamRoles = this.getIamRoleNames(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
@@ -207,11 +195,8 @@ export class EcsServerGroupConfigurationService {
           securityGroupReloader = this.refreshSecurityGroups(command, true);
         }
       }
-      if (command.instanceType) {
-        instanceTypeReloader = this.refreshInstanceTypes(command, true);
-      }
 
-      return this.$q.all([loadBalancerReloader, securityGroupReloader, instanceTypeReloader]).then(() => {
+      return this.$q.all([loadBalancerReloader, securityGroupReloader]).then(() => {
         this.applyOverrides('afterConfiguration', command);
         this.attachEventHandlers(command);
       });
@@ -224,41 +209,6 @@ export class EcsServerGroupConfigurationService {
         override[phase](command);
       }
     });
-  }
-
-  public loadImagesFromApplicationName(application: Application, provider: string): any {
-    return this.awsImageReader.findImages({
-      provider: provider,
-      q: application.name.replace(/_/g, '[_\\-]') + '*',
-    });
-  }
-
-  public loadImagesFromAmi(command: IAmazonServerGroupCommand): IPromise<any> {
-    return this.awsImageReader.getImage(command.viewState.imageId, command.region, command.credentials).then(
-      (namedImage: any) => {
-        if (!namedImage) {
-          return [];
-        }
-        command.amiName = namedImage.imageName;
-
-        let addDashToQuery = false;
-        let packageBase = namedImage.imageName.split('_')[0];
-        const parts = packageBase.split('-');
-        if (parts.length > 3) {
-          packageBase = parts.slice(0, -3).join('-');
-          addDashToQuery = true;
-        }
-        if (!packageBase || packageBase.length < 3) {
-          return [namedImage];
-        }
-
-        return this.awsImageReader.findImages({
-          provider: command.selectedProvider,
-          q: packageBase + (addDashToQuery ? '-*' : '*'),
-        });
-      },
-      (): any[] => []
-    );
   }
 
   public configureKeyPairs(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
@@ -293,61 +243,6 @@ export class EcsServerGroupConfigurationService {
     } else {
       command.backingData.filtered.keyPairs = [];
     }
-    return result;
-  }
-
-  public configureInstanceTypes(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
-    const result: IAmazonServerGroupCommandResult = { dirty: {} };
-    if (command.region && (command.virtualizationType || command.viewState.disableImageSelection)) {
-      let filtered = this.awsInstanceTypeService.getAvailableTypesForRegions(command.backingData.instanceTypes, [command.region]);
-      if (command.virtualizationType) {
-        filtered = this.awsInstanceTypeService.filterInstanceTypes(filtered, command.virtualizationType, !!command.vpcId);
-      }
-      if (command.instanceType && !filtered.includes(command.instanceType)) {
-        result.dirty.instanceType = command.instanceType;
-        command.instanceType = null;
-      }
-      command.backingData.filtered.instanceTypes = filtered;
-    } else {
-      command.backingData.filtered.instanceTypes = [];
-    }
-    extend(command.viewState.dirty, result.dirty);
-    return result;
-  }
-
-  public configureImages(command: IAmazonServerGroupCommand): IServerGroupCommandResult {
-    const result: IAmazonServerGroupCommandResult = { dirty: {} };
-    let regionalImages;
-    if (!command.amiName) {
-      command.virtualizationType = null;
-    }
-    if (command.viewState.disableImageSelection) {
-      return result;
-    }
-    if (command.region) {
-      regionalImages = command.backingData.packageImages
-        .filter((image) => image.amis && image.amis[command.region])
-        .map((image) => {
-          return {
-            virtualizationType: image.attributes.virtualizationType,
-            imageName: image.imageName,
-            ami: image.amis ? image.amis[command.region][0] : null
-          };
-        });
-      const match = regionalImages.find((image) => image.imageName === command.amiName);
-      if (command.amiName && !match) {
-        result.dirty.amiName = true;
-        command.amiName = null;
-      } else {
-        command.virtualizationType = match ? match.virtualizationType : null;
-      }
-    } else {
-      if (command.amiName) {
-        result.dirty.amiName = true;
-        command.amiName = null;
-      }
-    }
-    command.backingData.filtered.images = regionalImages;
     return result;
   }
 
@@ -430,17 +325,6 @@ export class EcsServerGroupConfigurationService {
         command.backingData.securityGroups = securityGroups;
         if (!skipCommandReconfiguration) {
           this.configureSecurityGroupOptions(command);
-        }
-      });
-    });
-  }
-
-  public refreshInstanceTypes(command: IAmazonServerGroupCommand, skipCommandReconfiguration?: boolean): IPromise<void> {
-    return this.cacheInitializer.refreshCache('instanceTypes').then(() => {
-      return this.awsInstanceTypeService.getAllTypesByRegion().then((instanceTypes: string[]) => {
-        command.backingData.instanceTypes = instanceTypes;
-        if (!skipCommandReconfiguration) {
-          this.configureInstanceTypes(command);
         }
       });
     });
@@ -539,11 +423,12 @@ export class EcsServerGroupConfigurationService {
       const subnet = find<ISubnet>(command.backingData.subnets, {purpose: command.subnetType, account: command.credentials, region: command.region});
       command.vpcId = subnet ? subnet.vpcId : null;
     }
-    extend(result.dirty, this.configureInstanceTypes(command).dirty);
     return result;
   }
 
   public attachEventHandlers(command: IAmazonServerGroupCommand): void {
+    console.log('bruno look at these handlers attaching');
+
     command.usePreferredZonesChanged = (): IAmazonServerGroupCommandResult => {
       const currentZoneCount = command.availabilityZones ? command.availabilityZones.length : 0;
       const result: IAmazonServerGroupCommandResult = { dirty: {} };
@@ -575,12 +460,10 @@ export class EcsServerGroupConfigurationService {
       extend(result.dirty, this.configureSubnetPurposes(command).dirty);
       if (command.region) {
         extend(result.dirty, command.subnetChanged().dirty);
-        extend(result.dirty, this.configureInstanceTypes(command).dirty);
 
         this.configureAvailabilityZones(command);
         extend(result.dirty, command.usePreferredZonesChanged().dirty);
 
-        extend(result.dirty, this.configureImages(command).dirty);
         extend(result.dirty, this.configureKeyPairs(command).dirty);
       } else {
         filteredData.regionalAvailabilityZones = null;
@@ -605,12 +488,6 @@ export class EcsServerGroupConfigurationService {
         command.region = null;
       }
       return result;
-    };
-
-    command.imageChanged = (): IServerGroupCommandResult => this.configureInstanceTypes(command);
-
-    command.instanceTypeChanged = (): void => {
-      command.ebsOptimized = this.awsInstanceTypeService.isEbsOptimized(command.instanceType);
     };
 
     this.applyOverrides('attachEventHandlers', command);
