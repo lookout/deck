@@ -3,13 +3,12 @@
 const angular = require('angular');
 import _ from 'lodash';
 
-import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE, SUBNET_READ_SERVICE } from '@spinnaker/core';
+import { ACCOUNT_SERVICE, INSTANCE_TYPE_SERVICE, NAMING_SERVICE } from '@spinnaker/core';
 
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from './serverGroupConfiguration.service';
 
 module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service', [
   ACCOUNT_SERVICE,
-  SUBNET_READ_SERVICE,
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
   ECS_SERVER_GROUP_CONFIGURATION_SERVICE,
@@ -28,7 +27,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
       var defaultCredentials = defaults.account || application.defaultCredentials.ecs;
       var defaultRegion = defaults.region || application.defaultRegions.ecs;
-      var defaultSubnet = defaults.subnet || '';
 
       var preferredZonesLoader = accountService.getAvailabilityZonesForAccountAndRegion('ecs', defaultCredentials, defaultRegion);
 
@@ -68,8 +66,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             selectedProvider: 'ecs',
             iamRole: defaultIamRole,
             terminationPolicies: ['Default'],
-            vpcId: null,
-            subnetType: defaultSubnet,
             availabilityZones: availabilityZones,
             keyPair: keyPair,
             iamRoles: [],
@@ -241,17 +237,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         if (mode === 'editPipeline') {
           command.strategy = 'redblack';
           command.suspendedProcesses = [];
-        }
-
-        var vpcZoneIdentifier = serverGroup.asg.vpczoneIdentifier;
-        if (vpcZoneIdentifier !== '') {
-          var subnetId = vpcZoneIdentifier.split(',')[0];
-          var subnet = _.chain(asyncData.subnets).find({'id': subnetId}).value();
-          command.subnetType = subnet.purpose;
-          command.vpcId = subnet.vpcId;
-        } else {
-          command.subnetType = '';
-          command.vpcId = null;
         }
 
         if (serverGroup.launchConfig) {
