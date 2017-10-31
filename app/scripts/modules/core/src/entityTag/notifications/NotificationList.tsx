@@ -1,5 +1,5 @@
 import * as React from 'react';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { Markdown } from 'core/presentation';
 import { relativeTime, timestamp } from 'core/utils';
@@ -56,7 +56,7 @@ interface IActionsProps {
   onDeleteTag(notification: INotification): void;
 }
 
-@autoBindMethods
+@BindAll()
 class NotificationActions extends React.Component<IActionsProps> {
   private editTag(): void {
     this.props.onEditTag(this.props.notification);
@@ -68,7 +68,7 @@ class NotificationActions extends React.Component<IActionsProps> {
 
   public render() {
     return (
-      <div className="flex-nogrow actions actions-popover" style={{position: 'relative'}}>
+      <div className="flex-nogrow actions actions-popover" style={{ position: 'relative' }}>
         <a onClick={this.editTag}><span className="glyphicon glyphicon-cog clickable" /></a>
         <a onClick={this.deleteTag}><span className="glyphicon glyphicon-trash clickable" /></a>
       </div>

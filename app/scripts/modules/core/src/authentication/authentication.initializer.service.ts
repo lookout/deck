@@ -40,7 +40,8 @@ export class AuthenticationInitializer {
           this.$uibModalStack.dismissAll();
           this.visibilityWatch.unsubscribe();
         }
-      });
+      })
+      .catch(() => {});
   }
 
   private loginNotification(): void {
@@ -109,7 +110,7 @@ export class AuthenticationInitializer {
   public logOut(): void {
     if (!this.userLoggedOut) {
       const config = {
-        headers: {'Content-Type': 'text/plain'},
+        headers: { 'Content-Type': 'text/plain' },
         transformResponse: (response: string) => response,
       };
 
@@ -130,6 +131,6 @@ module(AUTHENTICATION_INITIALIZER_SERVICE, [
   require('angular-ui-bootstrap'),
   REDIRECT_SERVICE,
   AUTHENTICATION_SERVICE,
-  require('./loggedOut.modal.controller')
+  require('./loggedOut.modal.controller').name
 ])
   .service('authenticationInitializer', AuthenticationInitializer);

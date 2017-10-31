@@ -1,10 +1,10 @@
 import { module } from 'angular';
 
+import { APPLICATION_STATE_PROVIDER, ApplicationStateProvider } from 'core/application/application.state.provider';
 import { INestedState, StateConfigProvider } from 'core/navigation/state.provider';
-import {
-  APPLICATION_STATE_PROVIDER, ApplicationStateProvider,
-} from 'core/application/application.state.provider';
 import { filterModelConfig } from './filter/executionFilter.model';
+
+import { Executions } from 'core/delivery/executions/Executions';
 
 export const DELIVERY_STATES = 'spinnaker.core.delivery.states';
 module(DELIVERY_STATES, [
@@ -33,7 +33,7 @@ module(DELIVERY_STATES, [
   // replacing the URL
   const executionDetails: INestedState = {
     name: 'execution',
-    url: '/:executionId?refId&stage&step&details&stageId',
+    url: '/:executionId?refId&stage&subStage&step&details&stageId',
     params: {
       stage: {
         value: '0',
@@ -41,9 +41,6 @@ module(DELIVERY_STATES, [
       step: {
         value: '0',
       },
-      refId: {
-        value: null,
-      }
     },
     data: {
       pageTitleDetails: {
@@ -69,9 +66,7 @@ module(DELIVERY_STATES, [
     name: 'executions',
     url: `?${stateConfigProvider.paramsToQuery(filterModelConfig)}`,
     views: {
-      'pipelines': {
-        template: '<executions application="$resolve.app"></executions>',
-      },
+      'pipelines': { component: Executions, $type: 'react' },
     },
     params: stateConfigProvider.buildDynamicParams(filterModelConfig),
     children: [executionDetails],

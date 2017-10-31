@@ -6,7 +6,7 @@ import _ from 'lodash';
 import './project.less';
 
 module.exports = angular.module('spinnaker.core.projects.project.controller', [
-  require('./configure/configureProject.modal.controller.js'),
+  require('./configure/configureProject.modal.controller.js').name,
 ])
   .controller('ProjectCtrl', function ($scope, $uibModal, $timeout, $state, projectConfiguration) {
 
@@ -97,7 +97,7 @@ module.exports = angular.module('spinnaker.core.projects.project.controller', [
               $state.go($state.current, {}, {reload: true});
             }
           }
-      });
+      }).catch(() => {});
     };
 
   });

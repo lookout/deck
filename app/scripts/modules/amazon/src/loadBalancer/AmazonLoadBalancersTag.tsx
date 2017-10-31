@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import * as ReactGA from 'react-ga';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 import { sortBy } from 'lodash';
 
 import {
@@ -22,7 +22,7 @@ interface ILoadBalancerSingleItemProps extends ILoadBalancerListItemProps {
   label: string;
 }
 
-@autoBindMethods
+@BindAll()
 class LoadBalancerListItem extends React.Component<ILoadBalancerListItemProps> {
   private onClick(e: React.MouseEvent<HTMLElement>): void {
     this.props.onItemClick(this.props.loadBalancer);
@@ -39,7 +39,7 @@ class LoadBalancerListItem extends React.Component<ILoadBalancerListItemProps> {
   }
 }
 
-@autoBindMethods
+@BindAll()
 class LoadBalancerButton extends React.Component<ILoadBalancerSingleItemProps> {
   private onClick(e: React.MouseEvent<HTMLElement>): void {
     this.props.onItemClick(this.props.loadBalancer);
@@ -66,7 +66,7 @@ export interface IAmazonLoadBalancersTagState {
   targetGroups: ITargetGroup[];
 }
 
-@autoBindMethods
+@BindAll()
 export class AmazonLoadBalancersTag extends React.Component<ILoadBalancersTagProps, IAmazonLoadBalancersTagState> {
   private loadBalancersRefreshUnsubscribe: () => void;
 
@@ -77,8 +77,8 @@ export class AmazonLoadBalancersTag extends React.Component<ILoadBalancersTagPro
       targetGroups: [],
     };
 
-    LoadBalancerDataUtils.populateLoadBalancers(props.application, props.serverGroup).then((loadBalancers) => this.setState({loadBalancers}))
-    AmazonLoadBalancerDataUtils.populateTargetGroups(props.application, props.serverGroup as IAmazonServerGroup).then((targetGroups: ITargetGroup[]) => this.setState({targetGroups}))
+    LoadBalancerDataUtils.populateLoadBalancers(props.application, props.serverGroup).then((loadBalancers) => this.setState({ loadBalancers }))
+    AmazonLoadBalancerDataUtils.populateTargetGroups(props.application, props.serverGroup as IAmazonServerGroup).then((targetGroups: ITargetGroup[]) => this.setState({ targetGroups }))
 
     this.loadBalancersRefreshUnsubscribe = props.application.getDataSource('loadBalancers').onRefresh(null, () => { this.forceUpdate(); });
   }
@@ -86,21 +86,21 @@ export class AmazonLoadBalancersTag extends React.Component<ILoadBalancersTagPro
   private showLoadBalancerDetails(loadBalancer: ILoadBalancer): void {
     const { $state } = ReactInjector;
     const serverGroup = this.props.serverGroup;
-    ReactGA.event({category: 'Cluster Pod', action: `Load Load Balancer Details (multiple menu)`});
+    ReactGA.event({ category: 'Cluster Pod', action: `Load Load Balancer Details (multiple menu)` });
     const nextState = $state.current.name.endsWith('.clusters') ? '.loadBalancerDetails' : '^.loadBalancerDetails';
-    $state.go(nextState, {region: serverGroup.region, accountId: serverGroup.account, name: loadBalancer.name, provider: serverGroup.type});
+    $state.go(nextState, { region: serverGroup.region, accountId: serverGroup.account, name: loadBalancer.name, provider: serverGroup.type });
   }
 
   private showTargetGroupDetails(targetGroup: ITargetGroup): void {
     const { $state } = ReactInjector;
     const serverGroup = this.props.serverGroup;
-    ReactGA.event({category: 'Cluster Pod', action: `Load Target Group Details (multiple menu)`});
+    ReactGA.event({ category: 'Cluster Pod', action: `Load Target Group Details (multiple menu)` });
     const nextState = $state.current.name.endsWith('.clusters') ? '.targetGroupDetails' : '^.targetGroupDetails';
-    $state.go(nextState, {region: serverGroup.region, accountId: serverGroup.account, name: targetGroup.name, provider: serverGroup.type, loadBalancerName: targetGroup.loadBalancerNames[0]});
+    $state.go(nextState, { region: serverGroup.region, accountId: serverGroup.account, name: targetGroup.name, provider: serverGroup.type, loadBalancerName: targetGroup.loadBalancerNames[0] });
   }
 
   private handleShowPopover() {
-    ReactGA.event({category: 'Cluster Pod', action: `Show Load Balancers Menu`});
+    ReactGA.event({ category: 'Cluster Pod', action: `Show Load Balancers Menu` });
   }
 
   private handleClick(e: React.MouseEvent<HTMLElement>): void {

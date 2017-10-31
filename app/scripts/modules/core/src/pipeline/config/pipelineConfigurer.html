@@ -22,7 +22,7 @@
           <copy-to-clipboard text="pipelineConfigurerCtrl.getUrl()" tool-tip="'Copy permalink to clipboard'"></copy-to-clipboard>
         </div>
         <div class="create-action">
-          <create-new application="application"></create-new>
+          <create-pipeline application="application"></create-pipeline>
         </div>
         <div class="pipeline-actions text-right">
           <div ng-include="pipelineConfigurerCtrl.actionsTemplateUrl"></div>
@@ -37,7 +37,7 @@
     </div>
 
     <div class="config-heading-body">
-      <div class="pipeline-graph-container">
+      <div class="pipeline-graph-container pipeline-config-graph">
         <pipeline-graph view-state="viewState"
                         pipeline="renderablePipeline"
                         should-validate="true"

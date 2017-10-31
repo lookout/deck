@@ -41,14 +41,19 @@ import { HELP_MODULE } from './help/help.module';
 import { INSIGHT_NGMODULE } from './insight/insight.module';
 import { INTERCEPTOR_MODULE } from './interceptor/interceptor.module';
 import { LOAD_BALANCER_MODULE } from './loadBalancer/loadBalancer.module';
+
+import { NETWORK_INTERCEPTOR } from './api/network.interceptor';
+
 import { PAGE_TITLE_MODULE } from './pageTitle/pageTitle.module';
 import { PIPELINE_TEMPLATE_MODULE } from './pipeline/config/templates/pipelineTemplate.module';
 import { REACT_MODULE } from './reactShims';
 import { REGION_MODULE } from './region/region.module';
+import { SERVERGROUP_MODULE } from './serverGroup/serverGroup.module';
 import { SUBNET_MODULE } from './subnet/subnet.module';
 import { WHATS_NEW_MODULE } from './whatsNew/whatsNew.module';
 import { WIDGETS_MODULE } from './widgets/widgets.module';
 import { STYLEGUIDE_MODULE } from './styleguide/styleguide.module';
+import { MANIFEST_MODULE } from 'core/manifest/manifestWriter.module';
 
 
 // load all templates into the $templateCache
@@ -74,7 +79,7 @@ module(CORE_MODULE, [
   APPLICATION_BOOTSTRAP_MODULE,
   AUTHENTICATION_MODULE,
 
-  require('./cache/caches.module'),
+  require('./cache/caches.module').name,
   CANCEL_MODAL_MODULE,
   CLOUD_PROVIDER_MODULE,
   CONFIG_MODULE,
@@ -82,47 +87,51 @@ module(CORE_MODULE, [
 
   DEBUG_WINDOW,
   DEPLOYMENT_STRATEGY_MODULE,
-  require('./delivery/delivery.module'),
+  require('./delivery/delivery.module').name,
   DIFF_MODULE,
 
   ENTITY_TAGS_MODULE,
 
-  require('./forms/forms.module'),
+  require('./forms/forms.module').name,
 
   HEALTH_COUNTS_MODULE,
   HELP_MODULE,
 
   INSIGHT_NGMODULE.name,
-  require('./instance/instance.module'),
+  require('./instance/instance.module').name,
   INTERCEPTOR_MODULE,
 
   LOAD_BALANCER_MODULE,
 
-  require('./modal/modal.module'),
+  MANIFEST_MODULE,
 
-  require('./notification/notifications.module'),
+  require('./modal/modal.module').name,
+
+  NETWORK_INTERCEPTOR,
+
+  require('./notification/notifications.module').name,
 
   PAGE_TITLE_MODULE,
   PIPELINE_TEMPLATE_MODULE,
-  require('./pipeline/pipelines.module'),
-  require('./presentation/presentation.module'),
-  require('./projects/projects.module'),
+  require('./pipeline/pipelines.module').name,
+  require('./presentation/presentation.module').name,
+  require('./projects/projects.module').name,
 
   REGION_MODULE,
 
-  require('./search/search.module'),
-  require('./securityGroup/securityGroup.module'),
-  require('./serverGroup/serverGroup.module'),
+  require('./search/search.module').name,
+  require('./securityGroup/securityGroup.module').name,
+  SERVERGROUP_MODULE,
   SUBNET_MODULE,
 
-  require('./task/task.module'),
+  require('./task/task.module').name,
 
-  require('./utils/utils.module'),
+  require('./utils/utils.module').name,
 
   WHATS_NEW_MODULE,
   WIDGETS_MODULE,
 
-  require('./validation/validation.module'),
+  require('./validation/validation.module').name,
   STYLEGUIDE_MODULE
 ]);
 

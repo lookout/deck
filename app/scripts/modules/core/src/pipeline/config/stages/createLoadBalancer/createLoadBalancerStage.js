@@ -48,7 +48,7 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.createLoadBalance
           }
         }).result.then(function(newLoadBalancer) {
           $scope.stage.loadBalancers.push(newLoadBalancer);
-        });
+        }).catch(() => {});
 
       });
     };
@@ -58,7 +58,7 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.createLoadBalance
 
         let config = cloudProviderRegistry.getValue(selectedProvider, 'loadBalancer');
         $uibModal.open({
-          templateUrl: config.editLoadBalancerTemplateUrl,
+          templateUrl: config.createLoadBalancerTemplateUrl,
           controller: `${config.createLoadBalancerController} as ctrl`,
           size: 'lg',
           resolve: {
@@ -69,7 +69,7 @@ module.exports = angular.module('spinnaker.core.pipeline.stage.createLoadBalance
           }
         }).result.then(function(updatedLoadBalancer) {
           $scope.stage.loadBalancers[index] = updatedLoadBalancer;
-        });
+        }).catch(() => {});
 
       });
     };

@@ -9,7 +9,7 @@ import { SECURITY_GROUP_FILTER_MODEL } from './securityGroupFilter.model';
 module.exports = angular
   .module('securityGroup.filter.service', [
     SECURITY_GROUP_FILTER_MODEL,
-    require('core/filterModel/filter.model.service'),
+    require('core/filterModel/filter.model.service').name,
   ])
   .factory('securityGroupFilterService', function (securityGroupFilterModel, filterModelService) {
 
@@ -53,6 +53,7 @@ module.exports = angular
         .filter(filterModelService.checkAccountFilters(securityGroupFilterModel))
         .filter(filterModelService.checkRegionFilters(securityGroupFilterModel))
         .filter(filterModelService.checkStackFilters(securityGroupFilterModel))
+        .filter(filterModelService.checkDetailFilters(securityGroupFilterModel))
         .filter(filterModelService.checkProviderFilters(securityGroupFilterModel))
         .value();
     }

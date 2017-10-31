@@ -143,11 +143,11 @@ class InternalLoadBalancerCtrl extends CommonGceLoadBalancerCtrl implements ICon
 
         this.accountUpdated();
 
-        this.wizardSubFormValidation.config({scope: this.$scope, form: 'form'})
-          .register({page: 'location', subForm: 'locationForm'})
-          .register({page: 'listener', subForm: 'listenerForm'})
-          .register({page: 'healthCheck', subForm: 'healthCheckForm'})
-          .register({page: 'advancedSettings', subForm: 'advancedSettingsForm'});
+        this.wizardSubFormValidation.config({ scope: this.$scope, form: 'form' })
+          .register({ page: 'location', subForm: 'locationForm' })
+          .register({ page: 'listener', subForm: 'listenerForm' })
+          .register({ page: 'healthCheck', subForm: 'healthCheckForm' })
+          .register({ page: 'advancedSettings', subForm: 'advancedSettingsForm' });
 
         this.taskMonitor = this.taskMonitorBuilder.buildTaskMonitor({
           application: this.application,
@@ -252,7 +252,7 @@ module(GCE_INTERNAL_LOAD_BALANCER_CTRL, [
     GCE_COMMON_LOAD_BALANCER_COMMAND_BUILDER,
     ACCOUNT_SERVICE,
     INFRASTRUCTURE_CACHE_SERVICE,
-    require('google/common/xpnNaming.gce.service.js'),
+    require('google/common/xpnNaming.gce.service.js').name,
     LOAD_BALANCER_WRITE_SERVICE,
     TASK_MONITOR_BUILDER,
   ])

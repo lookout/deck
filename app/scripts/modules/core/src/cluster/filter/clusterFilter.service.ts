@@ -190,6 +190,7 @@ export class ClusterFilterService {
       .filter(g => this.filterModelService.checkAccountFilters(this.clusterFilterModel)(g))
       .filter(g => this.filterModelService.checkRegionFilters(this.clusterFilterModel)(g))
       .filter(g => this.filterModelService.checkStackFilters(this.clusterFilterModel)(g))
+      .filter(g => this.filterModelService.checkDetailFilters(this.clusterFilterModel)(g))
       .filter(g => this.filterModelService.checkStatusFilters(this.clusterFilterModel)(g))
       .filter(g => this.filterModelService.checkProviderFilters(this.clusterFilterModel)(g))
       .filter(g => this.instanceTypeFilters(g))
@@ -473,6 +474,6 @@ export const CLUSTER_FILTER_SERVICE = 'spinnaker.core.cluster.filter.service';
 module(CLUSTER_FILTER_SERVICE, [
   require('@uirouter/angularjs').default,
   CLUSTER_FILTER_MODEL,
-  require('./multiselect.model'),
-  require('core/filterModel/filter.model.service'),
+  require('./multiselect.model').name,
+  require('core/filterModel/filter.model.service').name,
 ]).service('clusterFilterService', ClusterFilterService);

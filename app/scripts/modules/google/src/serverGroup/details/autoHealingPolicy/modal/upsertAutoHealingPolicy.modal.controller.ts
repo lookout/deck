@@ -46,7 +46,7 @@ class GceUpsertAutoHealingPolicyModalCtrl implements IController {
     this.gceHealthCheckReader.listHealthChecks('HTTP')
       .then((healthChecks) => {
         this.httpHealthChecks = chain(healthChecks)
-          .filter({account: this.serverGroup.account})
+          .filter({ account: this.serverGroup.account })
           .map('name')
           .value() as string[];
       });
@@ -74,5 +74,5 @@ class GceUpsertAutoHealingPolicyModalCtrl implements IController {
 export const GCE_UPSERT_AUTOHEALING_POLICY_MODAL_CTRL = 'spinnaker.gce.upsertAutoHealingPolicy.modal.controller';
 module(GCE_UPSERT_AUTOHEALING_POLICY_MODAL_CTRL, [
   GCE_HEALTH_CHECK_READER,
-  require('google/autoscalingPolicy/autoscalingPolicy.write.service.js'),
+  require('google/autoscalingPolicy/autoscalingPolicy.write.service.js').name,
 ]).controller('gceUpsertAutoHealingPolicyModalCtrl', GceUpsertAutoHealingPolicyModalCtrl);

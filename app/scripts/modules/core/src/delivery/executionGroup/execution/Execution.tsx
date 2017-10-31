@@ -3,13 +3,14 @@ import * as ReactGA from 'react-ga';
 import { clone } from 'lodash';
 import { $location } from 'ngimport';
 import { Subscription } from 'rxjs';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 import * as classNames from 'classnames';
 
 import { Application } from 'core/application/application.model';
+import { ExecutionDetails } from 'core/delivery/details/ExecutionDetails';
+import { ExecutionStatus } from 'core/delivery/status/ExecutionStatus';
 import { IExecution , IRestartDetails } from 'core/domain';
-import { IExecutionViewState } from 'core/pipeline/config/graph/pipelineGraph.service';
-import { IPipelineNode } from 'core/pipeline/config/graph/pipelineGraph.service';
+import { IExecutionViewState, IPipelineGraphNode } from 'core/pipeline/config/graph/pipelineGraph.service';
 import { IScheduler } from 'core/scheduler/scheduler.factory';
 import { OrchestratedItemRunningTime } from './OrchestratedItemRunningTime';
 import { SETTINGS } from 'core/config/settings';
@@ -18,6 +19,7 @@ import { duration, timestamp } from 'core/utils/timeFormatters';
 
 // react components
 import { ExecutionMarker } from './ExecutionMarker';
+import { PipelineGraph } from 'core/pipeline/config/graph/PipelineGraph';
 import { Tooltip } from 'core/presentation/Tooltip';
 
 import './execution.less';
@@ -41,7 +43,7 @@ export interface IExecutionState {
   runningTimeInMs: number;
 }
 
-@autoBindMethods
+@BindAll()
 export class Execution extends React.Component<IExecutionProps, IExecutionState> {
   public static defaultProps: Partial<IExecutionProps> = {
     dataSourceKey: 'executions'
@@ -59,10 +61,11 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
   constructor(props: IExecutionProps) {
     super(props);
     const { execution } = this.props;
-    const { executionFilterModel } = ReactInjector;
+    const { $stateParams, executionFilterModel } = ReactInjector;
 
     const initialViewState = {
-      activeStageId: Number(ReactInjector.$stateParams.stage),
+      activeStageId: Number($stateParams.stage),
+      activeSubStageId: Number($stateParams.subStage),
       executionId: execution.id,
       canTriggerPipelineManually: false,
       canConfigure: false,
@@ -84,6 +87,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     const { $stateParams } = ReactInjector;
     const newViewState = clone(this.state.viewState);
     newViewState.activeStageId = Number($stateParams.stage);
+    newViewState.activeSubStageId = Number($stateParams.subStage);
     newViewState.executionId = $stateParams.executionId;
     this.setState({
       viewState: newViewState,
@@ -101,31 +105,9 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     return this.state.showingDetails && Number(ReactInjector.$stateParams.stage) === stageIndex;
   }
 
-  public toggleDetails(stageIndex?: number): void {
-    const { $state } = ReactInjector;
-    if (this.props.execution.id === $state.params.executionId && $state.current.name.includes('.execution') && stageIndex === undefined) {
-      $state.go('^');
-      return;
-    }
-    const index = stageIndex || 0;
-    const stageSummary = this.props.execution.stageSummaries[index] || { firstActiveStage: 0 };
-    const params = {
-      executionId: this.props.execution.id,
-      stage: index,
-      step: stageSummary.firstActiveStage
-    };
-
-    if ($state.includes('**.execution', params)) {
-      if (!this.props.standalone) {
-        $state.go('^');
-      }
-    } else {
-      if ($state.current.name.endsWith('.execution') || this.props.standalone) {
-        $state.go('.', params);
-      } else {
-        $state.go('.execution', params);
-      }
-    }
+  public toggleDetails(stageIndex?: number, subIndex?: number): void {
+    const { executionService } = ReactInjector;
+    executionService.toggleDetails(this.props.execution, stageIndex, subIndex);
   }
 
   public getUrl(): string {
@@ -203,7 +185,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
             executionService.removeCompletedExecutionsFromRunningData(application);
           }
           refreshing = false;
-        });
+        }).catch(() => refreshing = false);
       });
     }
   }
@@ -224,48 +206,48 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     this.stateChangeSuccessSubscription.unsubscribe();
   }
 
-  private handleNodeClick(node: IPipelineNode): void {
-    this.toggleDetails(node.index);
+  private handleNodeClick(node: IPipelineGraphNode, subIndex: number): void {
+    this.toggleDetails(node.index, subIndex);
   }
 
   private handleSourceNoStagesClick(): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution source clicked (no stages found)'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution source clicked (no stages found)' });
   }
 
   private handlePauseClick(event: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution pause clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution pause clicked' });
     this.pauseExecution();
     event.stopPropagation();
   }
 
   private handleResumeClick(event: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution resume clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution resume clicked' });
     this.resumeExecution();
     event.stopPropagation();
   }
 
   private handleDeleteClick(event: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution delete clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution delete clicked' });
     this.deleteExecution();
     event.stopPropagation();
   }
 
   private handleCancelClick(event: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution cancel clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution cancel clicked' });
     this.cancelExecution();
     event.stopPropagation();
   }
 
   private handleSourceClick(): void {
-    ReactGA.event({category: 'Pipeline', action: 'Execution source clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Execution source clicked' });
   }
 
   private handlePermalinkClick(): void {
-    ReactGA.event({category: 'Pipeline', action: 'Permalink clicked'});
+    ReactGA.event({ category: 'Pipeline', action: 'Permalink clicked' });
   }
 
   public render() {
-    const { AccountTag, ExecutionStatus, PipelineGraph, ExecutionDetails, CopyToClipboard } = NgReact;
+    const { AccountTag, CopyToClipboard } = NgReact;
     const accountLabels = this.props.execution.deploymentTargets.map((account) => (
       <AccountTag key={account} account={account}/>
     ));

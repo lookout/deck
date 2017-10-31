@@ -10,7 +10,8 @@ export const filterModelConfig: IFilterConfig[] = [
   { model: 'account', param: 'acct', type: 'trueKeyObject' },
   { model: 'region', param: 'reg', type: 'trueKeyObject' },
   { model: 'stack', param: 'stack', type: 'trueKeyObject', },
-  { model: 'status', type: 'trueKeyObject', filterTranslator: {Up: 'Healthy', Down: 'Unhealthy', OutOfService: 'Out of Service'} },
+  { model: 'detail', param: 'detail', type: 'trueKeyObject', },
+  { model: 'status', type: 'trueKeyObject', filterTranslator: { Up: 'Healthy', Down: 'Unhealthy', OutOfService: 'Out of Service' } },
   { model: 'availabilityZone', param: 'zone', type: 'trueKeyObject', filterLabel: 'availability zone' },
   { model: 'providerType', type: 'trueKeyObject', filterLabel: 'provider' },
   { model: 'showInstances', displayOption: true, type: 'boolean' },
@@ -104,5 +105,5 @@ export class LoadBalancerFilterModel {
 
 export const LOAD_BALANCER_FILTER_MODEL = 'spinnaker.core.loadBalancer.filter.model';
 module(LOAD_BALANCER_FILTER_MODEL, [
-  require('core/filterModel/filter.model.service'),
+  require('core/filterModel/filter.model.service').name,
 ]).service('loadBalancerFilterModel', LoadBalancerFilterModel);

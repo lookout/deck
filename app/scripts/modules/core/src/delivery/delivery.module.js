@@ -3,40 +3,32 @@
 const angular = require('angular');
 
 import { DELIVERY_STATES } from './delivery.states';
-import { EXECUTION_DETAILS_COMPONENT } from './details/executionDetails.component';
 import { BUILD_DISPLAY_NAME_FILTER } from './executionBuild/buildDisplayName.filter';
-import { EXECUTION_BUILD_NUMBER_COMPONENT } from './executionBuild/executionBuildNumber.component';
 import { EXECUTION_COMPONENT } from './executionGroup/execution/execution.component';
-import { EXECUTION_GROUPS_COMPONENT } from './executionGroup/executionGroups.component';
-import { EXECUTIONS_COMPONENT } from './executions/executions.component';
-import { STAGE_FAILURE_MESSAGE_COMPONENT } from './stageFailureMessage/stageFailureMessage.component';
-import { EXECUTION_STATUS_COMPONENT } from './status/executionStatus.component';
+import { EXECUTION_DETAILS_SECTION_NAV } from './details/executionDetailsSectionNav.component';
+import { EXECUTION_FILTER_SERVICE } from 'core/delivery/filter/executionFilter.service';
+import { STAGE_FAILURE_MESSAGE_COMPONENT } from './details/stageFailureMessage.component';
 import { CORE_DELIVERY_DETAILS_SINGLEEXECUTIONDETAILS } from './details/singleExecutionDetails.component';
-
+import { STAGE_DETAILS_COMPONENT } from './details/stageDetails.component';
+import { STAGE_SUMMARY_COMPONENT } from './details/stageSummary.component';
 
 module.exports = angular.module('spinnaker.delivery', [
-
-  require('./details/executionDetails.controller.js'),
   CORE_DELIVERY_DETAILS_SINGLEEXECUTIONDETAILS,
   EXECUTION_COMPONENT,
-  EXECUTION_GROUPS_COMPONENT,
-  EXECUTION_DETAILS_COMPONENT,
-  EXECUTIONS_COMPONENT,
-  require('./details/executionDetailsSectionNav.directive.js'),
+  EXECUTION_DETAILS_SECTION_NAV,
+  EXECUTION_FILTER_SERVICE,
 
   BUILD_DISPLAY_NAME_FILTER,
-  EXECUTION_BUILD_NUMBER_COMPONENT,
 
-  require('./filter/executionFilters.directive.js'),
-
-  require('./manualExecution/manualPipelineExecution.controller.js'),
+  require('./manualExecution/manualPipelineExecution.controller.js').name,
 
   STAGE_FAILURE_MESSAGE_COMPONENT,
-  EXECUTION_STATUS_COMPONENT,
+  STAGE_DETAILS_COMPONENT,
+  STAGE_SUMMARY_COMPONENT,
 
-  require('../utils/appendTransform.js'),
-  require('../utils/moment.js'),
+  require('../utils/appendTransform.js').name,
+  require('../utils/moment.js').name,
 
-  require('./delivery.dataSource'),
+  require('./delivery.dataSource').name,
   DELIVERY_STATES,
 ]);

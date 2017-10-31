@@ -1,6 +1,6 @@
 import { module } from 'angular';
 
-import { CLOUD_PROVIDER_REGISTRY, CloudProviderRegistry, DeploymentStrategyRegistry, SearchFilterTypeRegistry } from '@spinnaker/core';
+import { CLOUD_PROVIDER_REGISTRY, CloudProviderRegistry, DeploymentStrategyRegistry } from '@spinnaker/core';
 
 import { AWS_LOAD_BALANCER_MODULE } from './loadBalancer/loadBalancer.module';
 import { AWS_REACT_MODULE } from './reactShims/aws.react.module';
@@ -32,32 +32,32 @@ module(AMAZON_MODULE, [
   CLOUD_PROVIDER_REGISTRY,
   AMAZON_HELP,
   AMAZON_APPLICATION_NAME_VALIDATOR,
-  require('./pipeline/stages/bake/awsBakeStage'),
-  require('./pipeline/stages/cloneServerGroup/awsCloneServerGroupStage'),
-  require('./pipeline/stages/destroyAsg/awsDestroyAsgStage'),
-  require('./pipeline/stages/disableAsg/awsDisableAsgStage'),
-  require('./pipeline/stages/disableCluster/awsDisableClusterStage'),
-  require('./pipeline/stages/enableAsg/awsEnableAsgStage'),
-  require('./pipeline/stages/findAmi/awsFindAmiStage'),
-  require('./pipeline/stages/findImageFromTags/awsFindImageFromTagsStage'),
-  require('./pipeline/stages/modifyScalingProcess/modifyScalingProcessStage'),
-  require('./pipeline/stages/resizeAsg/awsResizeAsgStage'),
-  require('./pipeline/stages/scaleDownCluster/awsScaleDownClusterStage'),
-  require('./pipeline/stages/shrinkCluster/awsShrinkClusterStage'),
-  require('./pipeline/stages/tagImage/awsTagImageStage'),
+  require('./pipeline/stages/bake/awsBakeStage').name,
+  require('./pipeline/stages/cloneServerGroup/awsCloneServerGroupStage').name,
+  require('./pipeline/stages/destroyAsg/awsDestroyAsgStage').name,
+  require('./pipeline/stages/disableAsg/awsDisableAsgStage').name,
+  require('./pipeline/stages/disableCluster/awsDisableClusterStage').name,
+  require('./pipeline/stages/enableAsg/awsEnableAsgStage').name,
+  require('./pipeline/stages/findAmi/awsFindAmiStage').name,
+  require('./pipeline/stages/findImageFromTags/awsFindImageFromTagsStage').name,
+  require('./pipeline/stages/modifyScalingProcess/modifyScalingProcessStage').name,
+  require('./pipeline/stages/resizeAsg/awsResizeAsgStage').name,
+  require('./pipeline/stages/scaleDownCluster/awsScaleDownClusterStage').name,
+  require('./pipeline/stages/shrinkCluster/awsShrinkClusterStage').name,
+  require('./pipeline/stages/tagImage/awsTagImageStage').name,
   SERVER_GROUP_DETAILS_MODULE,
   COMMON_MODULE,
   AWS_SERVER_GROUP_TRANSFORMER,
-  require('./serverGroup/configure/wizard/CloneServerGroup.aws.controller'),
-  require('./instance/awsInstanceType.service'),
+  require('./serverGroup/configure/wizard/CloneServerGroup.aws.controller').name,
+  require('./instance/awsInstanceType.service').name,
   AWS_LOAD_BALANCER_MODULE,
-  require('./instance/details/instance.details.controller'),
+  require('./instance/details/instance.details.controller').name,
   AWS_SECURITY_GROUP_MODULE,
   SUBNET_RENDERER,
   VPC_MODULE,
-  require('./image/image.reader'),
-  require('./cache/cacheConfigurer.service'),
-  require('./search/searchResultFormatter'),
+  require('./image/image.reader').name,
+  require('./cache/cacheConfigurer.service').name,
+  require('./search/searchResultFormatter').name,
 ]).config((cloudProviderRegistryProvider: CloudProviderRegistry) => {
   cloudProviderRegistryProvider.registerProvider('aws', {
     name: 'Amazon',
@@ -114,9 +114,6 @@ module(AMAZON_MODULE, [
       templateUrl: require('./applicationProviderFields/awsFields.html'),
     },
   });
-}).run(() => {
-  SearchFilterTypeRegistry.register({key: 'account', modifier: 'acct', text: 'Account'});
-  SearchFilterTypeRegistry.register({key: 'region', modifier: 'reg', text: 'Region'});
 });
 
 DeploymentStrategyRegistry.registerProvider('aws', ['custom', 'redblack', 'rollingpush', 'rollingredblack']);

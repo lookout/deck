@@ -5,21 +5,13 @@
 
 Buttons can be categorized based on form and function.
 These are three categories for buttons based on function:
-    1. primary -
-       Ones that call for action and are bold and bright. A page can have just one of these.
-    2. link -
-      Button that looks like a link
-    3. passive(default) -
-       Buttons that are used in the page which do not immediately call for action.
-       They are not the primary action for the page.
-    4. danger -
-       Buttons that are used to indicate operations that can have consequences.
-    5. nostyle -
-       No styles attached to the button. Relies on the user to set the styles based on parent element.
-    6. buttons with icons -
-       Buttons with icons to the left and right of the buttons
-    7. zombie -
-       Buttons that have a dashed border and is typically used with configurations.
+    1. primary - Ones that call for action and are bold and bright. A page can have just one of these.
+    2. link - Button that looks like a link
+    3. passive(default) - Buttons that are used in the page which do not immediately call for action. They are not the primary action for the page.
+    4. danger - Buttons that are used to indicate operations that can have consequences.
+    5. nostyle - No styles attached to the button. Relies on the user to set the styles based on parent element.
+    6. buttons with icons - Buttons with icons to the left and right of the buttons
+    7. zombie - Buttons that have a dashed border and is typically used with configurations.
 
 All buttons have a minimum width set.
 
@@ -108,23 +100,20 @@ Here are the variations:
   --button-hollow-padding: 6px 14px;
 }
 
-button, a.button {
-  font-family: 'Source Sans Pro', sans-serif;
-  letter-spacing: 0.04em;
-  font-size: var(--button-font-size);
-  box-shadow: none;
-  border: none;
-  cursor: pointer;
-}
-
-button i, a.button i {
+button.primary i, a.button.primary i,
+button.passive i, a.button.passive i,
+button.danger i, a.button.danger i,
+button.zombie i, a.button.zombie i {
   margin-right: 6px;
   vertical-align: middle;
   margin-top: -2px;
   font-size: inherit;
 }
 
-button *:not(i), a.button *:not(i) {
+button.primary *:not(i), a.button.primary *:not(i),
+button.passive *:not(i), a.button.passive *:not(i),
+button.danger *:not(i), a.button.danger *:not(i),
+button.zombie *:not(i), a.button.zombie *:not(i) {
   font-size: var(--button-font-size);
 }
 
@@ -133,6 +122,12 @@ button.passive, a.button.passive,
 button.danger, a.button.danger,
 button.zombie, a.button.zombie {
   border-radius: 3px;
+  font-family: 'Source Sans Pro', sans-serif;
+  letter-spacing: 0.04em;
+  font-size: var(--button-font-size);
+  box-shadow: none;
+  border: none;
+  cursor: pointer;
 }
 
 button.primary, a.button.primary {
@@ -171,11 +166,11 @@ button.passive:hover, a.button.passive:hover {
 }
 
 button.danger, a.button.danger {
-  color: var(--color-rose);
+  color: var(--color-danger);
 }
 
 button.danger:hover, a.button.danger:hover {
-  background-color: var(--color-rose);
+  background-color: var(--color-danger);
   color: var(--color-text-on-dark);
 }
 
@@ -185,7 +180,7 @@ button.zombie, a.button.zombie {
 }
 
 button.zombie, a.button.zombie, button.zombie i, a.button.zombie i {
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
 button.zombie:hover, a.button.zombie:hover,
@@ -198,7 +193,7 @@ a.button, a.button:hover, a.button:focus, a.button:active, a, button.link {
   text-decoration: none;
 }
 
-button.link, a {
+button.link, a.default {
   background-color: transparent;
   padding: 0;
   font-weight: normal;
@@ -206,7 +201,7 @@ button.link, a {
 }
 
 button.link:hover, button.link:active, button.link:focus,
-a:hover, a:active, a:focus {
+a.default:hover, a.default:active, a.default:focus {
   text-decoration: underline;
   color: var(--color-text-link);
 }

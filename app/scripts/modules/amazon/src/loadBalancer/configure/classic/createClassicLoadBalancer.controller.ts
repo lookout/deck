@@ -100,7 +100,7 @@ export class CreateClassicLoadBalancerCtrl extends CreateAmazonLoadBalancerCtrl 
   }
 
   public addListener(): void {
-    this.loadBalancerCommand.listeners.push({internalProtocol: 'HTTP', externalProtocol: 'HTTP', externalPort: 80, internalPort: undefined});
+    this.loadBalancerCommand.listeners.push({ internalProtocol: 'HTTP', externalProtocol: 'HTTP', externalPort: 80, internalPort: undefined });
   }
 
   public listenerProtocolChanged(listener: IClassicListenerDescription): void {
@@ -165,6 +165,6 @@ module(AWS_CREATE_CLASSIC_LOAD_BALANCER_CTRL, [
   CACHE_INITIALIZER_SERVICE,
   INFRASTRUCTURE_CACHE_SERVICE,
   NAMING_SERVICE,
-  require('../common/loadBalancerAvailabilityZoneSelector.directive.js'),
+  require('../common/loadBalancerAvailabilityZoneSelector.directive.js').name,
   SUBNET_SELECT_FIELD_COMPONENT,
 ]).controller('awsCreateClassicLoadBalancerCtrl', CreateClassicLoadBalancerCtrl);

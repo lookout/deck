@@ -55,6 +55,15 @@ module(HELP_CONTENTS, [])
           <li>Trigger</li>
           <li>Context - server groups, bakery results, etc.</li>
         </ul>`,
+    'pipeline.config.artifact.help': `
+        <p>There are certain types of triggers (e.g. Pub/Sub triggers) that can produce artifacts and inject them into the execution context for a pipeline.</p>
+        <p>You can specify artifacts that your pipeline expects to be present in the execution context in this section.</p>`,
+    'pipeline.config.artifact.missingPolicy': `
+        <p>The behavior of the pipeline if the Artifact is missing from the pipeline execution.</p>`,
+    'pipeline.config.artifact.name': `
+        <p>The name of the Artifact.</p>`,
+    'pipeline.config.artifact.type': `
+        <p>The type of the Artifact, e.g. 'gcs/object' or 'rpm'.</p>`,
     'pipeline.config.lock.allowUnlockUi': `
         <p><strong>Checked</strong> - the pipeline can be unlocked via the Spinnaker UI.</p>
         <p><strong>Unchecked</strong> - the pipeline can only be unlocked via the Spinnaker API.</p>`,
@@ -76,7 +85,22 @@ module(HELP_CONTENTS, [])
         the configuration based on the newest server group in the cluster.</p>
         <p>If you want to start from scratch, select "None".</p>
         <p>You can always edit the cluster configuration after you've created it.</p>`,
-
+    'pipeline.config.expectedArtifact.matchArtifact': `
+        <p>This specifies which fields in your incoming artifact to match against. Every field that you supply will be used to match against all incoming artifacts. If all fields specified match, the incoming artifact is bound to your pipeline context.</p>
+        <p>For example, if you want to match against any GCS object, only supply <b>type</b> = gcs/object. If you also want to restrict the matches by other fields, include those as well.</p>
+        <p>Regex is accepted, so you could for example match on a filepath like so <b>name</b> = .*\\.yaml to match all incoming YAML files.</p>`,
+    'pipeline.config.expectedArtifact.ifMissing': `
+        <p>If no artifact was supplied by your trigger to match against this expected artifact, you have a few options:
+          <ol>
+            <li>Attempt to match against an artifact in the prior pipeline execution's context. This ensures that you will always be using the most recently supplied artifact to this pipeline, and is generally a safe choice.</li>
+            <li>If option 1 fails, or isn't specified, you can provide a default artifact with all required fields specified to use instead.</li>
+            <li>Fail the pipeline if options 1 or 2 fail or aren't selected.</li>
+          </ol>
+        </p>`,
+    'pipeline.config.expectedArtifact.defaultArtifact': `
+        <p>If your artifact either wasn't supplied from a trigger, or it wasn't found in a prior execution, the artifact specified below will end up in your pipeline's execution context.</p>`,
+    'pipeline.config.expectedArtifact.gcs.name': `
+        <p>The GCS object name, in the form 'gs://bucket/path/to/file.yml.'</p>`,
     'loadBalancer.advancedSettings.healthTimeout': '<p>Configures the timeout, in seconds, for reaching the healthCheck target.  Must be less than the interval.</p><p> Default: <b>5</b></p>',
     'loadBalancer.advancedSettings.healthInterval': '<p>Configures the interval, in seconds, between ELB health checks.  Must be greater than the timeout.</p><p>Default: <b>10</b></p>',
     'loadBalancer.advancedSettings.healthyThreshold': '<p>Configures the number of healthy observations before reinstituting an instance into the ELB’s traffic rotation.</p><p>Default: <b>10</b></p>',
@@ -94,9 +118,9 @@ module(HELP_CONTENTS, [])
     'pipeline.config.enableAsg.cluster': '<p>Configures the cluster upon which this enable operation will act. The <em>target</em> specifies what server group to resolve for the operation.</p>',
     'pipeline.config.disableAsg.cluster': '<p>Configures the cluster upon which this disable operation will act. The <em>target</em> specifies what server group to resolve for the operation.</p>',
     'pipeline.config.destroyAsg.cluster': '<p>Configures the cluster upon which this destroy operation will act. The <em>target</em> specifies what server group to resolve for the operation.</p>',
-    'pipeline.config.jenkins.propertyFile': '<p>(Optional) Configures the name to the Jenkins artifact file used to pass in properties to later stages in the Spinnaker pipeline.</p>',
+    'pipeline.config.jenkins.propertyFile': '<p>(Optional) Configures the name to the Jenkins artifact file used to pass in properties to later stages in the Spinnaker pipeline. The contents of this file will now be available as a map under the trigger and accessible via <em>trigger.properties</em>. See <a target="_blank" href="https://www.spinnaker.io/guides/user/pipeline-expressions/">Pipeline Expressions docs</a> for more information.</p>',
     'pipeline.config.travis.job.isFiltered': '<p>Note that for performance reasons, not all jobs are displayed. Please use the search field to limit the number of jobs.</p>',
-    'pipeline.config.travis.propertyFile': '<p>(Optional) Configures the name to the Travis artifact file used to pass in properties to later stages in the Spinnaker pipeline.</p>',
+    'pipeline.config.travis.propertyFile': '<p>(Optional) Configures the name to the Travis artifact file used to pass in properties to later stages in the Spinnaker pipeline. The contents of this file will now be available as a map under the trigger and accessible via <em>trigger.properties</em>. See <a target="_blank" href="https://www.spinnaker.io/guides/user/pipeline-expressions/">Pipeline Expressions docs</a> for more information.</p>',
     'pipeline.config.bake.package': `
         <p>The name of the package you want installed (without any version identifiers).</p>
         <p>If your build produces a deb file named "myapp_1.27-h343", you would want to enter "myapp" here.</p>
@@ -104,7 +128,7 @@ module(HELP_CONTENTS, [])
     'pipeline.config.docker.bake.targetImage': '<p>The name of the resulting docker image.</p>',
     'pipeline.config.docker.bake.targetImageTag': '<p>The tag of the resulting docker image, defaults to commit hash if available.</p>',
     'pipeline.config.docker.bake.organization': '<p>The name of the organization or repo to use for the resulting docker image.</p>',
-    'pipeline.config.bake.baseAmi': '<p>(Optional) ami-????????</p>',
+    'pipeline.config.bake.baseAmi': '<p>(Optional) If Base AMI is specified, this will be used instead of the Base OS provided',
     'pipeline.config.bake.amiSuffix': '<p>(Optional) String of date in format YYYYMMDDHHmm, default is calculated from timestamp,</p>',
     'pipeline.config.bake.amiName': '<p>(Optional) Default = $package-$arch-$ami_suffix-$store_type</p>',
     'pipeline.config.bake.templateFileName': '<p>(Optional) The explicit packer template to use, instead of resolving one from rosco\'s configuration.</p>',
@@ -144,10 +168,7 @@ module(HELP_CONTENTS, [])
     'pipeline.config.parallel.cancel.queue': '<p>If concurrent pipeline execution is disabled, then the pipelines that are in the waiting queue will get canceled by default. <br><br>Check this box if you want to keep them in the queue.</p>',
     'pipeline.config.timeout': `
         <p>Allows you to override the amount of time the stage can run before failing.</p>
-        <p><b>Note:</b> this is not the overall time the stage has, but rather the time for specific tasks.</p>`,
-    'pipeline.config.timeout.bake': '<p>For the Bake stage, the timeout will apply to both the "Create Bake" and "Monitor Bake" tasks.</p>',
-    'pipeline.config.timeout.deploy': '<p>For the Deploy stage, the timeout will apply to both the "Monitor Deploy" and "Wait For Up Instances" tasks.</p>',
-    'pipeline.config.timeout.jenkins': '<p>For the Jenkins stage, the timeout will apply to both the "Wait For Jenkins Job Start" and "Monitor Jenkins Job" tasks.</p>',
+        <p><b>Note:</b> this represents the overall time the stage has to complete (the sum of all the task times).</p>`,
     'pipeline.config.trigger.runAsUser': 'The current user must have access to the specified service account, and the service account must have access to the current application. Otherwise, you\'ll receive an \'Access is denied\' error.',
     'pipeline.config.script.repoUrl': '<p>Path to the repo hosting the scripts in Stash. (e.g. <samp>CDL/mimir-scripts</samp>). Leave empty to use the default.</p>',
     'pipeline.config.script.repoBranch': '<p>Git Branch. (e.g. <samp>master</samp>). Leave empty to use the master branch.</p>',

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { Application, ReactInjector } from '@spinnaker/core';
 
@@ -19,7 +19,7 @@ export interface ICreateScalingPolicyButtonState {
   typeSelection: string;
 }
 
-@autoBindMethods
+@BindAll()
 export class CreateScalingPolicyButton extends React.Component<ICreateScalingPolicyButtonProps, ICreateScalingPolicyButtonState> {
 
   constructor(props: ICreateScalingPolicyButtonProps) {
@@ -32,7 +32,7 @@ export class CreateScalingPolicyButton extends React.Component<ICreateScalingPol
   }
 
   public handleClick(): void {
-    this.setState({showSelection: true});
+    this.setState({ showSelection: true });
   }
 
   public createStepPolicy(): void {
@@ -48,7 +48,7 @@ export class CreateScalingPolicyButton extends React.Component<ICreateScalingPol
         serverGroup: () => serverGroup,
         application: () => application,
       }
-    });
+    }).result.catch(() => {});
   }
 
   public createTargetTrackingPolicy(): void {
@@ -64,11 +64,11 @@ export class CreateScalingPolicyButton extends React.Component<ICreateScalingPol
         serverGroup: () => serverGroup,
         application: () => application,
       }
-    });
+    }).result.catch(() => {});
   }
 
   public typeSelected(typeSelection: string): void {
-    this.setState({typeSelection, showSelection: false, showModal: true});
+    this.setState({ typeSelection, showSelection: false, showModal: true });
     if (typeSelection === 'step') {
       this.createStepPolicy();
     }
@@ -78,7 +78,7 @@ export class CreateScalingPolicyButton extends React.Component<ICreateScalingPol
   }
 
   public showModalCallback(): void {
-    this.setState({showSelection: false, showModal: false, typeSelection: null});
+    this.setState({ showSelection: false, showModal: false, typeSelection: null });
   }
 
   public render() {

@@ -1,60 +1,53 @@
 import * as React from 'react';
-import autoBindMethods from 'class-autobind-decorator';
-
-const Logo = require('./logo.svg');
+import { BindAll } from 'lodash-decorators';
 
 export interface ISpinnerProps {
-  size?: 'nano' | 'small' | 'medium' | 'large' | 'page';
+  size?: 'nano' | 'small' | 'medium' | 'large';
   message?: string;
-  postnote?: string;
 }
 
-@autoBindMethods
+@BindAll()
 export class Spinner extends React.Component<ISpinnerProps> {
 
   public getBarRows(): Array<React.ReactNode> {
     const { size } = this.props;
     let count = 3;
 
-    if (size === 'nano') {
-      count = 1;
-    } else if (size.match(/large|page/)) {
-      count = 5;
+    if (size) {
+      if (size === 'nano') {
+        count = 1;
+      } else if (size === 'large') {
+        count = 5;
+      }
     }
 
     const rows = [];
     let i: number;
     for (i = 0; i < count; i++) {
-      rows.push(<div className="bar" />)
+      rows.push(<div key={i} className="bar" />)
     }
     return rows;
   }
 
   public render(): React.ReactElement<Spinner> {
-    const { size, message, postnote } = this.props;
-    const mainClassNames = `load ${size || 'small'} ${size === 'page' && 'large vertical center'}`;
-    const messageClassNames = `message color-text-accent ${size === 'medium' ? 'heading-4':'heading-2'}`;
+    const { size, message } = this.props;
+    const mainClassNames = `load ${size || 'small'}`;
+    const messageClassNames = `message color-text-accent ${size === 'medium' ? 'heading-4' : 'heading-2'}`;
 
-    const logo = (size === 'page' && <Logo />);
-
-    const messageNode = ['medium', 'large', 'page'].includes(size) &&
+    const messageNode = ['medium', 'large'].includes(size) &&
       <div className={messageClassNames}>{message || 'Loading ...'}</div>;
 
-    const bars = ['medium', 'large', 'page'].includes(size) ?
-      (<div className="bars">
+    const bars = ['medium', 'large'].includes(size) ? (
+      <div className="bars">
         {this.getBarRows()}
-      </div>) :
+      </div>
+      ) :
       this.getBarRows();
-
-    const postnoteNode = (size === 'page' &&
-      <div className="postnote">{postnote}</div>);
 
     return (
       <div className={mainClassNames}>
-        {logo}
         {messageNode}
         {bars}
-        {postnoteNode}
       </div>
     );
   }

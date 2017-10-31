@@ -1,8 +1,5 @@
-import { module } from 'angular';
-
-import { react2angular } from 'react2angular';
 import * as React from 'react';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { IEntityTags, IEntityTag } from 'core/domain';
 import { Placement } from 'core/presentation';
@@ -30,7 +27,7 @@ export interface IEntityNotificationsProps {
  * A notifications popover for alerts and notices.
  * Shows the notifications for a single entity (not rolled up, and not grouped by message)
  */
-@autoBindMethods
+@BindAll()
 export class EntityNotifications extends React.Component<IEntityNotificationsProps> {
   public static defaultProps: Partial<IEntityNotificationsProps> = {
     placement: 'bottom',
@@ -98,37 +95,3 @@ export class EntityNotifications extends React.Component<IEntityNotificationsPro
     );
   }
 }
-
-
-export const ENTITY_NOTIFICATIONS = 'spinnaker.core.entityTag.alerts.entitynotifications';
-const ngmodule = module(ENTITY_NOTIFICATIONS, []);
-
-ngmodule.component('entityNotificationsWrapper', react2angular(EntityNotifications, [
-  'entity', 'application', 'placement', 'hOffsetPercent', 'className', 'pageLocation', 'entityType', 'onUpdate'
-]));
-
-
-ngmodule.component('entityNotifications', {
-  template: `
-    <entity-notifications-wrapper
-      entity="$ctrl.entity"
-      application="$ctrl.application"
-      placement="$ctrl.placement"
-      h-offset-percent="$ctrl.hOffsetPercent"
-      class-name="$ctrl.className"
-      entity-type="$ctrl.entityType"
-      page-location="$ctrl.pageLocation"
-      on-update="$ctrl.onUpdate"
-    ></entity-notifications-wrapper>
-  `,
-  bindings: {
-    entity: '<',
-    application: '<',
-    placement: '@',
-    hOffsetPercent: '@',
-    className: '@',
-    entityType: '@',
-    pageLocation: '@',
-    onUpdate: '&',
-  }
-});

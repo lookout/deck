@@ -12,14 +12,16 @@
                ng-paste="ctrl.dispatchQueryInput($event)"
                ng-cut="ctrl.dispatchQueryInput($event)"
           />
-        <span class="glyphicon glyphicon-search form-control-feedback" uib-tooltip-html="ctrl.tooltip" tooltip-placement="right"></span>
+        <i class="glyphicon glyphicon-search form-control-feedback" uib-tooltip-html="ctrl.tooltip" tooltip-placement="right"></i>
       </div>
     </div>
   </form>
   <ul class="dropdown-menu"
       role="menu"
       ng-if="querying">
-    <li class="loader">searching..</li>
+    <li class="horizontal middle center spinner-section">
+      <loading-spinner size="'small'"></loading-spinner>
+    </li>
   </ul>
   <ul class="dropdown-menu"
       role="menu"

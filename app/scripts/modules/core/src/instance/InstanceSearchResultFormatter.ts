@@ -1,10 +1,9 @@
 import { IPromise } from 'angular';
-
 import { $q } from 'ngimport';
 
-import { ISearchResultFormatter } from '../search/searchResult/searchResultFormatter.registry';
-import { ISearchResult } from '../search/search.service';
-import { searchResultFormatterRegistry } from '../search/searchResult/searchResultFormatter.registry';
+import { SearchFilterTypeRegistry } from 'core/search/widgets/SearchFilterTypeRegistry';
+import { IResultRenderer, ISearchResult, ISearchResultFormatter, searchResultFormatterRegistry } from '../search';
+import { InstanceDisplayRenderer } from './InstanceDisplayRenderer';
 
 export interface IInstanceSearchResult extends ISearchResult {
   serverGroup?: string;
@@ -20,6 +19,12 @@ export class InstanceSearchResultFormatter implements ISearchResultFormatter {
   public displayFormatter(searchResult: IInstanceSearchResult): IPromise<string> {
     const serverGroup = searchResult.serverGroup || 'standalone instance';
     return $q.when(searchResult.instanceId + ' (' + serverGroup + ' - ' + searchResult.region + ')');
+  }
+  public get displayRenderer(): IResultRenderer {
+    return InstanceDisplayRenderer.renderer()
+  }
+  public get requiredSearchFields(): string[] {
+    return [SearchFilterTypeRegistry.KEYWORD_FILTER.key];
   }
 }
 

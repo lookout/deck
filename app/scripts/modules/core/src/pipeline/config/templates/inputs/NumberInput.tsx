@@ -1,13 +1,13 @@
-import {module} from 'angular';
+import { module } from 'angular';
 import * as React from 'react';
 import {
   IVariableInputBuilder, VariableInputService, IVariable,
   IVariableState, IVariableProps
 } from './variableInput.service';
-import autoBindMethods from 'class-autobind-decorator';
-import {VariableError} from '../VariableError';
+import { BindAll } from 'lodash-decorators';
+import { VariableError } from '../VariableError';
 
-@autoBindMethods
+@BindAll()
 class NumberInput extends React.Component<IVariableProps, IVariableState> {
 
   public render() {
@@ -27,7 +27,7 @@ class NumberInput extends React.Component<IVariableProps, IVariableState> {
 
   private extractValue(e: React.ChangeEvent<HTMLInputElement>) {
     const value: string = e.target.value; // Comes back from input as a string, not a number.
-    this.props.onChange({value, type: this.props.variable.type, name: this.props.variable.name});
+    this.props.onChange({ value, type: this.props.variable.type, name: this.props.variable.name });
   }
 }
 

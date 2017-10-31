@@ -1,4 +1,6 @@
-import {module} from 'angular';
+import { module } from 'angular';
+import { padStart, isNil } from 'lodash';
+import { IMoniker } from './IMoniker';
 
 export interface IComponentName {
   application: string;
@@ -69,14 +71,12 @@ export class NamingService {
     return split.join('-');
   }
 
-  public getSequence(serverGroupName: string): string {
-    const split = serverGroupName.split('-'),
-      isVersioned = NamingService.VERSION_PATTERN.test(split[split.length - 1]);
-
-    if (isVersioned) {
-      return split.pop();
+  public getSequence(monikerSequence: number): string {
+    if (isNil(monikerSequence)) {
+      return 'N/A';
+    } else {
+      return `v${padStart(monikerSequence.toString(), 3, '0')}`;
     }
-    return null;
   }
 
   public parseLoadBalancerName(loadBalancerName: string): IComponentName {
@@ -100,6 +100,11 @@ export class NamingService {
 
   public parseSecurityGroupName(securityGroupName: string): IComponentName {
     return this.parseLoadBalancerName(securityGroupName);
+  }
+
+  public getMoniker(app: string, stack: string, detail: string): IMoniker {
+    const cluster = this.getClusterName(app, stack, detail);
+    return { app, stack, detail, cluster };
   }
 }
 

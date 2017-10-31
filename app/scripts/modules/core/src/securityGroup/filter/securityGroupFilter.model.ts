@@ -10,6 +10,7 @@ export const filterModelConfig: IFilterConfig[] = [
   { model: 'account', param: 'acct', type: 'trueKeyObject' },
   { model: 'region', param: 'reg', type: 'trueKeyObject' },
   { model: 'stack', param: 'stack', type: 'trueKeyObject', },
+  { model: 'detail', param: 'detail', type: 'trueKeyObject', },
   { model: 'providerType', type: 'trueKeyObject', filterLabel: 'provider' },
   { model: 'showServerGroups', param: 'hideServerGroups', displayOption: true, type: 'inverse-boolean' },
   { model: 'showLoadBalancers', param: 'hideLoadBalancers', displayOption: true, type: 'inverse-boolean' },
@@ -97,5 +98,5 @@ export class SecurityGroupFilterModel {
 }
 
 module(SECURITY_GROUP_FILTER_MODEL, [
-  require('core/filterModel/filter.model.service'),
+  require('core/filterModel/filter.model.service').name,
 ]).service('securityGroupFilterModel', SecurityGroupFilterModel);

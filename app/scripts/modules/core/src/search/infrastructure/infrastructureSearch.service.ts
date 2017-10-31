@@ -36,7 +36,7 @@ export class InfrastructureSearcher {
           return Observable.of(getFallbackResults());
         }
         return Observable.zip(
-          searchService.search({q: query, type: searchResultFormatterRegistry.getSearchCategories()}),
+          searchService.search({ q: query, type: searchResultFormatterRegistry.getSearchCategories() }),
           externalSearchRegistry.search(query),
           (s1, s2) => {
             s1.results = s1.results.concat(s2);
@@ -45,7 +45,7 @@ export class InfrastructureSearcher {
         )
       })
       .subscribe((result: ISearchResults<ISearchResult>) => {
-        const tmp: {[type: string]: ISearchResult[]} = result.results.reduce((categories: { [type: string]: ISearchResult[] }, entry: ISearchResult) => {
+        const categorizedSearchResults: { [type: string]: ISearchResult[] } = result.results.reduce((categories: { [type: string]: ISearchResult[] }, entry: ISearchResult) => {
           this.formatResult(entry.type, entry).then((name) => entry.displayName = name);
           entry.href = urlBuilderService.buildFromMetadata(entry);
           if (!categories[entry.type]) {
@@ -54,7 +54,7 @@ export class InfrastructureSearcher {
           categories[entry.type].push(entry);
           return categories;
         }, {});
-        this.deferred.resolve(Object.keys(tmp)
+        this.deferred.resolve(Object.keys(categorizedSearchResults)
           .filter(c => searchResultFormatterRegistry.get(c))
           .map(category => {
             const config = searchResultFormatterRegistry.get(category);
@@ -65,7 +65,7 @@ export class InfrastructureSearcher {
               iconClass: config.iconClass,
               order: config.order,
               hideIfEmpty: config.hideIfEmpty,
-              results: tmp[category]
+              results: categorizedSearchResults[category]
             };
           })
         );
@@ -104,7 +104,8 @@ export class InfrastructureSearcher {
 }
 
 export class InfrastructureSearchService {
-  constructor(private $q: IQService, private providerServiceDelegate: any, private searchService: SearchService, private urlBuilderService: UrlBuilderService) {}
+  constructor(private $q: IQService, private providerServiceDelegate: any, private searchService: SearchService, private urlBuilderService: UrlBuilderService) {
+  }
 
   public getSearcher(): InfrastructureSearcher {
     return new InfrastructureSearcher(this.$q, this.providerServiceDelegate, this.searchService, this.urlBuilderService);

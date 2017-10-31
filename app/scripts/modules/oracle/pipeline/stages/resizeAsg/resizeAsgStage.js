@@ -9,16 +9,14 @@ import {
 
 module.exports = angular.module('spinnaker.oraclebmcs.pipeline.stage.resizeAsgStage', [
   ACCOUNT_SERVICE,
-  require('core/application/modal/platformHealthOverride.directive.js'),
+  require('core/application/modal/platformHealthOverride.directive.js').name,
 ])
   .config(function(pipelineConfigProvider) {
     pipelineConfigProvider.registerStage({
       provides: 'resizeServerGroup',
       cloudProvider: 'oraclebmcs',
       templateUrl: require('./resizeAsgStage.html'),
-      executionDetailsUrl: require('./resizeAsgExecutionDetails.html'),
       executionStepLabelUrl: require('./resizeAsgStepLabel.html'),
-      executionConfigSections: ['resizeServerGroupConfig', 'taskStatus'],
       validators: [
         {
           type: 'targetImpedance',

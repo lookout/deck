@@ -12,8 +12,8 @@ export const LOAD_BALANCER_FILTER = 'spinnaker.core.loadBalancer.filter.controll
 const ngmodule = module('spinnaker.core.loadBalancer.filter.controller', [
   LOAD_BALANCER_FILTER_SERVICE,
   LOAD_BALANCER_FILTER_MODEL,
-  require('../../filterModel/dependentFilter/dependentFilter.service'),
-  require('./loadBalancerDependentFilterHelper.service'),
+  require('../../filterModel/dependentFilter/dependentFilter.service').name,
+  require('./loadBalancerDependentFilterHelper.service').name,
 ]);
 
 class LoadBalancerFilterCtrl {
@@ -24,6 +24,7 @@ class LoadBalancerFilterCtrl {
   public regionHeadings: string[];
   public sortFilter: any;
   public stackHeadings: string[];
+  public detailHeadings: string[];
   public tags: IFilterTag[];
   private groupsUpdatedSubscription: Subscription;
   private locationChangeUnsubscribe: () => void;
@@ -101,6 +102,7 @@ class LoadBalancerFilterCtrl {
 
   public initialize(): void {
     this.stackHeadings = ['(none)'].concat(this.getHeadingsForOption('stack'));
+    this.detailHeadings = ['(none)'].concat(this.getHeadingsForOption('detail'));
     this.providerTypeHeadings = this.getHeadingsForOption('type');
     this.updateLoadBalancerGroups();
   }

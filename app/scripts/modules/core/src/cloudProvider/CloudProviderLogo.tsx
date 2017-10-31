@@ -1,5 +1,5 @@
 import * as React from 'react';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { Tooltip } from 'core/presentation/Tooltip';
 import { ReactInjector } from 'core/reactShims';
@@ -17,7 +17,7 @@ export interface ICloudProviderLogoState {
   tooltip?: string;
 }
 
-@autoBindMethods
+@BindAll()
 export class CloudProviderLogo extends React.Component<ICloudProviderLogoProps, ICloudProviderLogoState> {
   constructor(props: ICloudProviderLogoProps) {
     super(props);
@@ -42,7 +42,7 @@ export class CloudProviderLogo extends React.Component<ICloudProviderLogoProps, 
       <span className="cloud-provider-logo">
         <span
           className={`icon icon-${this.props.provider}`}
-          style={{height: this.props.height, width: this.props.width}}
+          style={{ height: this.props.height, width: this.props.width }}
         />
       </span>);
 

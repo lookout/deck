@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactGA from 'react-ga';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { IExecution, IExecutionStageSummary } from 'core/domain';
 import { OrchestratedItemRunningTime } from './OrchestratedItemRunningTime';
@@ -25,7 +25,7 @@ export interface IExecutionMarkerState {
   duration: string;
 }
 
-@autoBindMethods
+@BindAll()
 export class ExecutionMarker extends React.Component<IExecutionMarkerProps, IExecutionMarkerState> {
   private runningTime: OrchestratedItemRunningTime;
 
@@ -50,17 +50,18 @@ export class ExecutionMarker extends React.Component<IExecutionMarkerProps, IExe
   }
 
   private handleStageClick(): void {
-    ReactGA.event({category: 'Pipeline', action: 'Stage clicked (bar)'});
+    ReactGA.event({ category: 'Pipeline', action: 'Stage clicked (bar)' });
     this.props.onClick(this.props.stage.index);
   }
 
   public render() {
-    const {stage, application, execution, active, previousStageActive, width} = this.props;
+    const { stage, application, execution, active, previousStageActive, width } = this.props;
+    const stageType = (stage.activeStageType || stage.type).toLowerCase(); // support groups
     const markerClassName = [
-      'clickable',
+      stage.type !== 'group' ? 'clickable' : '',
       'stage',
       'execution-marker',
-      `stage-type-${stage.type.toLowerCase()}`,
+      `stage-type-${stageType}`,
       `execution-marker-${stage.status.toLowerCase()}`,
       active ? 'active' : '',
       previousStageActive ? 'after-active' : '',
@@ -72,7 +73,7 @@ export class ExecutionMarker extends React.Component<IExecutionMarkerProps, IExe
     const stageContents = (
       <div
         className={markerClassName}
-        style={{width: width, backgroundColor: stage.color}}
+        style={{ width: width, backgroundColor: stage.color }}
         onClick={this.handleStageClick}
       >
         <MarkerIcon stage={stage}/>

@@ -1,15 +1,15 @@
 @import (reference) "~core/presentation/less/imports/commonImports.less";
 
 .execution {
-  execution-details, .execution-details {
+  .execution-details {
     width: 100%;
   }
   .execution-details-container {
-    background-color: #ffffff;
+    background-color: var(--color-white);
     padding: 0 0 0 20px;
     margin: -20px 50px 0;
-    border: 1px solid @mid_light_grey;
-    box-shadow: 0 0 4px 2px fade(@spinnaker-link-color, 10%);
+    border: 1px solid var(--color-alto);
+    box-shadow: 0 0 4px 2px var(--color-accent-g1);
     border-radius: 1px;
     display: flex;
     flex-direction: row;
@@ -24,7 +24,7 @@
       }
       .stage-details {
         padding-left: 20px;
-        background-color: @pod_header_blue;
+        background-color: var(--color-accent-g2);
         box-shadow: none;
       }
     }
@@ -37,22 +37,21 @@
       border: 0;
       padding-left: 0;
       width: auto;
-      margin-left: -15px;
       a {
         margin: 10px 0 0;
         border-radius: 0;
         padding: 5px 15px;
         border-bottom-width: 0;
         font-weight: 600;
-        color: @text-color;
-        background-color: @lightest_grey;
+        color: var(--color-mineshaft);
+        background-color: var(--color-alabaster);
         &:hover {
-          background-color: @mid_lighter_grey;
+          background-color: var(--color-concrete);
           transition: background-color 0.15s;
         }
         &.active {
-          color: #ffffff;
-          background-color: @spinnaker-link-color;
+          color: var(--color-white);
+          background-color: var(--color-accent);
         }
       }
     }
@@ -89,13 +88,13 @@
       tr.clickable {
         cursor: pointer;
         &:hover {
-          background-color: @table-bg-hover;
+          background-color: var(--color-alabaster);
         }
       }
     }
     .glyphicon-remove {
       cursor: pointer;
-      color: @mid_grey;
+      color: var(--color-dovegray);
     }
     h5 {
       font-weight: 600;
@@ -106,20 +105,23 @@
     }
     .well, .alert-info {
       margin-top: 10px;
-      background-color: @lightest_grey;
+      background-color: var(--color-alabaster);
       padding: 10px;
-      border: 1px solid @spinnaker-link-color;
+      border: 1px solid var(--color-accent);
       border-radius: 2px;
-      color: @text-color;
+      color: var(--color-mineshaft);
     }
     .alert-danger {
-      border: 1px solid @unhealthy_red_border;
-      color: @text-color;
+      border: 1px solid var(--color-danger);
+      color: var(--color-mineshaft);
     }
   }
 
   .stage-details {
     .stage-details-heading {
+      .status-glyph {
+        margin-right: 3px;
+      }
       text-transform: uppercase;
       margin-top: 0;
       h4 {
@@ -127,7 +129,7 @@
       }
     }
     .stage-details-section-heading {
-      border-bottom: 1px solid @dark_blue_background;
+      border-bottom: 1px solid var(--color-primary);
       margin-bottom: 5px;
       h4 {
         font-weight: 600;
@@ -141,14 +143,14 @@
   .subinput-note {
     font-style: italic;
     font-size: 11px;
-    color: @mid_grey;
+    color: var(--color-dovegray);
   }
 
   .hide-details-link {
     display: block;
     text-align: right;
     padding-top: 5px;
-    color: @text-color;
+    color: var(--color-mineshaft);
     text-transform: none;
     font-size: 90%;
     .glyphicon {

@@ -86,8 +86,8 @@ class ViewChangesLinkController implements IController {
     this.loadingExecution = true;
     this.executionService.getExecution(executionId).then((details: any) => {
       const stage: any = details.stages.find((s: any) => s.id === stageId);
-      this.jarDiffs = stage.context.jarDiffs;
-      this.commits = stage.context.commits;
+      this.jarDiffs = stage.context.jarDiffs || {};
+      this.commits = stage.context.commits || [];
       extend(this.changeConfig.buildInfo, stage.context.buildInfo);
       this.setJarDiffs();
 
@@ -97,7 +97,8 @@ class ViewChangesLinkController implements IController {
       // if the stage is still running, and we haven't found commits or changes, reload it on the next refresh cycle
       this.executionLoaded = stage.status !== 'RUNNING' || this.changesAvailable;
 
-    }).finally(() => this.loadingExecution = false);
+    }).catch(() => {})
+      .finally(() => this.loadingExecution = false);
   }
 
   public $onInit(): void {

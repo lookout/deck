@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import { Application } from 'core/application/application.model';
 import { EXECUTION_FILTER_MODEL, ExecutionFilterModel } from 'core/delivery';
 import { IExecution, IExecutionGroup, IPipeline } from 'core/domain';
-import { PIPELINE_CONFIG_PROVIDER } from 'core/pipeline/config/pipelineConfigProvider';
+import { PIPELINE_CONFIG_PROVIDER, PipelineConfigProvider } from 'core/pipeline/config/pipelineConfigProvider';
 
 export class ExecutionFilterService {
 
@@ -19,7 +19,7 @@ export class ExecutionFilterService {
               private timeBoundaries: any,
               private $log: ILogService,
               private filterModelService: any,
-              private pipelineConfig: any) {
+              private pipelineConfig: PipelineConfigProvider) {
     'ngInject';
     this.isFilterable = filterModelService.isFilterable;
   }
@@ -119,12 +119,12 @@ export class ExecutionFilterService {
       !this.executionFilterModel.asFilterModel.sortFilter.filter) {
       configs
         .filter((config: any) => !groups[config.name])
-        .forEach((config: any) => groups.push({heading: config.name, config: config, executions: [], targetAccounts: this.extractAccounts(config)}));
+        .forEach((config: any) => groups.push({ heading: config.name, config: config, executions: [], targetAccounts: this.extractAccounts(config) }));
     } else {
       configs
         .filter((config: any) => !groups[config.name] && this.executionFilterModel.asFilterModel.sortFilter.pipeline[config.name])
         .forEach((config: any) => {
-          groups.push({heading: config.name, config: config, executions: [], targetAccounts: this.extractAccounts(config)});
+          groups.push({ heading: config.name, config: config, executions: [], targetAccounts: this.extractAccounts(config) });
         });
     }
   }
@@ -300,8 +300,8 @@ export class ExecutionFilterService {
 export const EXECUTION_FILTER_SERVICE = 'spinnaker.core.delivery.filter.executionFilter.service';
 module (EXECUTION_FILTER_SERVICE, [
   EXECUTION_FILTER_MODEL,
-  require('core/filterModel/filter.model.service'),
-  require('core/orchestratedItem/timeBoundaries.service'),
+  require('core/filterModel/filter.model.service').name,
+  require('core/orchestratedItem/timeBoundaries.service').name,
   PIPELINE_CONFIG_PROVIDER
 ]).factory('executionFilterService', (executionFilterModel: ExecutionFilterModel, timeBoundaries: any, $log: ILogService, filterModelService: any, pipelineConfig: any) =>
                                       new ExecutionFilterService(executionFilterModel, timeBoundaries, $log, filterModelService, pipelineConfig));

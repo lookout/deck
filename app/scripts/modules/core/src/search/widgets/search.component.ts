@@ -6,7 +6,9 @@ import { SearchFilterTypeRegistry } from './SearchFilterTypeRegistry';
 
 export const SEARCH_COMPONENT = 'spinnaker.core.search.component';
 module(SEARCH_COMPONENT, [])
-  .component('tagSearch', react2angular(Search, ['query']))
+  .component('tagSearch', react2angular(Search, ['query', 'onChange']))
   .run(() => {
+    SearchFilterTypeRegistry.register({ key: 'account', modifier: 'acct', text: 'Account' });
+    SearchFilterTypeRegistry.register({ key: 'region', modifier: 'reg', text: 'Region' });
     SearchFilterTypeRegistry.register({ key: 'stack', modifier: 'stack', text: 'Stack' });
   });

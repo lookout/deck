@@ -1,29 +1,50 @@
 const webpack = require('webpack');
-const HappyPack = require('happypack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const path = require('path');
-const NODE_MODULE_PATH = path.join(__dirname, 'node_modules');
 const fs = require('fs');
+const path = require('path');
+const md5 = require('md5');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
+// invalidate webpack cache when webpack config is changed, cache-loader is updated,
+// or any of these environment variables are changed
+const CACHE_INVALIDATE = JSON.stringify({
+  API_HOST:            process.env.API_HOST,
+  AUTH_ENABLED:        process.env.AUTH_ENABLED,
+  AUTH_ENDPOINT:       process.env.AUTH_ENDPOINT,
+  BAKERY_DETAIL_URL:   process.env.BAKERY_DETAIL_URL,
+  CANARY_ENABLED:      process.env.CANARY_ENABLED,
+  CHAOS_ENABLED:       process.env.CHAOS_ENABLED,
+  DEBUG_ENABLED:       process.env.DEBUG_ENABLED,
+  ENTITY_TAGS_ENABLED: process.env.ENTITY_TAGS_ENABLED,
+  FEEDBACK_URL:        process.env.FEEDBACK_URL,
+  FIAT_ENABLED:        process.env.FIAT_ENABLED,
+  INFRA_ENABLED:       process.env.INFRA_ENABLED,
+  INF_SEARCH_ENABLED:  process.env.INF_SEARCH_ENABLED,
+  NETFLIX_MODE:        process.env.NETFLIX_MODE,
+  THREAD_LOADER:       require('cache-loader/package.json').version,
+  WEBPACK_CONFIG:      md5(fs.readFileSync(__filename)),
+});
+
+const NODE_MODULE_PATH = path.join(__dirname, 'node_modules');
 function configure(IS_TEST) {
 
-  const POOL_SIZE = IS_TEST ? 3 : 6;
-  const happyThreadPool = HappyPack.ThreadPool({size: POOL_SIZE});
-
   const config = {
+    context: __dirname, // to automatically find tsconfig.json,
+    stats: 'errors-only',
+    devtool: 'source-map',
     plugins: [],
     output: IS_TEST ? undefined : {
-        path: path.join(__dirname, 'build', 'webpack', process.env.SPINNAKER_ENV || ''),
-        filename: '[name].js',
-      },
+      path: path.join(__dirname, 'build', 'webpack', process.env.SPINNAKER_ENV || ''),
+      filename: '[name].js',
+    },
     resolveLoader: IS_TEST ? {} : {
-        modules: [
-          NODE_MODULE_PATH
-        ],
-        moduleExtensions: ['-loader']
-      },
+      modules: [
+        NODE_MODULE_PATH
+      ],
+      moduleExtensions: ['-loader']
+    },
     resolve: {
-      extensions: ['.json', '.js', '.jsx', '.ts', '.tsx', '.css', '.less', '.html'],
+      extensions: ['.json', '.ts', '.tsx', '.js', '.jsx', '.css', '.less', '.html'],
       modules: [
         NODE_MODULE_PATH,
         path.join(__dirname, 'app', 'scripts', 'modules'),
@@ -39,56 +60,86 @@ function configure(IS_TEST) {
         'google': path.join(__dirname, 'app', 'scripts', 'modules', 'google', 'src'),
         '@spinnaker/google': path.join(__dirname, 'app', 'scripts', 'modules', 'google', 'src'),
         'coreImports': path.resolve(__dirname, 'app', 'scripts', 'modules', 'core', 'src', 'presentation', 'less', 'imports', 'commonImports.less'),
-        'coreColors': path.resolve(__dirname, 'app', 'scripts', 'modules', 'core', 'src', 'presentation', 'less', 'imports', 'colors.less'),
       }
     },
     module: {
       rules: [
-        {test: /\.json$/, loader: 'json-loader'},
-        {test: /\.tsx?$/, use: ['ng-annotate-loader', 'awesome-typescript-loader', 'tslint-loader'], exclude: /node_modules/},
-        {test: /\.(woff|otf|ttf|eot|png|gif|ico)(.*)?$/, use: 'file-loader'},
-        {test: /\.js$/, use: ['happypack/loader?id=js'], exclude: /node_modules(?!\/clipboard)/},
         {
-          test: require.resolve('jquery'),
+          test: /\.js$/,
           use: [
-            'expose-loader?$',
-            'expose-loader?jQuery'
-          ]
+            { loader: 'cache-loader', options: { cacheIdentifier: CACHE_INVALIDATE } },
+            { loader: 'thread-loader', options: { workers: 3 } },
+            { loader: 'babel-loader' },
+            { loader: 'envify-loader' },
+            { loader: 'eslint-loader' } ,
+          ],
+          exclude: /node_modules(?!\/clipboard)/
         },
         {
-          test: /\.svg(.*)?$/,
-          exclude: /\/app\/scripts\/modules\/core\/src\/widgets\/spinners/,
-          use: 'file-loader'
-        },
-        {
-          test: /\.svg(.*)?$/,
-          include: /\/app\/scripts\/modules\/core\/src\/widgets\/spinners/,
-          use: ['svg-react-loader']
+          test: /\.tsx?$/,
+          use: [
+            { loader: 'cache-loader', options: { cacheIdentifier: CACHE_INVALIDATE } },
+            { loader: 'thread-loader', options: { workers: 3 } },
+            { loader: 'babel-loader' },
+            { loader: 'ts-loader', options: { happyPackMode: true } },
+            { loader: 'tslint-loader' },
+          ],
+          exclude: /node_modules/
         },
         {
           test: /\.less$/,
-          use: IS_TEST ? ['style-loader', 'css-loader', 'less-loader'] : ['happypack/loader?id=less']
+          use: [
+            { loader: 'style-loader' },
+            { loader: 'css-loader' },
+            { loader: 'postcss-loader' },
+            { loader: 'less-loader' },
+          ],
         },
         {
           test: /\.css$/,
-          use: IS_TEST ? ['style-loader', 'css-loader'] : [
-            'style-loader',
-            'css-loader',
-            'postcss-loader'
+          use: [
+            { loader: 'style-loader' },
+            { loader: 'css-loader' },
+            { loader: 'postcss-loader' },
           ]
         },
         {
           test: /\.html$/,
-          use: ['happypack/loader?id=html']
-        }
+          use: [
+            { loader: 'ngtemplate-loader?relativeTo=' + (path.resolve(__dirname)) + '/' },
+            { loader: 'html-loader' },
+          ]
+        },
+        {
+          test: /\.json$/,
+          use: [
+            { loader: 'json-loader' },
+          ],
+        },
+        {
+          test: /\.(woff|woff2|otf|ttf|eot|png|gif|ico|svg)$/,
+          use: [
+            { loader: 'file-loader', options: { name: '[name].[hash:5].[ext]'} },
+          ],
+        },
+        {
+          test: require.resolve('jquery'),
+          use: [
+            { loader: 'expose-loader?$' },
+            { loader: 'expose-loader?jQuery' },
+          ],
+        },
       ],
     },
-    devServer: IS_TEST ? {} : {
-        port: process.env.DECK_PORT || 9000,
-        host: process.env.DECK_HOST || 'localhost',
-        https: process.env.DECK_HTTPS === 'true'
-      },
     watch: IS_TEST,
+    devServer: IS_TEST ? {
+      stats: 'none',
+    } : {
+      port: process.env.DECK_PORT || 9000,
+      host: process.env.DECK_HOST || 'localhost',
+      https: process.env.DECK_HTTPS === 'true',
+      stats: 'none',
+    },
     externals: {
       'cheerio': 'window',
       'react/addons': 'react',
@@ -106,33 +157,14 @@ function configure(IS_TEST) {
   }
 
   config.plugins = [
-    new HappyPack({
-      id: 'html',
-      loaders: [
-        'ngtemplate-loader?relativeTo=' + (path.resolve(__dirname)) + '/',
-        'html-loader'
-      ],
-      threadPool: happyThreadPool
-    }),
-    new HappyPack({
-      id: 'js',
-      loaders: [
-        'ng-annotate-loader',
-        'angular-loader',
-        'babel-loader',
-        'envify-loader',
-        'eslint-loader'
-      ],
-      threadPool: happyThreadPool,
-      cacheContext: {
-        env: process.env
-      }
-    })
+    new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, tslint: true }),
   ];
 
   if (!IS_TEST) {
     config.entry = {
       settings: './settings.js',
+      settingsLocal: './settings-local.js',
+      halconfig: './halconfig/settings.js',
       app: './app/scripts/app.ts',
       vendor: [
         'jquery', 'angular', 'angular-ui-bootstrap', 'source-sans-pro',
@@ -144,15 +176,6 @@ function configure(IS_TEST) {
     };
 
     config.plugins.push(...[
-      new HappyPack({
-        id: 'less',
-        loaders: [
-          'style-loader',
-          'css-loader',
-          'less-loader'
-        ],
-        threadPool: happyThreadPool
-      }),
       new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.bundle.js'}),
       new webpack.optimize.CommonsChunkPlugin('init'),
       new HtmlWebpackPlugin({
@@ -166,7 +189,7 @@ function configure(IS_TEST) {
         // settings.js is put at the end of the <script> blocks
         // which breaks the booting of the app.
         chunksSortMode: (a, b) => {
-          const chunks = ['init', 'vendor', 'settings', 'app'];
+          const chunks = ['init', 'vendor', 'halconfig', 'settings', 'settingsLocal', 'app'];
           return chunks.indexOf(a.names[0]) - chunks.indexOf(b.names[0]);
         }
       })
