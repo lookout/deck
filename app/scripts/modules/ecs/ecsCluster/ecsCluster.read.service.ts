@@ -1,6 +1,6 @@
-import {module} from 'angular';
+import { module } from 'angular';
 
-import {API_SERVICE, Api} from 'core/api/api.service';
+import { API_SERVICE, Api } from 'core/api/api.service';
 
 export class EscClusterReader {
 public constructor(private API: Api) { 'ngInject'; }

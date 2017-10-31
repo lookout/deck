@@ -45,7 +45,6 @@ export class DeployInitializerController implements IController {
   }
 
   public $onInit(): void {
-    console.log('DeployInitializerController - onInit');
     const { viewState } = this.command;
     if (!viewState.disableNoTemplateSelection) {
       this.templates.push(this.noTemplate);
@@ -58,7 +57,6 @@ export class DeployInitializerController implements IController {
     const grouped = groupBy(serverGroups, (serverGroup) => [serverGroup.cluster, serverGroup.account, serverGroup.region].join(':'));
 
     Object.keys(grouped).forEach(key => {
-      console.log('DeployInitializerController - forEach');
       const latest = sortBy(grouped[key], 'name').pop();
       this.templates.push({
         cluster: latest.cluster,
@@ -76,7 +74,6 @@ export class DeployInitializerController implements IController {
   }
 
   private applyCommandToScope(command: any) {
-    console.log('DeployInitializerController - applyCommandToScope');
     const { viewState } = command;
     const baseCommand = this.command;
     viewState.disableImageSelection = true;
@@ -91,7 +88,6 @@ export class DeployInitializerController implements IController {
   }
 
   private buildCommandFromTemplate(serverGroup: IServerGroup): IPromise<any> {
-    console.log('DeployInitializerController - buildCommandFromTemplate');
     const commandBuilder: any = this.providerServiceDelegate.getDelegate(this.cloudProvider, 'serverGroup.commandBuilder');
     return this.serverGroupReader.getServerGroup(this.application.name, serverGroup.account, serverGroup.region, serverGroup.name)
       .then(details => {
@@ -101,13 +97,11 @@ export class DeployInitializerController implements IController {
   }
 
   private buildEmptyCommand(): IPromise<any> {
-    console.log('DeployInitializerController - buildEmptyCommand');
     const commandBuilder: any = this.providerServiceDelegate.getDelegate(this.cloudProvider, 'serverGroup.commandBuilder');
     return commandBuilder.buildNewServerGroupCommand(this.application, { mode: 'createPipeline' });
   }
 
   private selectTemplate(): IPromise<void> {
-    console.log('DeployInitializerController - selectTemplate');
     const buildCommand = this.selectedTemplate === this.noTemplate ?
       this.buildEmptyCommand() :
       this.buildCommandFromTemplate(this.selectedTemplate.serverGroup);
@@ -115,7 +109,6 @@ export class DeployInitializerController implements IController {
   }
 
   public useTemplate(): void {
-    console.log('DeployInitializerController - useTemplate ');
     this.parentState.loaded = false;
     this.selectTemplate().then(() => this.onTemplateSelected());
   }

@@ -77,7 +77,7 @@ export class EcsServerGroupTransformer {
 
   public convertServerGroupCommandToDeployConfiguration(base: any): any {
     // use _.defaults to avoid copying the backingData, which is huge and expensive to copy over
-    const command = defaults({backingData: [], viewState: []}, base);
+    const command = defaults({ backingData: [], viewState: [] }, base);
     command.cloudProvider = 'ecs';
     command.availabilityZones = {};
     command.availabilityZones[command.region] = base.availabilityZones;

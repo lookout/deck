@@ -23,16 +23,6 @@
     ],
     "no-arg": true,
     "no-bitwise": true,
-    "no-console": [
-      false,
-      "log",
-      "warn",
-      "debug",
-      "info",
-      "time",
-      "timeEnd",
-      "trace"
-    ],
     "no-construct": true,
     "no-debugger": true,
     "no-duplicate-variable": true,

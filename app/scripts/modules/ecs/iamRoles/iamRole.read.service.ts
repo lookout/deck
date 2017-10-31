@@ -1,6 +1,6 @@
-import {IPromise, module} from 'angular';
+import { IPromise, module } from 'angular';
 
-import {API_SERVICE, Api} from 'core/api/api.service';
+import { API_SERVICE, Api } from 'core/api/api.service';
 import { IRoleDescriptor } from './IRole';
 
 export class IamRoleReader {

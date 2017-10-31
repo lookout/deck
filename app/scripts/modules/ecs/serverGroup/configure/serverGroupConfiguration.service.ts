@@ -152,7 +152,7 @@ export class EcsServerGroupConfigurationService {
 
   public configureAvailabilityZones(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.availabilityZones =
-      find<IRegion>(command.backingData.credentialsKeyedByAccount[command.credentials].regions, {name: command.region}).availabilityZones;
+      find<IRegion>(command.backingData.credentialsKeyedByAccount[command.credentials].regions, { name: command.region }).availabilityZones;
   }
 
   public configureSubnetPurposes(command: IEcsServerGroupCommand): IServerGroupCommandResult {
@@ -162,13 +162,13 @@ export class EcsServerGroupConfigurationService {
       return result;
     }
     filteredData.subnetPurposes = chain(command.backingData.subnets)
-      .filter({account: command.credentials, region: command.region})
-      .reject({target: 'elb'})
-      .reject({purpose: null})
+      .filter({ account: command.credentials, region: command.region })
+      .reject({ target: 'elb' })
+      .reject({ purpose: null })
       .uniqBy('purpose')
       .value();
 
-    if (!chain(filteredData.subnetPurposes).some({purpose: command.subnetType}).value()) {
+    if (!chain(filteredData.subnetPurposes).some({ purpose: command.subnetType }).value()) {
       command.subnetType = null;
       result.dirty.subnetType = true;
     }
@@ -179,10 +179,10 @@ export class EcsServerGroupConfigurationService {
     return chain(command.backingData.loadBalancers)
       .map('accounts')
       .flattenDeep()
-      .filter({name: command.credentials})
+      .filter({ name: command.credentials })
       .map('regions')
       .flattenDeep()
-      .filter({name: command.region})
+      .filter({ name: command.region })
       .map<IAmazonLoadBalancer>('loadBalancers')
       .flattenDeep<IAmazonLoadBalancer>()
       .value()
@@ -265,7 +265,7 @@ export class EcsServerGroupConfigurationService {
       command.vpcId = null;
       result.dirty.vpcId = true;
     } else {
-      const subnet = find<ISubnet>(command.backingData.subnets, {purpose: command.subnetType, account: command.credentials, region: command.region});
+      const subnet = find<ISubnet>(command.backingData.subnets, { purpose: command.subnetType, account: command.credentials, region: command.region });
       command.vpcId = subnet ? subnet.vpcId : null;
     }
     return result;
@@ -301,9 +301,9 @@ export class EcsServerGroupConfigurationService {
       const result: IEcsServerGroupCommandResult = { dirty: {} };
       const backingData = command.backingData;
       if (command.credentials) {
-        const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || {regions: []} as IAccountDetails;
+        const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || { regions: [] } as IAccountDetails;
         backingData.filtered.regions = regionsForAccount.regions;
-        if (!some(backingData.filtered.regions, {name: command.region})) {
+        if (!some(backingData.filtered.regions, { name: command.region })) {
           command.region = null;
           result.dirty.region = true;
         } else {
@@ -322,7 +322,7 @@ export class EcsServerGroupConfigurationService {
 
 export const ECS_SERVER_GROUP_CONFIGURATION_SERVICE = 'spinnaker.ecs.serverGroup.configure.service';
 module(ECS_SERVER_GROUP_CONFIGURATION_SERVICE, [
-  require('amazon/image/image.reader.js'),
+  require('amazon/image/image.reader.js').name,
   ACCOUNT_SERVICE,
   SUBNET_READ_SERVICE,
   LOAD_BALANCER_READ_SERVICE,
