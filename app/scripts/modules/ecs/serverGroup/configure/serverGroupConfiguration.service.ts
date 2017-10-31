@@ -112,7 +112,7 @@ export class EcsServerGroupConfigurationService {
     };
 
     return this.$q.all({
-      credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'),
+      credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'), // TODO(Bruno Carrier) : This should use the 'ecs' value, but load balancers are a mess in there.
       loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
