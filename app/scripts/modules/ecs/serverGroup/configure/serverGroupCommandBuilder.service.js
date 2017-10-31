@@ -39,8 +39,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
           var availabilityZones = asyncData.preferredZones;
 
           var credentials = asyncData.credentialsKeyedByAccount[defaultCredentials];
-          var keyPair = credentials ? credentials.defaultKeyPair : null;
-
 
           var defaultIamRole = 'poc-role';
           defaultIamRole = defaultIamRole.replace('{{application}}', application.name);
@@ -56,26 +54,13 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
               max: 1,
               desired: 1
             },
-            targetHealthyDeployPercentage: 100,
-            cooldown: 10,
-            enabledMetrics: [],
             healthCheckType: 'EC2',
-            healthCheckGracePeriod: 600,
-            instanceMonitoring: false,
-            ebsOptimized: false,
             selectedProvider: 'ecs',
             iamRole: defaultIamRole,
-            terminationPolicies: ['Default'],
             availabilityZones: availabilityZones,
-            keyPair: keyPair,
             iamRoles: [],
-            suspendedProcesses: [],
-            securityGroups: [],
             ecsClusterName: '',
-            ecsClusters: [],
             targetGroup: '',
-            spotPrice: null,
-            tags: {},
             viewState: {
               useAllImageSelection: false,
               useSimpleCapacity: true,
@@ -148,11 +133,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         asgs: [
           { asgName: serverGroup.name, region: serverGroup.region }
         ],
-        cooldown: serverGroup.asg.defaultCooldown,
-        enabledMetrics: _.get(serverGroup, 'asg.enabledMetrics', []).map(m => m.metric),
-        healthCheckGracePeriod: serverGroup.asg.healthCheckGracePeriod,
         healthCheckType: serverGroup.asg.healthCheckType,
-        terminationPolicies: angular.copy(serverGroup.asg.terminationPolicies),
         credentials: serverGroup.account
       };
       ecsServerGroupConfigurationService.configureUpdateCommand(command);
@@ -180,18 +161,13 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
         // These processes should never be copied over, as the affect launching instances and enabling traffic
         let enabledProcesses = ['Launch', 'Terminate', 'AddToLoadBalancer'];
 
-
         var command = {
           application: application.name,
           strategy: '',
           stack: serverGroupName.stack,
           freeFormDetails: serverGroupName.freeFormDetails,
           credentials: serverGroup.account,
-          cooldown: serverGroup.asg.defaultCooldown,
-          enabledMetrics: _.get(serverGroup, 'asg.enabledMetrics', []).map(m => m.metric),
-          healthCheckGracePeriod: serverGroup.asg.healthCheckGracePeriod,
           healthCheckType: serverGroup.asg.healthCheckType,
-          terminationPolicies: serverGroup.asg.terminationPolicies,
           loadBalancers: serverGroup.asg.loadBalancerNames,
           region: serverGroup.region,
           useSourceCapacity: false,
@@ -200,10 +176,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             'max': serverGroup.asg.maxSize,
             'desired': serverGroup.asg.desiredCapacity
           },
-          targetHealthyDeployPercentage: 100,
           availabilityZones: zones,
           selectedProvider: CLOUD_PROVIDER,
-          spotPrice: null,
           source: {
             account: serverGroup.account,
             region: serverGroup.region,
@@ -212,7 +186,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
           suspendedProcesses: (serverGroup.asg.suspendedProcesses || [])
             .map((process) => process.processName)
             .filter((name) => !enabledProcesses.includes(name)),
-          tags: serverGroup.tags || {},
           targetGroup: serverGroup.targetGroup,
           viewState: {
             instanceProfile: asyncData.instanceProfile,
@@ -225,13 +198,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
           },
         };
 
-        if (application.attributes && application.attributes.platformHealthOnlyShowOverride && application.attributes.platformHealthOnly) {
-          command.interestingHealthProviderNames = ['Amazon'];
-        }
-
         if (mode === 'clone' || mode === 'editPipeline') {
           command.useSourceCapacity = true;
-          command.viewState.useSimpleCapacity = false;
         }
 
         if (mode === 'editPipeline') {
@@ -241,13 +209,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
         if (serverGroup.launchConfig) {
           angular.extend(command, {
-            instanceType: serverGroup.launchConfig.instanceType,
             iamRole: serverGroup.launchConfig.iamInstanceProfile,
-            keyPair: serverGroup.launchConfig.keyName,
-            associatePublicIpAddress: serverGroup.launchConfig.associatePublicIpAddress,
-            ramdiskId: serverGroup.launchConfig.ramdiskId,
-            instanceMonitoring: serverGroup.launchConfig.instanceMonitoring.enabled,
-            ebsOptimized: serverGroup.launchConfig.ebsOptimized,
           });
           if (serverGroup.launchConfig.userData) {
             command.base64UserData = serverGroup.launchConfig.userData;
@@ -255,9 +217,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
           command.viewState.imageId = serverGroup.launchConfig.imageId;
         }
 
-        if (serverGroup.launchConfig && serverGroup.launchConfig.securityGroups.length) {
-          command.securityGroups = serverGroup.launchConfig.securityGroups;
-        }
         return command;
       });
     }
