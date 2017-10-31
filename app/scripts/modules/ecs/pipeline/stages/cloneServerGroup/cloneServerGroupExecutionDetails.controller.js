@@ -10,8 +10,11 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.cloneServerGroup.e
   CLUSTER_FILTER_SERVICE,
   URL_BUILDER_SERVICE
 ])
-  .controller('ecsCloneServerGroupExecutionDetailsCtrl', function ($scope, $stateParams, executionDetailsSectionService,
-                                                                   urlBuilderService, clusterFilterService) {
+  .controller('ecsCloneServerGroupExecutionDetailsCtrl', function ($scope, $stateParams,
+                                                                   executionDetailsSectionService,
+                                                                   urlBuilderService,
+                                                                   clusterFilterService,
+  ) {
 
     $scope.configSections = ['cloneServerGroupConfig', 'taskStatus'];
 

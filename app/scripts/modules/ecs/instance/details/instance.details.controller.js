@@ -18,7 +18,6 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
   require('angular-ui-bootstrap'),
   AMAZON_INSTANCE_WRITE_SERVICE,
   INSTANCE_READ_SERVICE,
-  // require('../modules/amazon/src/vpc/vpcTag.directive'),
   CONFIRMATION_MODAL_SERVICE,
   RECENT_HISTORY_SERVICE,
   CLOUD_PROVIDER_REGISTRY,
