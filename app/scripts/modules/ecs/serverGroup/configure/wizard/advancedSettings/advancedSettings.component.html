@@ -1,0 +1,32 @@
+<div class="container-fluid form-horizontal">
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile</b> <help-field key="ecs.loadbalancing.targetPort"></help-field></div>
+    <!-- TODO - Add a help box that explains that the container does not share profiles with the host -->
+    <div class="col-md-7">
+      <ui-select ng-model="$ctrl.command.iamRole" class="form-control input-sm" required on-select="$ctrl.fieldChanged()">
+        <ui-select-match>{{$select.selected}}</ui-select-match>
+        <ui-select-choices repeat="iamRole in $ctrl.command.backingData.filtered.iamRoles | filter: $select.search">
+          <span ng-bind-html="iamRole"></span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-5 sm-label-right">
+      <b>Placement strategy</b> <help-field key="ecs.placementStrategy"></help-field>
+    </div>
+    <div class="col-md-7">
+      <ui-select multiple
+                 ng-model="$ctrl.command.placementStrategy"
+                 class="form-control input-sm">
+        <ui-select-match>{{$item}}</ui-select-match>
+        <ui-select-choices repeat="item in ['AZ Balanced Spread', 'AZ Balanced BinPack', 'BinPack', 'One Task Per Host']">
+          <span ng-bind-html="item"></span>
+        </ui-select-choices>
+      </ui-select>
+      <!-- TODO - implement this , using a real controller providing the data, here! -->
+    </div>
+  </div>
+</div>

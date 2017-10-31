@@ -1,8 +1,19 @@
 'use strict';
 
-let angular = require('angular');
+const angular = require('angular');
 
-require('./logo/ecs.logo.less');
+import { CLOUD_PROVIDER_REGISTRY, DeploymentStrategyRegistry } from '@spinnaker/core';
+
+import { ECS_SERVER_GROUP_TRANSFORMER } from './serverGroup/serverGroup.transformer';
+import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadBalancers/loadBalancerSelector.component';
+import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDetails.module';
+import { IAM_ROLE_READ_SERVICE } from './iamRoles/iamRole.read.service';
+import { ECS_CLUSTER_READ_SERVICE } from './ecsCluster/ecsCluster.read.service';
+import { ECS_HELP } from './ecs.help';
+import { COMMON_MODULE } from './common/common.module';
+
+import './logo/ecs.logo.less';
+
 require('./ecs.settings.ts');
 
 // load all templates into the $templateCache
@@ -12,12 +23,50 @@ templates.keys().forEach(function(key) {
 });
 
 module.exports = angular.module('spinnaker.ecs', [
+  require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage'),
+  require('./serverGroup/configure/wizard/CloneServerGroup.ecs.controller'),
+  SERVER_GROUP_DETAILS_MODULE,
+  CLOUD_PROVIDER_REGISTRY,
+  IAM_ROLE_READ_SERVICE,
+  ECS_SERVER_GROUP_TRANSFORMER,
+  require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component'),
+  require('./serverGroup/configure/wizard/capacity/capacity.component'),
+  ECS_LOAD_BALANCER_SELECTOR,
+  ECS_CLUSTER_READ_SERVICE,
+  ECS_HELP,
+  COMMON_MODULE,
+  require('./serverGroup/configure/wizard/location/ServerGroupBasicSettings.controller'),
+  require('./serverGroup/configure/serverGroupCommandBuilder.service'),
+  require('./instance/details/instance.details.controller'),
+  require('./pipeline/stages/findImageFromTags/ecsFindImageFromTagStage'),
+  require('./pipeline/stages/destroyAsg/ecsDestroyAsgStage'),
+  require('./pipeline/stages/disableAsg/ecsDisableAsgStage'),
+  require('./pipeline/stages/disableCluster/ecsDisableClusterStage'),
+  require('./pipeline/stages/enableAsg/ecsEnableAsgStage'),
+  require('./pipeline/stages/resizeAsg/ecsResizeAsgStage'),
+  require('./pipeline/stages/scaleDownCluster/ecsScaleDownClusterStage'),
+  require('./pipeline/stages/shrinkCluster/ecsShrinkClusterStage'),
 ])
   .config(function(cloudProviderRegistryProvider) {
     cloudProviderRegistryProvider.registerProvider('ecs',
       {
         name: 'EC2 Container Service',
         logo: { path: require('./logo/ecs.logo.svg')},
-
+        serverGroup: {
+          transformer: 'ecsServerGroupTransformer',
+          detailsTemplateUrl: require('./serverGroup/details/serverGroupDetails.html'),
+          detailsController: 'ecsServerGroupDetailsCtrl',
+          cloneServerGroupTemplateUrl: require('./serverGroup/configure/wizard/serverGroupWizard.html'),
+          cloneServerGroupController: 'ecsCloneServerGroupCtrl',
+          commandBuilder: 'ecsServerGroupCommandBuilder',
+          // configurationService: 'ecsServerGroupConfigurationService',
+          scalingActivitiesEnabled: false,
+        },
+        instance: {
+          detailsTemplateUrl: require('./instance/details/instanceDetails.html'),
+          detailsController: 'ecsInstanceDetailsCtrl',
+        },
       });
   });
+
+DeploymentStrategyRegistry.registerProvider('ecs', ['redblack']);
