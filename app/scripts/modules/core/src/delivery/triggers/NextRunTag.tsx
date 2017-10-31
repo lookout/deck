@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { IPipeline, ICronTrigger } from 'core/domain';
 import { Popover } from 'core/presentation/Popover';
@@ -17,7 +17,7 @@ export interface INextRunTagState {
   hasNextScheduled: boolean;
 }
 
-@autoBindMethods
+@BindAll()
 export class NextRunTag extends React.Component<INextRunTagProps, INextRunTagState> {
   constructor(props: INextRunTagProps) {
     super(props);
@@ -70,7 +70,7 @@ export class NextRunTag extends React.Component<INextRunTagProps, INextRunTagSta
     const nextDuration = moment(this.state.nextScheduled).fromNow();
     const visible = !this.props.pipeline.disabled && this.state.hasNextScheduled;
     return (
-      <span style={{visibility: visible ? 'visible' : 'hidden'}} className="next-run-tag">
+      <span style={{ visibility: visible ? 'visible' : 'hidden' }} className="next-run-tag">
         <Popover value={`Next run: ${timestamp(this.state.nextScheduled)} (${nextDuration})`} placement="left">
           <span className="glyphicon glyphicon-time" onMouseEnter={this.handleMouseEnter}/>
         </Popover>

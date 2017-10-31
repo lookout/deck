@@ -11,8 +11,8 @@ import { UrlParser } from 'core/navigation/urlParser';
 
 export const filterModelConfig: IFilterConfig[] = [
   { model: 'filter', param: 'q', clearValue: '', type: 'string', filterLabel: 'search', },
-  { model: 'pipeline', param: 'pipeline', type: 'trueKeyObject', },
-  { model: 'status', type: 'trueKeyObject', },
+  { model: 'pipeline', param: 'pipeline', type: 'trueKeyObject', clearValue: {} },
+  { model: 'status', type: 'trueKeyObject', clearValue: {}, },
 ];
 
 export interface IExecutionFilterModel extends IFilterModel {
@@ -27,6 +27,7 @@ export class ExecutionFilterModel {
   private showStageDuration: boolean;
 
   public asFilterModel: IExecutionFilterModel;
+  public mostRecentApplication: string;
 
   // This is definitely not the best way to do this, but already have a Subject in here, so just using the same
   // mechanism for now.
@@ -153,7 +154,7 @@ export class ExecutionFilterModel {
 
 export const EXECUTION_FILTER_MODEL = 'spinnaker.core.delivery.filter.executionFilter.model';
 module (EXECUTION_FILTER_MODEL, [
-  require('core/filterModel/filter.model.service'),
+  require('core/filterModel/filter.model.service').name,
   VIEW_STATE_CACHE_SERVICE
 ]).factory('executionFilterModel', ($rootScope: IRootScopeService, filterModelService: any, viewStateCache: ViewStateCacheService) =>
                                     new ExecutionFilterModel($rootScope, filterModelService, viewStateCache));

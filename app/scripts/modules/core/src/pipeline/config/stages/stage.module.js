@@ -2,27 +2,29 @@
 
 const angular = require('angular');
 
-import {ACCOUNT_SERVICE} from 'core/account/account.service';
-import {API_SERVICE} from 'core/api/api.service';
-import {BASE_EXECUTION_DETAILS_CTRL} from './core/baseExecutionDetails.controller';
-import {CONFIRMATION_MODAL_SERVICE} from 'core/confirmationModal/confirmationModal.service';
-import {PIPELINE_CONFIG_PROVIDER} from 'core/pipeline/config/pipelineConfigProvider';
-import {PIPELINE_CONFIG_SERVICE} from 'core/pipeline/config/services/pipelineConfig.service';
-import {PIPELINE_BAKE_STAGE_CHOOSE_OS} from 'core/pipeline/config/stages/bake/bakeStageChooseOs.component';
+import { ACCOUNT_SERVICE } from 'core/account/account.service';
+import { API_SERVICE } from 'core/api/api.service';
+import { BASE_EXECUTION_DETAILS_CTRL } from './core/baseExecutionDetails.controller';
+import { CONFIRMATION_MODAL_SERVICE } from 'core/confirmationModal/confirmationModal.service';
+import { EDIT_STAGE_JSON_CONTROLLER } from './core/editStageJson.controller';
+import { PIPELINE_CONFIG_PROVIDER } from 'core/pipeline/config/pipelineConfigProvider';
+import { PIPELINE_CONFIG_SERVICE } from 'core/pipeline/config/services/pipelineConfig.service';
+import { PIPELINE_BAKE_STAGE_CHOOSE_OS } from 'core/pipeline/config/stages/bake/bakeStageChooseOs.component';
 
 module.exports = angular.module('spinnaker.core.pipeline.config.stage', [
   ACCOUNT_SERVICE,
   API_SERVICE,
   BASE_EXECUTION_DETAILS_CTRL,
+  EDIT_STAGE_JSON_CONTROLLER,
   PIPELINE_CONFIG_PROVIDER,
   PIPELINE_CONFIG_SERVICE,
-  require('./overrideTimeout/overrideTimeout.directive.js'),
-  require('./overrideFailure/overrideFailure.component.js'),
-  require('./optionalStage/optionalStage.directive.js'),
+  require('./overrideTimeout/overrideTimeout.directive.js').name,
+  require('./overrideFailure/overrideFailure.component.js').name,
+  require('./optionalStage/optionalStage.directive.js').name,
   CONFIRMATION_MODAL_SERVICE,
   PIPELINE_BAKE_STAGE_CHOOSE_OS,
-  require('./core/stageConfigField/stageConfigField.directive.js'),
-  require('./bake/bakeStage.module'),
+  require('./core/stageConfigField/stageConfigField.directive.js').name,
+  require('./bake/bakeStage.module').name,
 ])
   .directive('pipelineConfigStage', function() {
     return {
@@ -40,7 +42,7 @@ module.exports = angular.module('spinnaker.core.pipeline.config.stage', [
       }
     };
   })
-  .controller('StageConfigCtrl', function($scope, $element, $compile, $controller, $templateCache,
+  .controller('StageConfigCtrl', function($scope, $element, $compile, $controller, $templateCache, $uibModal,
                                           pipelineConfigService, pipelineConfig, accountService) {
 
     var lastStageScope;
@@ -89,6 +91,19 @@ module.exports = angular.module('spinnaker.core.pipeline.config.stage', [
           });
         }
       });
+    };
+
+    this.editStageJson = () => {
+      $uibModal.open({
+        size: 'lg modal-fullscreen',
+        templateUrl: require('./core/editStageJson.modal.html'),
+        controller: 'editStageJsonCtrl as $ctrl',
+        resolve: {
+          stage: () => $scope.stage
+        }
+      }).result.then(() => {
+        $scope.$broadcast('pipeline-json-edited');
+      }).catch(() => {});
     };
 
     this.selectStageType = stage => {

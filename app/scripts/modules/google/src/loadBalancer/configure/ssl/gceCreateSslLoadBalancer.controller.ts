@@ -66,6 +66,7 @@ class SslLoadBalancerCtrl extends CommonGceLoadBalancerCtrl implements IControll
     'listener': require('./listener.html'),
     'healthCheck': require('../common/commonHealthCheckPage.html'),
     'advancedSettings': require('../common/commonAdvancedSettingsPage.html'),
+    'backendService': require('./backendService.html'),
   };
   public sessionAffinityViewToModelMap: any = {
     'None': 'NONE',
@@ -87,6 +88,7 @@ class SslLoadBalancerCtrl extends CommonGceLoadBalancerCtrl implements IControll
   public viewState: ViewState = new ViewState('None');
   public maxCookieTtl = 60 * 60 * 24; // One day.
   public taskMonitor: any;
+  public hasBackendService = true;
 
   private sessionAffinityModelToViewMap: any = _.invert(this.sessionAffinityViewToModelMap);
 
@@ -141,11 +143,11 @@ class SslLoadBalancerCtrl extends CommonGceLoadBalancerCtrl implements IControll
 
         this.accountUpdated();
 
-        this.wizardSubFormValidation.config({scope: this.$scope, form: 'form'})
-          .register({page: 'location', subForm: 'locationForm'})
-          .register({page: 'listener', subForm: 'listenerForm'})
-          .register({page: 'healthCheck', subForm: 'healthCheckForm'})
-          .register({page: 'advancedSettings', subForm: 'advancedSettingsForm'});
+        this.wizardSubFormValidation.config({ scope: this.$scope, form: 'form' })
+          .register({ page: 'location', subForm: 'locationForm' })
+          .register({ page: 'listener', subForm: 'listenerForm' })
+          .register({ page: 'healthCheck', subForm: 'healthCheckForm' })
+          .register({ page: 'advancedSettings', subForm: 'advancedSettingsForm' });
 
         this.taskMonitor = this.taskMonitorBuilder.buildTaskMonitor({
           application: this.application,

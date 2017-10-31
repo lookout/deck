@@ -19,8 +19,8 @@ module.exports = angular.module('spinnaker.securityGroup.kubernetes.create.contr
   ACCOUNT_SERVICE,
   V2_MODAL_WIZARD_SERVICE,
   TASK_MONITOR_BUILDER,
-  require('../../../namespace/selectField.directive.js'),
-  require('../../transformer.js'),
+  require('../../../namespace/selectField.directive.js').name,
+  require('../../transformer.js').name,
 ])
   .controller('kubernetesUpsertSecurityGroupController', function($q, $scope, $uibModalInstance, $state,
                                                                   application, securityGroup,
@@ -34,6 +34,8 @@ module.exports = angular.module('spinnaker.securityGroup.kubernetes.create.contr
       basicSettings: require('./basicSettings.html'),
       backend: require('./backend.html'),
       rules: require('./rules.html'),
+      tls: require('./tls.html'),
+      advancedSettings: require('./advancedSettings.html'),
     };
 
     $scope.state = {
@@ -181,6 +183,14 @@ module.exports = angular.module('spinnaker.securityGroup.kubernetes.create.contr
             cloudProvider: 'kubernetes',
             region: $scope.securityGroup.namespace,
           };
+
+          // Change TLS hosts from string to array for Clouddriver (if it isn't already an array)
+          for (let idx in $scope.securityGroup.tls) {
+            if (!Array.isArray($scope.securityGroup.tls[idx].hosts)) {
+              $scope.securityGroup.tls[idx].hosts = [$scope.securityGroup.tls[idx].hosts];
+            }
+          }
+
           return securityGroupWriter.upsertSecurityGroup($scope.securityGroup, application, descriptor, params);
         }
       );

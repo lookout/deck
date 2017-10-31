@@ -70,7 +70,7 @@ module.exports = angular.module('spinnaker.amazon.serverGroupCommandBuilder.serv
             keyPair: keyPair,
             suspendedProcesses: [],
             securityGroups: [],
-            spotPrice: null,
+            spotPrice: '',
             tags: {},
             useAmiBlockDeviceMappings: useAmiBlockDeviceMappings,
             copySourceCustomBlockDeviceMappings: !useAmiBlockDeviceMappings,
@@ -210,7 +210,6 @@ module.exports = angular.module('spinnaker.amazon.serverGroupCommandBuilder.serv
           targetHealthyDeployPercentage: 100,
           availabilityZones: zones,
           selectedProvider: 'aws',
-          spotPrice: null,
           source: {
             account: serverGroup.account,
             region: serverGroup.region,
@@ -238,12 +237,9 @@ module.exports = angular.module('spinnaker.amazon.serverGroupCommandBuilder.serv
           command.interestingHealthProviderNames = ['Amazon'];
         }
 
-        if (mode === 'clone' || mode === 'editPipeline') {
+        if (mode === 'editPipeline') {
           command.useSourceCapacity = true;
           command.viewState.useSimpleCapacity = false;
-        }
-
-        if (mode === 'editPipeline') {
           command.strategy = 'redblack';
           command.suspendedProcesses = [];
         }
@@ -268,6 +264,7 @@ module.exports = angular.module('spinnaker.amazon.serverGroupCommandBuilder.serv
             ramdiskId: serverGroup.launchConfig.ramdiskId,
             instanceMonitoring: serverGroup.launchConfig.instanceMonitoring.enabled,
             ebsOptimized: serverGroup.launchConfig.ebsOptimized,
+            spotPrice: serverGroup.launchConfig.spotPrice,
           });
           if (serverGroup.launchConfig.userData) {
             command.base64UserData = serverGroup.launchConfig.userData;

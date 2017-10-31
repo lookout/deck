@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as $ from 'jquery';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { IInstance } from 'core/domain';
 
@@ -11,7 +11,7 @@ export interface IInstanceProps {
   onInstanceClicked(instance: IInstance): void;
 }
 
-@autoBindMethods
+@BindAll()
 export class Instance extends React.Component<IInstanceProps> {
   private handleClick(event: React.MouseEvent<any>) {
     event.preventDefault();
@@ -19,7 +19,7 @@ export class Instance extends React.Component<IInstanceProps> {
   }
 
   public onMouseOver(event: React.MouseEvent<any>) {
-    $(event.target).tooltip({animation: false} as JQueryUI.TooltipOptions).tooltip('show');
+    $(event.target).tooltip({ animation: false } as JQueryUI.TooltipOptions).tooltip('show');
   }
 
   public shouldComponentUpdate(nextProps: IInstanceProps) {

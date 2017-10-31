@@ -101,7 +101,7 @@ export class AwsLoadBalancerTransformer {
   private normalizeTargetGroup(targetGroup: ITargetGroup): IPromise<ITargetGroup> {
     this.normalizeServerGroups(targetGroup.serverGroups, targetGroup, 'targetGroups', 'TargetGroup');
 
-    const activeServerGroups = filter(targetGroup.serverGroups, {isDisabled: false});
+    const activeServerGroups = filter(targetGroup.serverGroups, { isDisabled: false });
     targetGroup.provider = targetGroup.type;
     targetGroup.instances = chain(activeServerGroups).map('instances').flatten<IInstance>().value();
     targetGroup.detachedInstances = chain(activeServerGroups).map('detachedInstances').flatten<IInstance>().value();
@@ -120,7 +120,7 @@ export class AwsLoadBalancerTransformer {
       serverGroups = flatten<IServerGroup>(map(appLoadBalancer.targetGroups, 'serverGroups'));
     }
 
-    const activeServerGroups = filter(serverGroups, {isDisabled: false});
+    const activeServerGroups = filter(serverGroups, { isDisabled: false });
     loadBalancer.provider = loadBalancer.type;
     loadBalancer.instances = chain(activeServerGroups).map('instances').flatten<IInstance>().value();
     loadBalancer.detachedInstances = chain(activeServerGroups).map('detachedInstances').flatten<IInstance>().value();
@@ -134,21 +134,21 @@ export class AwsLoadBalancerTransformer {
       isInternal: loadBalancer.isInternal,
       region: loadBalancer.region,
       cloudProvider: loadBalancer.cloudProvider,
-      credentials: loadBalancer.account,
-      listeners: [],
+      credentials: loadBalancer.credentials || loadBalancer.account,
+      listeners: loadBalancer.listeners,
       loadBalancerType: 'classic',
       name: loadBalancer.name,
       regionZones: loadBalancer.availabilityZones,
-      securityGroups: [],
-      vpcId: undefined,
+      securityGroups: loadBalancer.securityGroups,
+      vpcId: loadBalancer.vpcId,
       healthCheck: undefined,
-      healthTimeout: undefined,
-      healthInterval: undefined,
-      healthyThreshold: undefined,
-      unhealthyThreshold: undefined,
-      healthCheckProtocol: undefined,
-      healthCheckPort: undefined,
-      healthCheckPath: undefined,
+      healthTimeout: loadBalancer.healthTimeout,
+      healthInterval: loadBalancer.healthInterval,
+      healthyThreshold: loadBalancer.healthyThreshold,
+      unhealthyThreshold: loadBalancer.unhealthyThreshold,
+      healthCheckProtocol: loadBalancer.healthCheckProtocol,
+      healthCheckPort: loadBalancer.healthCheckPort,
+      healthCheckPath: loadBalancer.healthCheckPath,
       subnetType: loadBalancer.subnetType,
     };
 
@@ -214,7 +214,7 @@ export class AwsLoadBalancerTransformer {
       region: loadBalancer.region,
       loadBalancerType: 'application',
       cloudProvider: loadBalancer.cloudProvider,
-      credentials: loadBalancer.account,
+      credentials: loadBalancer.account || loadBalancer.credentials,
       listeners: [],
       targetGroups: [],
       name: loadBalancer.name,

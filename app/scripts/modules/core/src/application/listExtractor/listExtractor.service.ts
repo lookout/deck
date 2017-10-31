@@ -2,6 +2,7 @@ import { module } from 'angular';
 import { compact, flatten, uniq } from 'lodash';
 import { IInstance, IServerGroup } from 'core/domain';
 import { Application } from '../application.model';
+import { IMoniker } from 'core/naming/IMoniker';
 
 export interface IServerGroupFilter {
   (s: IServerGroup): boolean;
@@ -14,6 +15,13 @@ export interface IInstanceFilter {
 const defaultFilter = () => true;
 
 export class AppListExtractor {
+
+  public getMonikers(applications: Application[],  filter: IServerGroupFilter = defaultFilter): IMoniker[] {
+    const allMonikers: IMoniker[][] = applications.map(a => a.getDataSource('serverGroups').data
+      .filter(filter)
+      .map((serverGroup: IServerGroup) => serverGroup.moniker));
+    return compact(flatten(allMonikers));
+  }
 
   public getRegions(applications: Application[], filter: IServerGroupFilter = defaultFilter): string[] {
     const allRegions: string[][] = applications.map(a => a.getDataSource('serverGroups').data
@@ -77,6 +85,12 @@ export class AppListExtractor {
     return (serverGroup: IServerGroup) => {
       return credentials ? serverGroup.account === credentials : true;
     };
+  }
+
+  public monikerClusterNameFilter(clusterName: string): IServerGroupFilter {
+    return (serverGroup: IServerGroup) => {
+      return serverGroup.moniker.cluster === clusterName;
+    }
   }
 
   public clusterFilterForCredentialsAndRegion(credentials: string, region: string | string[]): IServerGroupFilter {

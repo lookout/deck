@@ -1,7 +1,9 @@
 'use strict';
 
-import {SETTINGS} from 'core/config/settings';
-import {PIPELINE_CONFIG_PROVIDER} from 'core/pipeline/config/pipelineConfigProvider';
+import { copy } from 'angular';
+
+import { SETTINGS } from 'core/config/settings';
+import { PIPELINE_CONFIG_PROVIDER } from 'core/pipeline/config/pipelineConfigProvider';
 
 const angular = require('angular');
 
@@ -33,6 +35,14 @@ module.exports = angular.module('spinnaker.core.pipeline.config.trigger.triggerD
     this.removeTrigger = function(trigger) {
       var triggerIndex = $scope.pipeline.triggers.indexOf(trigger);
       $scope.pipeline.triggers.splice(triggerIndex, 1);
+    };
+
+    this.summarizeExpectedArtifact = function(expected) {
+      const artifact = copy(expected.matchArtifact);
+      return Object.keys(artifact)
+        .filter((k) => artifact[k])
+        .map((k) => (`${k}: ${artifact[k]}`))
+        .join(', ');
     };
 
     this.loadTrigger = () => {

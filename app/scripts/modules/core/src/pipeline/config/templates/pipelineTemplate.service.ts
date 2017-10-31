@@ -2,7 +2,7 @@ import { module, IPromise, IQService } from 'angular';
 import { flatten } from 'lodash';
 import { Api, API_SERVICE } from 'core/api/api.service';
 import { IPipeline } from 'core/domain/IPipeline';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 export interface IPipelineTemplate {
   id: string;
@@ -72,7 +72,7 @@ export interface IPipelineTemplatePlanError {
   nestedErrors: IPipelineTemplatePlanError[];
 }
 
-@autoBindMethods
+@BindAll()
 export class PipelineTemplateService {
 
   constructor(private API: Api, private $q: IQService) {
@@ -80,7 +80,7 @@ export class PipelineTemplateService {
   }
 
   public getPipelineTemplateFromSourceUrl(source: string): IPromise<IPipelineTemplate> {
-    return this.API.one('pipelineTemplates').one('resolve').withParams({source}).get()
+    return this.API.one('pipelineTemplates').one('resolve').withParams({ source }).get()
       .then((template: IPipelineTemplate) => {
         template.selfLink = source;
         return template;
@@ -88,11 +88,11 @@ export class PipelineTemplateService {
   }
 
   public getPipelinePlan(config: IPipelineTemplateConfig): IPromise<IPipeline> {
-    return this.API.one('pipelines').one('start').post(Object.assign({}, config, {plan: true}));
+    return this.API.one('pipelines').one('start').post(Object.assign({}, config, { plan: true }));
   }
 
   public getPipelineTemplatesByScope(scope: string): IPromise<IPipelineTemplate[]> {
-    return this.API.one('pipelineTemplates').withParams({scope}).get();
+    return this.API.one('pipelineTemplates').withParams({ scope }).get();
   }
 
   public getPipelineTemplatesByScopes(scopes: string[]): IPromise<IPipelineTemplate[]> {

@@ -1,10 +1,10 @@
-import {chain, intersection, zipObject} from 'lodash';
-import {module} from 'angular';
+import { chain, intersection, zipObject } from 'lodash';
+import { module } from 'angular';
 
-import {Application} from 'core/application/application.model';
-import {API_SERVICE, Api} from 'core/api/api.service';
-import {CLOUD_PROVIDER_REGISTRY, CloudProviderRegistry} from '../cloudProvider/cloudProvider.registry';
-import {SETTINGS} from 'core/config/settings';
+import { Application } from 'core/application/application.model';
+import { API_SERVICE, Api } from 'core/api/api.service';
+import { CLOUD_PROVIDER_REGISTRY, CloudProviderRegistry } from '../cloudProvider/cloudProvider.registry';
+import { SETTINGS } from 'core/config/settings';
 
 export interface IRegion {
   account?: string;
@@ -21,6 +21,7 @@ export interface IAccount {
   name: string;
   requiredGroupMembership: string[];
   type: string;
+  providerVersion?: string;
 }
 
 export interface IAccountDetails extends IAccount {
@@ -82,8 +83,8 @@ export class AccountService {
       .get();
   }
 
-  public getAllAccountDetailsForProvider(provider: string): ng.IPromise<IAccountDetails[]> {
-    return this.listAccounts(provider)
+  public getAllAccountDetailsForProvider(provider: string, providerVersion: string = null): ng.IPromise<IAccountDetails[]> {
+    return this.listAccounts(provider, providerVersion)
       .then((accounts: IAccount[]) => this.$q.all(accounts.map((account: IAccount) => this.getAccountDetails(account.name))))
       .catch((error: any) => {
         this.$log.warn(`Failed to load accounts for provider "${provider}"; exception:`, error);
@@ -165,11 +166,14 @@ export class AccountService {
       });
   }
 
-  public listAccounts(provider: string = null): ng.IPromise<IAccount[]> {
-
+  public listAccounts(provider: string = null, providerVersion: string = null): ng.IPromise<IAccount[]> {
     let result: ng.IPromise<IAccount[]> = this.API.one('credentials').useCache().get();
     if (provider) {
-      result = result.then((accounts: IAccount[]) => accounts.filter((account: IAccount) => account.type === provider));
+      result = result.then((accounts) => accounts.filter((account) => account.type === provider));
+    }
+
+    if (providerVersion) {
+      result = result.then((accounts) => accounts.filter((account) => account.providerVersion === providerVersion));
     }
 
     return result;

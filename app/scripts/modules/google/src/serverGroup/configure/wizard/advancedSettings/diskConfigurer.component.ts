@@ -21,7 +21,7 @@ class GceDiskConfigurerController implements IComponentController {
     this.setPersistentDisks();
 
     if (this.getLocalSSDDisks().length && !get(this.command, 'viewState.instanceTypeDetails.storage.localSSDSupported')) {
-      this.updateDisks({disks: this.sortDisks(this.getPersistentDisks())});
+      this.updateDisks({ disks: this.sortDisks(this.getPersistentDisks()) });
     }
   }
 
@@ -41,13 +41,13 @@ class GceDiskConfigurerController implements IComponentController {
     }
 
     disks = this.sortDisks(disks);
-    this.updateDisks({disks});
+    this.updateDisks({ disks });
   }
 
   public handlePersistentDiskChange(): void {
     let disks = this.persistentDisks.concat(this.getLocalSSDDisks());
     disks = this.sortDisks(disks);
-    this.updateDisks({disks});
+    this.updateDisks({ disks });
   }
 
   public addPersistentDisk(): void {
@@ -98,7 +98,7 @@ class GceDiskConfigurer implements IComponentOptions {
                ng-change="$ctrl.handleLocalSSDCountChange()"
                required
                min="0"
-               max="{{$ctrl.command.viewState.instanceTypeDetails.storage.localSSDSupported ? 4 : 0}}"
+               max="{{$ctrl.command.viewState.instanceTypeDetails.storage.localSSDSupported ? 8 : 0}}"
                ng-disabled="!$ctrl.command.viewState.instanceTypeDetails.storage.localSSDSupported"/>
       </div>
     </div>

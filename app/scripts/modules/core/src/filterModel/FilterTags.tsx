@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactGA from 'react-ga';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 export interface IFilter {
   label: string;
@@ -21,7 +21,7 @@ export interface IFilterTagsState {
   tags: IFilterTag[];
 }
 
-@autoBindMethods
+@BindAll()
 export class FilterTags extends React.Component<IFilterTagsProps, IFilterTagsState> {
 
   public static defaultProps: Partial<IFilterTagsProps> = {
@@ -41,14 +41,14 @@ export class FilterTags extends React.Component<IFilterTagsProps, IFilterTagsSta
 
   private clearAllFilters(): void {
     this.props.clearFilters();
-    ReactGA.event({category: 'Filter Tags', action: 'Clear All clicked'});
+    ReactGA.event({ category: 'Filter Tags', action: 'Clear All clicked' });
   }
 
   private generateTag(tag: IFilterTag) {
     const clearFilter = (): void => {
       tag.clear();
       this.props.tagCleared();
-      ReactGA.event({category: 'Filter Tags', action: 'Individual tag removed'});
+      ReactGA.event({ category: 'Filter Tags', action: 'Individual tag removed' });
     };
     return (
       <span className="filter-tag" key={[tag.label, tag.value].join(':')}>

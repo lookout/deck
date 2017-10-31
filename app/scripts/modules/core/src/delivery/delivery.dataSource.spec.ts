@@ -1,10 +1,10 @@
-import {IQProvider, mock} from 'angular';
+import { IQProvider, mock } from 'angular';
 
-import {Application} from 'core/application/application.model';
-import {APPLICATION_MODEL_BUILDER, ApplicationModelBuilder} from 'core/application/applicationModel.builder';
-import {APPLICATION_DATA_SOURCE_REGISTRY, ApplicationDataSourceRegistry} from '../application/service/applicationDataSource.registry';
-import {EXECUTION_SERVICE} from './service/execution.service';
-import {PIPELINE_CONFIG_SERVICE, PipelineConfigService} from 'core/pipeline/config/services/pipelineConfig.service';
+import { Application } from 'core/application/application.model';
+import { APPLICATION_MODEL_BUILDER, ApplicationModelBuilder } from 'core/application/applicationModel.builder';
+import { APPLICATION_DATA_SOURCE_REGISTRY, ApplicationDataSourceRegistry } from '../application/service/applicationDataSource.registry';
+import { EXECUTION_SERVICE } from './service/execution.service';
+import { PIPELINE_CONFIG_SERVICE, PipelineConfigService } from 'core/pipeline/config/services/pipelineConfig.service';
 
 describe('Delivery Data Source', function () {
 
@@ -18,7 +18,7 @@ describe('Delivery Data Source', function () {
 
   beforeEach(
     mock.module(
-      require('./delivery.dataSource'),
+      require('./delivery.dataSource').name,
       EXECUTION_SERVICE,
       PIPELINE_CONFIG_SERVICE,
       APPLICATION_DATA_SOURCE_REGISTRY,
@@ -45,7 +45,7 @@ describe('Delivery Data Source', function () {
   );
 
   function configureApplication() {
-    applicationDataSourceRegistry.registerDataSource({key: 'serverGroups'});
+    applicationDataSourceRegistry.registerDataSource({ key: 'serverGroups' });
     application = applicationModelBuilder.createApplication('app', applicationDataSourceRegistry.getDataSources());
     application.refresh();
     $scope.$digest();
@@ -59,7 +59,7 @@ describe('Delivery Data Source', function () {
     });
 
     it('loads executions and sets appropriate flags', function () {
-      spyOn(executionService, 'getExecutions').and.returnValue($q.when([{status: 'SUCCEEDED', stages: []}]));
+      spyOn(executionService, 'getExecutions').and.returnValue($q.when([{ status: 'SUCCEEDED', stages: [] }]));
       configureApplication();
       application.getDataSource('executions').activate();
       $scope.$digest();

@@ -18,11 +18,11 @@ module.exports = angular.module('spinnaker.loadBalancer.openstack.create.control
     ACCOUNT_SERVICE,
     V2_MODAL_WIZARD_SERVICE,
     TASK_MONITOR_BUILDER,
-    require('../../transformer.js'),
-    require('../../../region/regionSelectField.directive.js'),
-    require('../../../subnet/subnetSelectField.directive.js'),
-    require('../../../network/networkSelectField.directive.js'),
-    require('../../../common/isolateForm.directive.js'),
+    require('../../transformer.js').name,
+    require('../../../region/regionSelectField.directive.js').name,
+    require('../../../subnet/subnetSelectField.directive.js').name,
+    require('../../../network/networkSelectField.directive.js').name,
+    require('../../../common/isolateForm.directive.js').name,
     SECURITY_GROUP_READER
   ])
   .controller('openstackUpsertLoadBalancerController', function($scope, $uibModalInstance, $state,
@@ -58,6 +58,7 @@ module.exports = angular.module('spinnaker.loadBalancer.openstack.create.control
     $scope.allSecurityGroups = [];
     $scope.$watch('loadBalancer.account', updateSecurityGroups);
     $scope.$watch('loadBalancer.region', updateSecurityGroups);
+    $scope.updateSecurityGroups = updateSecurityGroups;
     updateSecurityGroups();
 
     // initialize controller
@@ -158,6 +159,9 @@ module.exports = angular.module('spinnaker.loadBalancer.openstack.create.control
     this.accountUpdated = function() {
       ctrl.updateName();
       $scope.subnetFilter = {type: 'openstack', account: $scope.loadBalancer.account, region: $scope.loadBalancer.region};
+      if ($scope.loadBalancer) {
+        $scope.loadBalancer.securityGroups = [];
+      }
       updateLoadBalancerNames();
     };
 

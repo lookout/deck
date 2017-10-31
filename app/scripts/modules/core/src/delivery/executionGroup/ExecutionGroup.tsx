@@ -4,7 +4,7 @@ import { $timeout } from 'ngimport';
 import { IPromise } from 'angular';
 import { Subscription } from 'rxjs';
 import { find, flatten, uniq, without } from 'lodash';
-import autoBindMethods from 'class-autobind-decorator';
+import { BindAll } from 'lodash-decorators';
 
 import { Application } from 'core/application/application.model';
 import { Execution } from './execution/Execution';
@@ -32,7 +32,7 @@ export interface IExecutionGroupState {
   showAccounts: boolean;
 }
 
-@autoBindMethods
+@BindAll()
 export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecutionGroupState> {
   private strategyConfig: IPipeline;
   private expandUpdatedSubscription: Subscription;
@@ -89,19 +89,19 @@ export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecu
       this.hideDetails();
     }
     ReactInjector.collapsibleSectionStateCache.setExpanded(this.getSectionCacheKey(), open);
-    this.setState({open});
+    this.setState({ open });
   }
 
   private startPipeline(command: IPipelineCommand): IPromise<void> {
     const { executionService, pipelineConfigService } = ReactInjector;
-    this.setState({triggeringExecution: true});
+    this.setState({ triggeringExecution: true });
     return pipelineConfigService.triggerPipeline(this.props.application.name, command.pipelineName, command.trigger).then(
       (newPipelineId) => {
         const monitor = executionService.waitUntilNewTriggeredPipelineAppears(this.props.application, newPipelineId);
-        monitor.then(() => this.setState({triggeringExecution: false}));
-        this.setState({poll: monitor});
+        monitor.then(() => this.setState({ triggeringExecution: false }));
+        this.setState({ poll: monitor });
       },
-      () => this.setState({triggeringExecution: false}));
+      () => this.setState({ triggeringExecution: false }));
   }
 
   public triggerPipeline(): void {
@@ -113,7 +113,7 @@ export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecu
         application: () => this.props.application,
         currentlyRunningExecutions: () => this.props.group.runningExecutions,
       }
-    }).result.then((command) => this.startPipeline(command));
+    }).result.then((command) => this.startPipeline(command)).catch(() => {});
   }
 
   public componentDidMount(): void {
@@ -144,18 +144,18 @@ export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecu
   }
 
   private handleHeadingClicked(): void {
-    ReactGA.event({category: 'Pipeline', action: `Group ${this.state.open ? 'collapsed' : 'expanded'}`, label: this.props.group.heading});
+    ReactGA.event({ category: 'Pipeline', action: `Group ${this.state.open ? 'collapsed' : 'expanded'}`, label: this.props.group.heading });
     this.toggle();
   }
 
   private handleConfigureClicked(e: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Configure pipeline button clicked', label: this.props.group.heading});
+    ReactGA.event({ category: 'Pipeline', action: 'Configure pipeline button clicked', label: this.props.group.heading });
     this.configure(this.props.group.config.id);
     e.stopPropagation();
   }
 
   private handleTriggerClicked(e: React.MouseEvent<HTMLElement>): void {
-    ReactGA.event({category: 'Pipeline', action: 'Trigger pipeline button clicked', label: this.props.group.heading});
+    ReactGA.event({ category: 'Pipeline', action: 'Trigger pipeline button clicked', label: this.props.group.heading });
     this.triggerPipeline();
     e.stopPropagation();
   }
@@ -200,7 +200,7 @@ export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecu
                       </a>
                     </h4>
                     { this.state.canTriggerPipelineManually && (
-                      <h4 style={{visibility: pipelineDisabled ? 'hidden' : 'visible'}}>
+                      <h4 style={{ visibility: pipelineDisabled ? 'hidden' : 'visible' }}>
                         <a className="btn btn-xs btn-link" onClick={this.handleTriggerClicked}>
                           { this.state.triggeringExecution ?
                             <span><span className="fa fa-cog fa-spin"/> Starting Manual Execution&hellip;</span> :
@@ -220,7 +220,7 @@ export class ExecutionGroup extends React.Component<IExecutionGroupProps, IExecu
           <div className="execution-groups">
             <div className="execution-group-container">
               {!group.executions.length && (
-                <div style={{paddingBottom: '10px'}}>
+                <div style={{ paddingBottom: '10px' }}>
                   <em>No executions found matching the selected filters.</em>
                 </div>
               )}

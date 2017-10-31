@@ -1,9 +1,10 @@
 import { Application } from 'core/application/application.model';
 
 import { IExecution } from './IExecution';
+import { IExecutionDetailsSection } from './IStageTypeConfig';
 import { IOrchestratedItem } from './IOrchestratedItem';
 import { IStage } from './IStage';
-import { IStageStep } from './IStageStep';
+import { ITaskStep } from './ITaskStep';
 
 export interface IRestartDetails {
   restartedBy: string;
@@ -24,7 +25,7 @@ export interface IExecutionStage extends IOrchestratedItem, IStage {
   before?: IExecutionStage[];
   context: IExecutionContext;
   id: string;
-  tasks: IStageStep[];
+  tasks: ITaskStep[];
 }
 
 export interface IExecutionStageLabelComponentProps {
@@ -34,7 +35,20 @@ export interface IExecutionStageLabelComponentProps {
   stage: IExecutionStageSummary;
 }
 
+export interface IExecutionDetailsComponentProps {
+  application: Application;
+  detailsSections: IExecutionDetailsSection[];
+  execution: IExecution;
+  stage: IExecutionStage;
+}
+
+export interface IExecutionDetailsComponentState {
+  configSections: string[];
+  currentSection: string;
+}
+
 export interface IExecutionStageSummary extends IOrchestratedItem {
+  activeStageType?: string,
   after: IExecutionStage[];
   before: IExecutionStage[];
   cloudProvider: string;
@@ -43,6 +57,8 @@ export interface IExecutionStageSummary extends IOrchestratedItem {
   endTime: number;
   extraLabelLines?: (stage: IExecutionStageSummary) => number;
   firstActiveStage?: number;
+  group?: string;
+  groupStages?: IExecutionStageSummary[];
   id: string;
   inSuspendedExecutionWindow?: boolean;
   index: number;

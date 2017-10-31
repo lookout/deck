@@ -1,4 +1,4 @@
-import {cloneDeep, merge} from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 
 export interface IProviderSettings {
   defaults: {};
@@ -37,8 +37,8 @@ export interface IFeatures {
   snapshots?: boolean;
   dockerBake?: boolean;
   pipelineTemplates?: boolean;
+  versionedProviders?: boolean;
   travis?: boolean;
-  infSearchEnabled?: boolean;  // TODO: temporary until new inf search is ready
   [key: string]: any;
 }
 

@@ -11,6 +11,7 @@ import { ISearchResultFormatter } from './searchResult/searchResultFormatter.reg
  * External search registry entries add a section to the infrastructure search
  */
 export interface IExternalSearchConfig {
+
   /**
    * Provides the display text of the search entry. Can include HTML
    */

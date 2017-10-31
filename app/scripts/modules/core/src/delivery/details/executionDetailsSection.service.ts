@@ -1,13 +1,13 @@
-import { module } from 'angular';
+import { IPromise, ITimeoutService, module } from 'angular';
 import { StateParams, StateService } from '@uirouter/angularjs';
 
 export class ExecutionDetailsSectionService {
 
-  private pendingOnComplete: ng.IPromise<any>;
+  private pendingOnComplete: IPromise<any>;
 
   public constructor(private $stateParams: StateParams,
                      private $state: StateService,
-                     private $timeout: ng.ITimeoutService) {
+                     private $timeout: ITimeoutService) {
     'ngInject';
   }
 
@@ -26,7 +26,7 @@ export class ExecutionDetailsSectionService {
     }
     if (!this.sectionIsValid(availableSections)) {
       // use { location: 'replace' } to overwrite the invalid browser history state
-      this.$state.go('.', { details: details}, { location: 'replace' });
+      this.$state.go('.', { details: details }, { location: 'replace' });
     }
     if (onComplete) {
       this.pendingOnComplete = this.$timeout(onComplete);

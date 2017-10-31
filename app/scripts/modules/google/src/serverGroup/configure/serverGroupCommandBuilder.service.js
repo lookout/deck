@@ -10,9 +10,9 @@ module.exports = angular.module('spinnaker.gce.serverGroupCommandBuilder.service
   ACCOUNT_SERVICE,
   INSTANCE_TYPE_SERVICE,
   NAMING_SERVICE,
-  require('google/common/xpnNaming.gce.service.js'),
-  require('./../../instance/custom/customInstanceBuilder.gce.service.js'),
-  require('./wizard/hiddenMetadataKeys.value.js'),
+  require('google/common/xpnNaming.gce.service.js').name,
+  require('./../../instance/custom/customInstanceBuilder.gce.service.js').name,
+  require('./wizard/hiddenMetadataKeys.value.js').name,
 ])
   .factory('gceServerGroupCommandBuilder', function ($q, accountService, instanceTypeService, namingService,
                                                      gceCustomInstanceBuilderService, gceServerGroupHiddenMetadataKeys,
@@ -263,18 +263,12 @@ module.exports = angular.module('spinnaker.gce.serverGroupCommandBuilder.service
     function attemptToSetValidCredentials(application, defaultCredentials, command) {
       return accountService.listAccounts('gce').then(function(gceAccounts) {
         var gceAccountNames = _.map(gceAccounts, 'name');
-        var firstGCEAccount = null;
-
-        if (application.accounts.length) {
-          firstGCEAccount = _.find(application.accounts, function (applicationAccount) {
-            return gceAccountNames.includes(applicationAccount);
-          });
-        }
+        var firstGCEAccount = gceAccountNames[0];
 
         var defaultCredentialsAreValid = defaultCredentials && gceAccountNames.includes(defaultCredentials);
 
         command.credentials =
-          defaultCredentialsAreValid ? defaultCredentials : (firstGCEAccount ? firstGCEAccount : 'my-account-name');
+          defaultCredentialsAreValid ? defaultCredentials : (firstGCEAccount || 'my-account-name');
       });
     }
 
