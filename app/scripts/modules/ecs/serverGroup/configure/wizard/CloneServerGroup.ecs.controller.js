@@ -118,12 +118,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function configureCommand() {
       ecsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
-        var mode = serverGroupCommand.viewState.mode;
-        if (mode === 'clone' || mode === 'create') {
-          if (!serverGroupCommand.backingData.packageImages.length) {
-            serverGroupCommand.viewState.useAllImageSelection = true;
-          }
-        }
         $scope.state.loaded = true;
         initializeCommand();
         initializeSelectOptions();
@@ -137,7 +131,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
       $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
       $scope.$watch('command.viewState.usePreferredZones', createResultProcessor($scope.command.usePreferredZonesChanged));
-      $scope.$watch('command.virtualizationType', createResultProcessor($scope.command.imageChanged));
       $scope.$watch('command.stack', $scope.command.clusterChanged);
       $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
       $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
