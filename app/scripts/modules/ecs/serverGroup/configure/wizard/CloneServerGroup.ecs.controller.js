@@ -61,8 +61,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       copied: [
         'account, region, subnet, cluster name (stack, details)',
         'load balancers',
-        'security groups',
-        'instance type',
         'all fields on the Advanced Settings page'
       ],
       notCopied: [
@@ -129,11 +127,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     function initializeWatches() {
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
-      $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
-      $scope.$watch('command.viewState.usePreferredZones', createResultProcessor($scope.command.usePreferredZonesChanged));
       $scope.$watch('command.stack', $scope.command.clusterChanged);
       $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
-      $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
       serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
