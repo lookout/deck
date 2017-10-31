@@ -52,12 +52,6 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.cloneServerGroupSt
       stage.credentials = $scope.application.defaultCredentials.ecs;
     }
 
-    if (stage.isNew) {
-      let useAmiBlockDeviceMappings = _.get($scope, 'application.attributes.providerSettings.ecs.useAmiBlockDeviceMappings', false);
-      stage.useAmiBlockDeviceMappings = useAmiBlockDeviceMappings;
-      stage.copySourceCustomBlockDeviceMappings = !useAmiBlockDeviceMappings;
-    }
-
     this.targetClusterUpdated = () => {
       if (stage.targetCluster) {
         let clusterName = namingService.parseServerGroupName(stage.targetCluster);
@@ -93,29 +87,5 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.cloneServerGroupSt
       return stage.suspendedProcesses && stage.suspendedProcesses.includes(process);
     };
 
-    this.getBlockDeviceMappingsSource = () => {
-      if (stage.copySourceCustomBlockDeviceMappings) {
-        return 'source';
-      } else if (stage.useAmiBlockDeviceMappings) {
-        return 'ami';
-      }
-      return 'default';
-    };
-
-    this.selectBlockDeviceMappingsSource = (selection) => {
-      if (selection === 'source') {
-        // copy block device mappings from source asg
-        stage.copySourceCustomBlockDeviceMappings = true;
-        stage.useAmiBlockDeviceMappings = false;
-      } else if (selection === 'ami') {
-        // use block device mappings from selected ami
-        stage.copySourceCustomBlockDeviceMappings = false;
-        stage.useAmiBlockDeviceMappings = true;
-      } else {
-        // use default block device mappings for selected instance type
-        stage.copySourceCustomBlockDeviceMappings = false;
-        stage.useAmiBlockDeviceMappings = false;
-      }
-    };
   });
 

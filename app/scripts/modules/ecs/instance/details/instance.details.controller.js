@@ -23,8 +23,16 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
   CLOUD_PROVIDER_REGISTRY,
 ])
   .controller('ecsInstanceDetailsCtrl', function ($scope, $state, $uibModal,
-                                                  amazonInstanceWriter, confirmationModalService, recentHistoryService,
-                                                  cloudProviderRegistry, instanceReader, instance, app, $q, overrides) {
+                                                  amazonInstanceWriter,
+                                                  confirmationModalService,
+                                                  recentHistoryService,
+                                                  cloudProviderRegistry,
+                                                  instanceReader,
+                                                  instance,
+                                                  app,
+                                                  $q,
+                                                  overrides
+  ) {
     // needed for standalone instances
     $scope.detailsTemplateUrl = cloudProviderRegistry.getValue('ecs', 'instance.detailsTemplateUrl');
 
