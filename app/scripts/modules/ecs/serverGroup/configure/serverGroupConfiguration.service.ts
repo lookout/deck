@@ -29,8 +29,6 @@ import { IamRoleReader } from '../../iamRoles/iamRole.read.service';
 import { EscClusterReader } from '../../ecsCluster/ecsCluster.read.service';
 import { IRoleDescriptor } from '../../iamRoles/IRole';
 
-export type IBlockDeviceMappingSource = 'source' | 'ami' | 'default';
-
 export interface IEcsServerGroupCommandDirty extends IServerGroupCommandDirty {
   targetGroup?: string;
 }
