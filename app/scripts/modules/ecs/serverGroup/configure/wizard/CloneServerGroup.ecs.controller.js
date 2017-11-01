@@ -61,8 +61,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
       copied: [
         'account, region, subnet, cluster name (stack, details)',
         'load balancers',
-        'security groups',
-        'instance type',
         'all fields on the Advanced Settings page'
       ],
       notCopied: [
@@ -118,12 +116,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
 
     function configureCommand() {
       ecsServerGroupConfigurationService.configureCommand(application, serverGroupCommand).then(function () {
-        var mode = serverGroupCommand.viewState.mode;
-        if (mode === 'clone' || mode === 'create') {
-          if (!serverGroupCommand.backingData.packageImages.length) {
-            serverGroupCommand.viewState.useAllImageSelection = true;
-          }
-        }
         $scope.state.loaded = true;
         initializeCommand();
         initializeSelectOptions();
@@ -135,12 +127,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     function initializeWatches() {
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
-      $scope.$watch('command.subnetType', createResultProcessor($scope.command.subnetChanged));
-      $scope.$watch('command.viewState.usePreferredZones', createResultProcessor($scope.command.usePreferredZonesChanged));
-      $scope.$watch('command.virtualizationType', createResultProcessor($scope.command.imageChanged));
       $scope.$watch('command.stack', $scope.command.clusterChanged);
       $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
-      $scope.$watch('command.instanceType', $scope.command.instanceTypeChanged);
 
       // if any additional watches have been configured, add them
       serverGroupCommandRegistry.getCommandOverrides('ecs').forEach((override) => {
@@ -192,14 +180,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     function initializeCommand() {
-      if (serverGroupCommand.viewState.imageId) {
-        var foundImage = $scope.command.backingData.packageImages.filter(function(image) {
-          return image.amis[serverGroupCommand.region] && image.amis[serverGroupCommand.region].includes(serverGroupCommand.viewState.imageId);
-        });
-        if (foundImage.length) {
-          serverGroupCommand.amiName = foundImage[0].imageName;
-        }
-      }
+
     }
 
     this.isValid = function () {

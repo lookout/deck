@@ -7,25 +7,31 @@ import {
   CLOUD_PROVIDER_REGISTRY,
   CONFIRMATION_MODAL_SERVICE,
   INSTANCE_READ_SERVICE,
+  INSTANCE_WRITE_SERVICE,
   RECENT_HISTORY_SERVICE,
   SETTINGS
 } from '@spinnaker/core';
 
-import { AMAZON_INSTANCE_WRITE_SERVICE } from 'amazon/instance/amazon.instance.write.service';
 
 module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
   require('@uirouter/angularjs').default,
   require('angular-ui-bootstrap'),
-  AMAZON_INSTANCE_WRITE_SERVICE,
   INSTANCE_READ_SERVICE,
-  // require('../modules/amazon/src/vpc/vpcTag.directive'),
   CONFIRMATION_MODAL_SERVICE,
   RECENT_HISTORY_SERVICE,
   CLOUD_PROVIDER_REGISTRY,
 ])
   .controller('ecsInstanceDetailsCtrl', function ($scope, $state, $uibModal,
-                                                  amazonInstanceWriter, confirmationModalService, recentHistoryService,
-                                                  cloudProviderRegistry, instanceReader, instance, app, $q, overrides) {
+                                                  confirmationModalService,
+                                                  recentHistoryService,
+                                                  cloudProviderRegistry,
+                                                  instanceReader,
+                                                  instanceWriter,
+                                                  instance,
+                                                  app,
+                                                  $q,
+                                                  overrides
+  ) {
     // needed for standalone instances
     $scope.detailsTemplateUrl = cloudProviderRegistry.getValue('ecs', 'instance.detailsTemplateUrl');
 
@@ -49,7 +55,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       instance.health = instance.health || [];
       var displayableMetrics = instance.health.filter(
         function(metric) {
-          return metric.type !== 'Amazon' || metric.state !== 'Unknown';
+          return metric.type !== 'Ecs' || metric.state !== 'Unknown';
         }
       );
       // backfill details where applicable
@@ -211,50 +217,6 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       }
     }
 
-    this.canDeregisterFromLoadBalancer = function() {
-      let healthMetrics = $scope.instance.health || [];
-      return healthMetrics.some(function(health) {
-        return health.type === 'LoadBalancer';
-      });
-    };
-
-    this.canRegisterWithLoadBalancer = function() {
-      var instance = $scope.instance,
-          healthMetrics = instance.health || [];
-      if (!instance.loadBalancers || !instance.loadBalancers.length) {
-        return false;
-      }
-      var outOfService = healthMetrics.some(function(health) {
-        return health.type === 'LoadBalancer' && health.state === 'OutOfService';
-      });
-      var hasLoadBalancerHealth = healthMetrics.some(function(health) {
-        return health.type === 'LoadBalancer';
-      });
-      return outOfService || !hasLoadBalancerHealth;
-    };
-
-    this.canDeregisterFromTargetGroup = function() {
-      let healthMetrics = $scope.instance.health || [];
-      return healthMetrics.some(function(health) {
-        return health.type === 'TargetGroup' && health.state !== 'OutOfService';
-      });
-    };
-
-    this.canRegisterWithTargetGroup = function() {
-      var instance = $scope.instance,
-          healthMetrics = instance.health || [];
-      if (!instance.targetGroup) {
-        return false;
-      }
-      var outOfService = healthMetrics.some(function(health) {
-        return health.type === 'TargetGroup' && health.state === 'OutOfService';
-      });
-      var hasTargetGroupHealth = healthMetrics.some(function(health) {
-        return health.type === 'TargetGroup';
-      });
-      return outOfService || !hasTargetGroupHealth;
-    };
-
     this.canRegisterWithDiscovery = function() {
       var instance = $scope.instance;
       let healthMetrics = instance.health || [];
@@ -278,7 +240,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.terminateInstance(instance, app, defaultRequestParams);
+        return instanceWriter.terminateInstance(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -305,7 +267,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.terminateInstanceAndShrinkServerGroup(instance, app, defaultRequestParams);
+        return instanceWriter.terminateInstanceAndShrinkServerGroup(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -313,124 +275,6 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
         buttonText: 'Terminate ' + instance.instanceId + ' and shrink ' + instance.serverGroup,
         account: instance.account,
         provider: 'ecs',
-        taskMonitorConfig: taskMonitor,
-        submitMethod: submitMethod
-      });
-    };
-
-    this.rebootInstance = function rebootInstance() {
-      var instance = $scope.instance;
-
-      var taskMonitor = {
-        application: app,
-        title: 'Rebooting ' + instance.instanceId
-      };
-
-      var submitMethod = (params = {}) => {
-        if (app.attributes && app.attributes.platformHealthOnlyShowOverride && app.attributes.platformHealthOnly) {
-          params.interestingHealthProviderNames = ['Amazon'];
-          params.cloudProvider = cloudProvider;
-        }
-
-
-        return amazonInstanceWriter.rebootInstance(instance, app, params);
-      };
-
-      confirmationModalService.confirm({
-        header: 'Really reboot ' + instance.instanceId + '?',
-        buttonText: 'Reboot ' + instance.instanceId,
-        account: instance.account,
-        provider: 'ecs',
-        taskMonitorConfig: taskMonitor,
-        submitMethod: submitMethod
-      });
-    };
-
-    this.registerInstanceWithLoadBalancer = function registerInstanceWithLoadBalancer() {
-      var instance = $scope.instance;
-      var loadBalancerNames = instance.loadBalancers.join(' and ');
-
-      var taskMonitor = {
-        application: app,
-        title: 'Registering ' + instance.instanceId + ' with ' + loadBalancerNames
-      };
-
-      var submitMethod = function () {
-        return amazonInstanceWriter.registerInstanceWithLoadBalancer(instance, app, defaultRequestParams);
-      };
-
-      confirmationModalService.confirm({
-        header: 'Really register ' + instance.instanceId + ' with ' + loadBalancerNames + '?',
-        buttonText: 'Register ' + instance.instanceId,
-        account: instance.account,
-        taskMonitorConfig: taskMonitor,
-        submitMethod: submitMethod
-      });
-    };
-
-    this.deregisterInstanceFromLoadBalancer = function deregisterInstanceFromLoadBalancer() {
-      var instance = $scope.instance;
-      var loadBalancerNames = instance.loadBalancers.join(' and ');
-
-      var taskMonitor = {
-        application: app,
-        title: 'Deregistering ' + instance.instanceId + ' from ' + loadBalancerNames
-      };
-
-      var submitMethod = function () {
-        return amazonInstanceWriter.deregisterInstanceFromLoadBalancer(instance, app, defaultRequestParams);
-      };
-
-      confirmationModalService.confirm({
-        header: 'Really deregister ' + instance.instanceId + ' from ' + loadBalancerNames + '?',
-        buttonText: 'Deregister ' + instance.instanceId,
-        provider: 'ecs',
-        account: instance.account,
-        taskMonitorConfig: taskMonitor,
-        submitMethod: submitMethod
-      });
-    };
-
-    this.registerInstanceWithTargetGroup = function registerInstanceWithTargetGroup() {
-      var instance = $scope.instance;
-      var targetGroupName = instance.targetGroup;
-
-      var taskMonitor = {
-        application: app,
-        title: 'Registering ' + instance.instanceId + ' with ' + targetGroupName
-      };
-
-      var submitMethod = function () {
-        return amazonInstanceWriter.registerInstanceWithTargetGroup(instance, app, defaultRequestParams);
-      };
-
-      confirmationModalService.confirm({
-        header: 'Really register ' + instance.instanceId + ' with ' + targetGroupName + '?',
-        buttonText: 'Register ' + instance.instanceId,
-        account: instance.account,
-        taskMonitorConfig: taskMonitor,
-        submitMethod: submitMethod
-      });
-    };
-
-    this.deregisterInstanceFromTargetGroup = function deregisterInstanceFromTargetGroup() {
-      var instance = $scope.instance;
-      var targetGroupName = instance.targetGroup;
-
-      var taskMonitor = {
-        application: app,
-        title: 'Deregistering ' + instance.instanceId + ' from ' + targetGroupName
-      };
-
-      var submitMethod = function () {
-        return amazonInstanceWriter.deregisterInstanceFromTargetGroup(instance, app, defaultRequestParams);
-      };
-
-      confirmationModalService.confirm({
-        header: 'Really deregister ' + instance.instanceId + ' from ' + targetGroupName + '?',
-        buttonText: 'Deregister ' + instance.instanceId,
-        provider: 'ecs',
-        account: instance.account,
         taskMonitorConfig: taskMonitor,
         submitMethod: submitMethod
       });
@@ -445,7 +289,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.enableInstanceInDiscovery(instance, app, defaultRequestParams);
+        return instanceWriter.enableInstanceInDiscovery(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
@@ -466,7 +310,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       };
 
       var submitMethod = function () {
-        return amazonInstanceWriter.disableInstanceInDiscovery(instance, app, defaultRequestParams);
+        return instanceWriter.disableInstanceInDiscovery(instance, app, defaultRequestParams);
       };
 
       confirmationModalService.confirm({
