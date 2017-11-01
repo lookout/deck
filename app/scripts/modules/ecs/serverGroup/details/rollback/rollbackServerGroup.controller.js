@@ -25,7 +25,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.rollback.cont
 
       if (application && application.attributes) {
         if (application.attributes.platformHealthOnlyShowOverride && application.attributes.platformHealthOnly) {
-          $scope.command.interestingHealthProviderNames = ['Amazon'];
+          $scope.command.interestingHealthProviderNames = ['Ecs'];
         }
 
         $scope.command.platformHealthOnlyShowOverride = application.attributes.platformHealthOnlyShowOverride;

@@ -55,7 +55,7 @@ module.exports = angular.module('spinnaker.ecs.instance.details.controller', [
       instance.health = instance.health || [];
       var displayableMetrics = instance.health.filter(
         function(metric) {
-          return metric.type !== 'Amazon' || metric.state !== 'Unknown';
+          return metric.type !== 'Ecs' || metric.state !== 'Unknown';
         }
       );
       // backfill details where applicable

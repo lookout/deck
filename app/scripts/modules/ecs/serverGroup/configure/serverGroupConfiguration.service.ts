@@ -320,7 +320,6 @@ export class EcsServerGroupConfigurationService {
 
 export const ECS_SERVER_GROUP_CONFIGURATION_SERVICE = 'spinnaker.ecs.serverGroup.configure.service';
 module(ECS_SERVER_GROUP_CONFIGURATION_SERVICE, [
-  require('amazon/image/image.reader.js').name,
   ACCOUNT_SERVICE,
   SUBNET_READ_SERVICE,
   LOAD_BALANCER_READ_SERVICE,

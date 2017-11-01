@@ -133,6 +133,12 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
                 this.scalingPolicies = this.serverGroup.scalingPolicies;
                 // TODO - figure out whether we need the commented out block below, or not.  IF we do, then we need to make it stop crashing
 
+                if (has(this.serverGroup, 'buildInfo.jenkins')) {
+                  this.changeConfig.buildInfo = {
+                    jenkins: this.serverGroup.buildInfo.jenkins
+                  };
+                }
+
                 /*this.scalingPoliciesDisabled = this.scalingPolicies.length && this.autoScalingProcesses
                     .filter(p => !p.enabled)
                     .some(p => ['Launch','Terminate','AlarmNotification'].includes(p.name));
@@ -144,11 +150,9 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
                 this.changeConfig = {
                   metadata: get(this.serverGroup.entityTags, 'creationMetadata')
                 };
-                if (has(this.serverGroup, 'buildInfo.jenkins')) {
-                  this.changeConfig.buildInfo = {
-                    jenkins: this.serverGroup.buildInfo.jenkins
-                  };
-                } */
+                */
+
+
               } else {
                 autoClose();
               }
@@ -165,22 +169,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
         app.serverGroups.onRefresh($scope, retrieveServerGroup);
       }
     });
-
-    // let configureEntityTagTargets = () => {
-    //   this.entityTagTargets = clusterTargetBuilder.buildClusterTargets(this.serverGroup);
-    // };
-    //
-    // this.isEnableLocked = () => {
-    //   if (this.serverGroup.isDisabled) {
-    //     let resizeTasks = (this.serverGroup.runningTasks || [])
-    //       .filter(task => get(task, 'execution.stages', []).some(
-    //         stage => stage.type === 'resizeServerGroup'));
-    //     if (resizeTasks.length) {
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // };
 
     this.destroyServerGroup = () => {
       var serverGroup = this.serverGroup;
@@ -207,7 +195,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
         submitMethod: submitMethod,
         askForReason: true,
         platformHealthOnlyShowOverride: app.attributes.platformHealthOnlyShowOverride,
-        platformHealthType: 'Amazon',
+        platformHealthType: 'Ecs',
         onTaskComplete: () => {
           if ($state.includes('**.serverGroup', stateParams)) {
             $state.go('^');
@@ -218,7 +206,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       serverGroupWarningMessageService.addDestroyWarningMessage(app, serverGroup, confirmationModalParams);
 
       if (app.attributes.platformHealthOnlyShowOverride && app.attributes.platformHealthOnly) {
-        confirmationModalParams.interestingHealthProviderNames = ['Amazon'];
+        confirmationModalParams.interestingHealthProviderNames = ['Ecs'];
       }
 
       confirmationModalService.confirm(confirmationModalParams);
@@ -243,7 +231,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
         provider: 'ecs',
         taskMonitorConfig: taskMonitor,
         platformHealthOnlyShowOverride: app.attributes.platformHealthOnlyShowOverride,
-        platformHealthType: 'Amazon',
+        platformHealthType: 'Ecs',
         submitMethod: submitMethod,
         askForReason: true
       };
@@ -251,7 +239,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
       serverGroupWarningMessageService.addDisableWarningMessage(app, serverGroup, confirmationModalParams);
 
       if (app.attributes.platformHealthOnlyShowOverride && app.attributes.platformHealthOnly) {
-        confirmationModalParams.interestingHealthProviderNames = ['Amazon'];
+        confirmationModalParams.interestingHealthProviderNames = ['Ecs'];
       }
 
       confirmationModalService.confirm(confirmationModalParams);
@@ -275,13 +263,13 @@ module.exports = angular.module('spinnaker.ecs.serverGroup.details.controller', 
         account: serverGroup.account,
         taskMonitorConfig: taskMonitor,
         platformHealthOnlyShowOverride: app.attributes.platformHealthOnlyShowOverride,
-        platformHealthType: 'Amazon',
+        platformHealthType: 'Ecs',
         submitMethod: submitMethod,
         askForReason: true
       };
 
       if (app.attributes.platformHealthOnlyShowOverride && app.attributes.platformHealthOnly) {
-        confirmationModalParams.interestingHealthProviderNames = ['Amazon'];
+        confirmationModalParams.interestingHealthProviderNames = ['Ecs'];
       }
 
       confirmationModalService.confirm(confirmationModalParams);

@@ -45,7 +45,7 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.cloneServerGroupSt
     stage.cloudProviderType = 'ecs';
 
     if (stage.isNew && $scope.application.attributes.platformHealthOnlyShowOverride && $scope.application.attributes.platformHealthOnly) {
-      stage.interestingHealthProviderNames = ['Amazon'];
+      stage.interestingHealthProviderNames = ['Ecs'];
     }
 
     if (!stage.credentials && $scope.application.defaultCredentials.ecs) {
