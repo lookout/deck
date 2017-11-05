@@ -3,7 +3,12 @@
   <div class="form-group">
     <div class="col-md-5 sm-label-right"><b>ECS IAM Instance Profile</b> <help-field key="ecs.loadbalancing.targetPort"></help-field></div>
     <!-- TODO - Add a help box that explains that the container does not share profiles with the host -->
-    <div class="col-md-7">
+
+    <div class="col-md-7" ng-if="!$ctrl.command.backingData.filtered.iamRoles.length">
+      No account was selected, or no IAM roles are available for ECS tasks in this account.
+    </div>
+
+    <div class="col-md-7" ng-if="$ctrl.command.backingData.filtered.iamRoles.length">
       <ui-select ng-model="$ctrl.command.iamRole" class="form-control input-sm" required on-select="$ctrl.fieldChanged()">
         <ui-select-match>{{$select.selected}}</ui-select-match>
         <ui-select-choices repeat="iamRole in $ctrl.command.backingData.filtered.iamRoles | filter: $select.search">
