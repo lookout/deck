@@ -113,7 +113,7 @@ export class EcsServerGroupConfigurationService {
       credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'), // TODO(Bruno Carrier) : This should use the 'ecs' value, but load balancers are a mess in there.
       loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
       subnets: this.subnetReader.listSubnets(),
-      iamRoles: this.iamRoleReader.listRoles('ecs', 'continuous-delivery-ecs', 'doesnt matter'),
+      iamRoles: this.iamRoleReader.listRoles('ecs'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
@@ -122,7 +122,7 @@ export class EcsServerGroupConfigurationService {
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
       this.configureVpcId(command);
-      backingData.filtered.iamRoles = this.getIamRoleNames(command);
+      this.configureAvailableIamRoles(command)
 
       if (command.loadBalancers && command.loadBalancers.length) {
         // verify all load balancers are accounted for; otherwise, try refreshing load balancers cache
@@ -151,6 +151,14 @@ export class EcsServerGroupConfigurationService {
   public configureAvailabilityZones(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.availabilityZones =
       find<IRegion>(command.backingData.credentialsKeyedByAccount[command.credentials].regions, { name: command.region }).availabilityZones;
+  }
+
+  public configureAvailableIamRoles(command: IEcsServerGroupCommand): void {
+    command.backingData.filtered.iamRoles = chain(command.backingData.iamRoles)
+      .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
+      // .filter({ accountName: command.credentials })
+      .map('name')
+      .value();
   }
 
   public configureSubnetPurposes(command: IEcsServerGroupCommand): IServerGroupCommandResult {
@@ -200,12 +208,6 @@ export class EcsServerGroupConfigurationService {
     const loadBalancersV2 = this.getLoadBalancerMap(command).filter((lb) => lb.loadBalancerType !== 'classic') as any[];
     const allTargetGroups = flatten(loadBalancersV2.map<string[]>((lb) => lb.targetGroups));
     return allTargetGroups.sort();
-  }
-
-  public getIamRoleNames(command: IEcsServerGroupCommand): string[] {
-    const iamRoles = command.backingData.iamRoles as any[];
-    const iamRoleNames = flatten(iamRoles.map<string[]>((role) => role.name));
-    return iamRoleNames.sort();
   }
 
   public configureLoadBalancerOptions(command: IEcsServerGroupCommand): IServerGroupCommandResult {
@@ -286,7 +288,6 @@ export class EcsServerGroupConfigurationService {
       extend(result.dirty, this.configureSubnetPurposes(command).dirty);
       if (command.region) {
         extend(result.dirty, command.subnetChanged().dirty);
-
         this.configureAvailabilityZones(command);
       } else {
         filteredData.regionalAvailabilityZones = null;
@@ -299,6 +300,8 @@ export class EcsServerGroupConfigurationService {
       const result: IEcsServerGroupCommandResult = { dirty: {} };
       const backingData = command.backingData;
       if (command.credentials) {
+        this.configureAvailableIamRoles(command);
+
         const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || { regions: [] } as IAccountDetails;
         backingData.filtered.regions = regionsForAccount.regions;
         if (!some(backingData.filtered.regions, { name: command.region })) {
