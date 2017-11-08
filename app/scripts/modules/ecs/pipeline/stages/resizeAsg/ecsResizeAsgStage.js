@@ -12,7 +12,6 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.ecs.resizeAsgStage
       alias: 'resizeAsg',
       cloudProvider: 'ecs',
       templateUrl: require('./resizeAsgStage.html'),
-      executionDetailsUrl: require('./resizeAsgExecutionDetails.html'),
       executionConfigSections: ['resizeServerGroupConfig', 'taskStatus'],
       executionStepLabelUrl: require('./resizeAsgStepLabel.html'),
       accountExtractor: (stage) => [stage.context.credentials],
