@@ -28,7 +28,7 @@ module.exports = angular.module('spinnaker.ecs', [
   CLOUD_PROVIDER_REGISTRY,
   IAM_ROLE_READ_SERVICE,
   ECS_SERVER_GROUP_TRANSFORMER,
-  require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage').name,
+  // require('./pipeline/stages/cloneServerGroup/ecsCloneServerGroupStage').name,  // TODO(Bruno Carrier): We should enable this on Clouddriver before revealing this stage
   require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component').name,
   require('./serverGroup/configure/wizard/capacity/capacity.component').name,
   ECS_LOAD_BALANCER_SELECTOR,
