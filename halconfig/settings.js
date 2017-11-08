@@ -9,6 +9,8 @@ var chaosEnabled = '{%features.chaos%}' === 'true';
 var fiatEnabled = '{%features.fiat%}' === 'true';
 var jobsEnabled = '{%features.jobs%}' === 'true';
 var pipelineTemplatesEnabled = '{%features.pipelineTemplates%}' === 'true';
+var artifactsEnabled = '{%features.artifacts%}' === 'true';
+var canaryEnabled = '{%features.legacyCanary%}' === 'true';
 var timezone = '{%timezone%}';
 var version = '{%version%}';
 var changelogGistId = '{%changelog.gist.id%}';
@@ -137,8 +139,10 @@ window.spinnakerSettings = {
     chaosMonkey: chaosEnabled,
     jobs: jobsEnabled,
     pipelineTemplates: pipelineTemplatesEnabled,
-    pipelines: true,
     notifications: notificationsEnabled,
+    artifacts: artifactsEnabled,
+    canary: canaryEnabled,
+    pipelines: true,
     fastProperty: true,
     vpcMigrator: true,
     clusterDiff: false,
