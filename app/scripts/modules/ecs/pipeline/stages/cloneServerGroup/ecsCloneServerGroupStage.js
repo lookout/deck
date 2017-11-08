@@ -8,14 +8,12 @@ import { ACCOUNT_SERVICE, NAMING_SERVICE, StageConstants } from '@spinnaker/core
 module.exports = angular.module('spinnaker.ecs.pipeline.stage.cloneServerGroupStage', [
   ACCOUNT_SERVICE,
   NAMING_SERVICE,
-  require('./cloneServerGroupExecutionDetails.controller.js').name,
 ])
   .config(function(pipelineConfigProvider) {
     pipelineConfigProvider.registerStage({
       provides: 'cloneServerGroup',
       cloudProvider: 'ecs',
       templateUrl: require('./cloneServerGroupStage.html'),
-      executionDetailsUrl: require('./cloneServerGroupExecutionDetails.html'),
       executionStepLabelUrl: require('./cloneServerGroupStepLabel.html'),
       accountExtractor: (stage) => stage.context.credentials,
       validators: [
