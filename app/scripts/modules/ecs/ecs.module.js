@@ -9,6 +9,7 @@ import { ECS_LOAD_BALANCER_SELECTOR } from './serverGroup/configure/wizard/loadB
 import { SERVER_GROUP_DETAILS_MODULE } from './serverGroup/details/serverGroupDetails.module';
 import { IAM_ROLE_READ_SERVICE } from './iamRoles/iamRole.read.service';
 import { ECS_CLUSTER_READ_SERVICE } from './ecsCluster/ecsCluster.read.service';
+import { METRIC_ALARM_READ_SERVICE } from './metricAlarm/metricAlarm.read.service';
 import { ECS_HELP } from './ecs.help';
 import { COMMON_MODULE } from './common/common.module';
 
@@ -33,6 +34,7 @@ module.exports = angular.module('spinnaker.ecs', [
   require('./serverGroup/configure/wizard/capacity/capacity.component').name,
   ECS_LOAD_BALANCER_SELECTOR,
   ECS_CLUSTER_READ_SERVICE,
+  METRIC_ALARM_READ_SERVICE,
   ECS_HELP,
   COMMON_MODULE,
   require('./serverGroup/configure/wizard/location/ServerGroupBasicSettings.controller').name,

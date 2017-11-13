@@ -59,6 +59,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             iamRole: defaultIamRole,
             availabilityZones: availabilityZones,
             iamRoles: [],
+            autoscalingPolicies: [],
             ecsClusterName: '',
             targetGroup: '',
             viewState: {
@@ -75,6 +76,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             command.interestingHealthProviderNames = ['ecs'];
           }
 
+          console.log(command);
           return command;
         });
     }
