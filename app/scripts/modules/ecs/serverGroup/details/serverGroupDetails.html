@@ -159,20 +159,20 @@
         <dt>Current</dt>
         <dd>{{ctrl.serverGroup.instances.length}}</dd>
 
-        <dt>Desired</dt> <!-- TODO - Make the values reflect the current state of the server group -->
-        <dd><i>1</i></dd>
+        <dt>Desired</dt>
+        <dd>{{ctrl.serverGroup.capacity.desired}}</dd>
 
         <dt>Min</dt>
-        <dd><i>1</i></dd> <!-- TODO - Make the values reflect the current state of the server group -->
+        <dd>{{ctrl.serverGroup.capacity.min}}</dd>
 
         <dt>Max</dt>
-        <dd><i>1</i></dd> <!-- TODO - Make the values reflect the current state of the server group -->
+        <dd>{{ctrl.serverGroup.capacity.max}}</dd>
       </dl>
     </collapsible-section>
     <collapsible-section heading="Scaling Policies" expanded="false">
       <dl class="horizontal-when-filters-collapsed">
-        <dd>scale-up-1-when-cpu-above-80-2-min-refresh-15-min</dd> <!-- TODO - Make the values reflect the current state of the server group -->
-        <dd>scale-down-1-when-cpu-below-40-5-min-refresh-30-min</dd> <!-- TODO - Make the values reflect the current state of the server group -->
+        <dd ng-if="ctrl.serverGroup.metricAlarms.length > 0" ng-repeat="metricAlarmName in ctrl.serverGroup.metricAlarms">{{metricAlarmName}}</dd>
+        <dd ng-if="ctrl.serverGroup.metricAlarms.length <= 0"><i>There are no scaling policies assigned.</i></dd>
       </dl>
     </collapsible-section>
     <collapsible-section heading="Metrics" expanded="false">

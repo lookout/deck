@@ -302,7 +302,7 @@ export class EcsServerGroupConfigurationService {
       if (command.region) {
         extend(result.dirty, command.subnetChanged().dirty);
         this.configureAvailabilityZones(command);
-        //this.configureAvaliableMetricAlarms(command);
+        // this.configureAvaliableMetricAlarms(command);
       } else {
         filteredData.regionalAvailabilityZones = null;
       }
