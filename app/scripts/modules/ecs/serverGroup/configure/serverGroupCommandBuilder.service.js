@@ -76,7 +76,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             command.interestingHealthProviderNames = ['ecs'];
           }
 
-          console.log(command);
           return command;
         });
     }

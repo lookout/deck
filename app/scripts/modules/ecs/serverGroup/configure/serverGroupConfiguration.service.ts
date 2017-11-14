@@ -123,8 +123,6 @@ export class EcsServerGroupConfigurationService {
       metricAlarms: this.metricAlarmReader.listMetricAlarms('continuous-delivery-ecs', 'us-west-2'),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
-      console.log('bruno look over here!');
-      console.log(backingData.metricAlarms)
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
