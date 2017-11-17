@@ -79,7 +79,7 @@
                  ng-model="$ctrl.command.autoscalingPolicies"
                  class="form-control input-sm">
         <ui-select-match>{{$item.alarmName}}</ui-select-match>
-        <ui-select-choices repeat="policy in $ctrl.command.backingData.metricAlarms | filter: $select.search">
+        <ui-select-choices repeat="policy in $ctrl.command.backingData.filtered.metricAlarms | filter: $select.search">
           <span ng-bind-html="policy.alarmName"></span>
         </ui-select-choices>
       </ui-select>

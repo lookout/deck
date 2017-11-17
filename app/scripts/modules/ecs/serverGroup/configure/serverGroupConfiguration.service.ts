@@ -43,7 +43,7 @@ export interface IEcsServerGroupCommandBackingDataFiltered extends IServerGroupC
   targetGroups: string[];
   iamRoles: string[];
   ecsClusters: string[];
-  metricAlarms: string[];
+  metricAlarms: MetricAlarmDescriptor[];
 }
 
 export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBackingData {
@@ -120,14 +120,15 @@ export class EcsServerGroupConfigurationService {
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
-      metricAlarms: this.metricAlarmReader.listMetricAlarms('continuous-delivery-ecs', 'us-west-2'),
+      metricAlarms: this.metricAlarmReader.listMetricAlarms(),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
       this.configureVpcId(command);
-      this.configureAvailableIamRoles(command)
+      this.configureAvailableIamRoles(command);
+      this.configureAvailableMetricAlarms(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
         // verify all load balancers are accounted for; otherwise, try refreshing load balancers cache
@@ -137,6 +138,7 @@ export class EcsServerGroupConfigurationService {
         }
       }
 
+      console.log(command.backingData);
       return this.$q.all([loadBalancerReloader]).then(() => {
         this.applyOverrides('afterConfiguration', command);
         this.attachEventHandlers(command);
@@ -158,6 +160,23 @@ export class EcsServerGroupConfigurationService {
       find<IRegion>(command.backingData.credentialsKeyedByAccount[command.credentials].regions, { name: command.region }).availabilityZones;
   }
 
+  public configureAvailableMetricAlarms(command: IEcsServerGroupCommand): void {
+    command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
+      .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
+      .flattenDeep<MetricAlarmDescriptor>()
+      .filter({ region: command.region })
+      .flattenDeep<MetricAlarmDescriptor>()
+      .map(metricAlarm => {
+        return {
+          accountName: metricAlarm.accountName,
+          region: metricAlarm.region,
+          alarmName: metricAlarm.alarmName,
+          alarmArn: metricAlarm.alarmArn,
+        } as MetricAlarmDescriptor;
+      })
+      .value();
+  }
+
   public configureAvailableIamRoles(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.iamRoles = chain(command.backingData.iamRoles)
       .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
@@ -165,12 +184,6 @@ export class EcsServerGroupConfigurationService {
       .map('name')
       .value();
   }
-
-  /*public configureAvaliableMetricAlarms(command: IEcsServerGroupCommand): void {
-    command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
-      .filter({account: command.credentials, region: command.region})
-      .value();
-  }*/
 
   public configureSubnetPurposes(command: IEcsServerGroupCommand): IServerGroupCommandResult {
     const result: IEcsServerGroupCommandResult = { dirty: {} };
@@ -276,7 +289,11 @@ export class EcsServerGroupConfigurationService {
       command.vpcId = null;
       result.dirty.vpcId = true;
     } else {
-      const subnet = find<ISubnet>(command.backingData.subnets, { purpose: command.subnetType, account: command.credentials, region: command.region });
+      const subnet = find<ISubnet>(command.backingData.subnets, {
+        purpose: command.subnetType,
+        account: command.credentials,
+        region: command.region
+      });
       command.vpcId = subnet ? subnet.vpcId : null;
     }
     return result;
@@ -300,7 +317,7 @@ export class EcsServerGroupConfigurationService {
       if (command.region) {
         extend(result.dirty, command.subnetChanged().dirty);
         this.configureAvailabilityZones(command);
-        // this.configureAvaliableMetricAlarms(command);
+        this.configureAvailableMetricAlarms(command);
       } else {
         filteredData.regionalAvailabilityZones = null;
       }
@@ -313,6 +330,7 @@ export class EcsServerGroupConfigurationService {
       const backingData = command.backingData;
       if (command.credentials) {
         this.configureAvailableIamRoles(command);
+        this.configureAvailableMetricAlarms(command);
 
         const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || { regions: [] } as IAccountDetails;
         backingData.filtered.regions = regionsForAccount.regions;

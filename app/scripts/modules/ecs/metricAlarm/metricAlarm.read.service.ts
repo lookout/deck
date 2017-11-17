@@ -8,8 +8,8 @@ export class MetricAlarmReader {
     'ngInject';
   }
 
-  public listMetricAlarms(account: string, region: string): ng.IPromise<MetricAlarmDescriptor[]> {
-    return this.API.all('ecs').all('cloudMetrics').all(account).all(region).getList();
+  public listMetricAlarms(): ng.IPromise<MetricAlarmDescriptor[]> {
+    return this.API.all('ecs').all('cloudMetrics').all('alarms').getList();
   }
 
 }
