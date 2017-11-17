@@ -15,6 +15,7 @@ const helpContents: {[key: string]: string} = {
   'ecs.loadbalancing.targetPort': '<p>The port on which your application is listening for incoming traffic</p>',
   'ecs.iamrole': '<p>The IAM role that your container (task, in AWS wording) will inherit.  </p><p>Define a role only if your application needs to access AWS APIs</p>',
   'ecs.placementStrategy': '<p>The strategy the container scheduler will be using.  See <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html" target="_blank">AWS documentation</a> for more details. </p><p>You should at least balance across availability zones</p>',
+  'ecs.capacity.autoscalingPolicies': '<p>A predefined MetricAlarm and Autoscaling policy with an Action must exist.</p><p>There is a delay in MetricAlarm recognizing the Autoscaling policy.</p>',
 };
 
 export const ECS_HELP = 'spinnaker.ecs.help.contents';
