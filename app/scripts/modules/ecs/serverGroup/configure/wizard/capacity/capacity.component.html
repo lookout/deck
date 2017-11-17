@@ -70,21 +70,20 @@
                                  ng-model="$ctrl.command.reservedMemory"/></div>
   </div>
 
-
   <div class="form-group">
     <div class="col-md-4 sm-label-right">
-      <b>Autoscaling policy</b>
+      <b>Autoscaling policy</b> <help-field key="ecs.capacity.autoscalingPolicies"></help-field>
     </div>
     <div class="col-md-8">
       <ui-select multiple
-                 ng-model="command.autoscalingPolicies"
+                 ng-model="$ctrl.command.autoscalingPolicies"
                  class="form-control input-sm">
-        <ui-select-match>{{$item}}</ui-select-match>
-        <ui-select-choices repeat="item in ['Scale down 1 - CPU usage < 50% - 10 minute window', 'Scale up 1 - CPU usage > 80% - 5 minute window']">
-          <span ng-bind-html="item"></span>
+        <ui-select-match>{{$item.alarmName}}</ui-select-match>
+        <ui-select-choices repeat="policy in $ctrl.command.backingData.filtered.metricAlarms | filter: $select.search">
+          <span ng-bind-html="policy.alarmName"></span>
         </ui-select-choices>
       </ui-select>
-      <!-- TODO - implement auto-scaling with real values, using a real controller, here! -->
     </div>
   </div>
+
 </div>

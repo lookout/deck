@@ -27,7 +27,9 @@ import {
 import { IAmazonLoadBalancer } from 'amazon/domain';
 import { IamRoleReader } from '../../iamRoles/iamRole.read.service';
 import { EscClusterReader } from '../../ecsCluster/ecsCluster.read.service';
+import { MetricAlarmReader } from '../../metricAlarm/metricAlarm.read.service';
 import { IRoleDescriptor } from '../../iamRoles/IRole';
+import { MetricAlarmDescriptor } from '../../metricAlarm/MetricAlarm';
 
 export interface IEcsServerGroupCommandDirty extends IServerGroupCommandDirty {
   targetGroup?: string;
@@ -41,6 +43,7 @@ export interface IEcsServerGroupCommandBackingDataFiltered extends IServerGroupC
   targetGroups: string[];
   iamRoles: string[];
   ecsClusters: string[];
+  metricAlarms: MetricAlarmDescriptor[];
 }
 
 export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBackingData {
@@ -48,6 +51,7 @@ export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBa
   targetGroups: string[];
   ecsClusters: string[];
   iamRoles: IRoleDescriptor[];
+  metricAlarms: MetricAlarmDescriptor[];
 }
 
 export interface IEcsServerGroupCommand extends IServerGroupCommand {
@@ -69,6 +73,7 @@ export class EcsServerGroupConfigurationService {
               private serverGroupCommandRegistry: ServerGroupCommandRegistry,
               private iamRoleReader: IamRoleReader,
               private ecsClusterReader: EscClusterReader,
+              private metricAlarmReader: MetricAlarmReader,
               ) {
     'ngInject';
   }
@@ -115,14 +120,15 @@ export class EcsServerGroupConfigurationService {
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
+      metricAlarms: this.metricAlarmReader.listMetricAlarms(),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
-      console.log('bruno look over here!');
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
       this.configureVpcId(command);
-      this.configureAvailableIamRoles(command)
+      this.configureAvailableIamRoles(command);
+      this.configureAvailableMetricAlarms(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
         // verify all load balancers are accounted for; otherwise, try refreshing load balancers cache
@@ -132,6 +138,7 @@ export class EcsServerGroupConfigurationService {
         }
       }
 
+      console.log(command.backingData);
       return this.$q.all([loadBalancerReloader]).then(() => {
         this.applyOverrides('afterConfiguration', command);
         this.attachEventHandlers(command);
@@ -151,6 +158,21 @@ export class EcsServerGroupConfigurationService {
   public configureAvailabilityZones(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.availabilityZones =
       find<IRegion>(command.backingData.credentialsKeyedByAccount[command.credentials].regions, { name: command.region }).availabilityZones;
+  }
+
+  public configureAvailableMetricAlarms(command: IEcsServerGroupCommand): void {
+    command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
+      .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
+      .flattenDeep<MetricAlarmDescriptor>()
+      .filter({ region: command.region })
+      .flattenDeep<MetricAlarmDescriptor>()
+      .map(metricAlarm => {
+        return {
+          alarmName: metricAlarm.alarmName,
+          alarmArn: metricAlarm.alarmArn,
+        } as MetricAlarmDescriptor;
+      })
+      .value();
   }
 
   public configureAvailableIamRoles(command: IEcsServerGroupCommand): void {
@@ -265,7 +287,11 @@ export class EcsServerGroupConfigurationService {
       command.vpcId = null;
       result.dirty.vpcId = true;
     } else {
-      const subnet = find<ISubnet>(command.backingData.subnets, { purpose: command.subnetType, account: command.credentials, region: command.region });
+      const subnet = find<ISubnet>(command.backingData.subnets, {
+        purpose: command.subnetType,
+        account: command.credentials,
+        region: command.region
+      });
       command.vpcId = subnet ? subnet.vpcId : null;
     }
     return result;
@@ -289,6 +315,7 @@ export class EcsServerGroupConfigurationService {
       if (command.region) {
         extend(result.dirty, command.subnetChanged().dirty);
         this.configureAvailabilityZones(command);
+        this.configureAvailableMetricAlarms(command);
       } else {
         filteredData.regionalAvailabilityZones = null;
       }
@@ -301,6 +328,7 @@ export class EcsServerGroupConfigurationService {
       const backingData = command.backingData;
       if (command.credentials) {
         this.configureAvailableIamRoles(command);
+        this.configureAvailableMetricAlarms(command);
 
         const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || { regions: [] } as IAccountDetails;
         backingData.filtered.regions = regionsForAccount.regions;
