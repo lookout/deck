@@ -168,8 +168,6 @@ export class EcsServerGroupConfigurationService {
       .flattenDeep<MetricAlarmDescriptor>()
       .map(metricAlarm => {
         return {
-          accountName: metricAlarm.accountName,
-          region: metricAlarm.region,
           alarmName: metricAlarm.alarmName,
           alarmArn: metricAlarm.alarmArn,
         } as MetricAlarmDescriptor;
