@@ -30,6 +30,8 @@ import { EscClusterReader } from '../../ecsCluster/ecsCluster.read.service';
 import { MetricAlarmReader } from '../../metricAlarm/metricAlarm.read.service';
 import { IRoleDescriptor } from '../../iamRoles/IRole';
 import { MetricAlarmDescriptor } from '../../metricAlarm/MetricAlarm';
+import { PlacementStrategyService } from '../../placementStrategy/placementStrategy.service';
+import { PlacementStrategy } from '../../placementStrategy/PlacementStrategy';
 
 export interface IEcsServerGroupCommandDirty extends IServerGroupCommandDirty {
   targetGroup?: string;
@@ -58,6 +60,10 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   backingData: IEcsServerGroupCommandBackingData;
   targetHealthyDeployPercentage: number;
   targetGroup: string;
+  placementStrategyName: string;
+  placementStrategySequence: PlacementStrategy[];
+
+  placementStrategyNameChanged: () => IServerGroupCommandResult;
 }
 
 export class EcsServerGroupConfigurationService {
@@ -74,6 +80,7 @@ export class EcsServerGroupConfigurationService {
               private iamRoleReader: IamRoleReader,
               private ecsClusterReader: EscClusterReader,
               private metricAlarmReader: MetricAlarmReader,
+              private placementStrategyService: PlacementStrategyService,
               ) {
     'ngInject';
   }
@@ -341,6 +348,12 @@ export class EcsServerGroupConfigurationService {
       } else {
         command.region = null;
       }
+      return result;
+    };
+
+    command.placementStrategyNameChanged = (): IServerGroupCommandResult => {
+      const result: IEcsServerGroupCommandResult = { dirty: {} };
+      command.placementStrategySequence = this.placementStrategyService.getPredefinedStrategy(command.placementStrategyName);
       return result;
     };
 
