@@ -60,6 +60,8 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             availabilityZones: availabilityZones,
             iamRoles: [],
             autoscalingPolicies: [],
+            placementStrategyName: '',
+            placementStrategySequence: [],
             ecsClusterName: '',
             targetGroup: '',
             viewState: {
