@@ -127,6 +127,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     function initializeWatches() {
       $scope.$watch('command.credentials', createResultProcessor($scope.command.credentialsChanged));
       $scope.$watch('command.region', createResultProcessor($scope.command.regionChanged));
+      $scope.$watch('command.placementStrategyName', createResultProcessor($scope.command.placementStrategyNameChanged));
       $scope.$watch('command.stack', $scope.command.clusterChanged);
       $scope.$watch('command.freeFormDetails', $scope.command.clusterChanged);
 
