@@ -17,10 +17,6 @@ const helpContents: {[key: string]: string} = {
   'ecs.iamrole': '<p>The IAM role that your container (task, in AWS wording) will inherit.  </p><p>Define a role only if your application needs to access AWS APIs</p>',
   'ecs.placementStrategy': '<p>The strategy the container scheduler will be using.  See <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html" target="_blank">AWS documentation</a> for more details. </p><p>You should at least balance across availability zones</p><p>Custom placement strategies have not been implemented yet.</p>',
   'ecs.capacity.autoscalingPolicies': '<p>A predefined MetricAlarm and Autoscaling policy with an Action must exist.</p><p>There is a delay in MetricAlarm recognizing the Autoscaling policy.</p>',
-  'ecs.capacity.reserved.memory': '<p>The maximal amount of memory that your container can use, in megabytes.  Exceeding this amount may result in termination of your container.</p><p>1024 MB = 1 GB</p>',
-  'ecs.loadbalancing.targetPort': '<p>The port on which your application is listening for incoming traffic</p>',
-  'ecs.iamrole': '<p>The IAM role that your container (task, in AWS wording) will inherit.  </p><p>Define a role only if your application needs to access AWS APIs</p>',
-  'ecs.placementStrategy': '<p>The strategy the container scheduler will be using.  See <a href="http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-strategies.html" target="_blank">AWS documentation</a> for more details. </p><p>You should at least balance across availability zones</p>',
 };
 
 export const ECS_HELP = 'spinnaker.ecs.help.contents';

@@ -14,7 +14,7 @@ export class PlacementStrategyService {
     } else if ( strategyName === 'One Task Per Host' ) {
       return this.getOneTaskPerHostStrategy();
     } else {
-      //TODO: Add support for custom placement strategy.
+      // TODO: Add support for custom placement strategy.
       return [];
     }
   }
