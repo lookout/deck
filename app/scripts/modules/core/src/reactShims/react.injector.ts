@@ -2,7 +2,7 @@ import { IQService, IRootScopeService, IScope } from 'angular';
 import IInjectorService = angular.auto.IInjectorService;
 
 import { IModalService } from 'angular-ui-bootstrap';
-import { UIRouter, StateService, StateParams } from '@uirouter/core';
+import { StateParams, StateService, UIRouter } from '@uirouter/core';
 
 import { AccountService } from '../account/account.service';
 import { Api } from '../api/api.service';
@@ -16,12 +16,12 @@ import { ClusterFilterService } from '../cluster/filter/clusterFilter.service';
 import { CollapsibleSectionStateCache } from '../cache/collapsibleSectionStateCache';
 import { ConfirmationModalService } from '../confirmationModal/confirmationModal.service';
 import { EntityTagWriter } from '../entityTag';
-import { ExecutionDetailsSectionService } from 'core/delivery/details/executionDetailsSection.service';
-import { ExecutionFilterModel } from '../delivery/filter/executionFilter.model';
-import { ExecutionFilterService } from '../delivery/filter/executionFilter.service';
-import { ExecutionService } from '../delivery/service/execution.service';
-import { HelpContentsRegistry } from 'core/help';
-import { IHelpContents } from 'core/help';
+import { ExecutionDetailsSectionService } from 'core/pipeline/details/executionDetailsSection.service';
+import { ExecutionFilterModel } from '../pipeline/filter/executionFilter.model';
+import { ExecutionFilterService } from '../pipeline/filter/executionFilter.service';
+import { ExecutionService } from '../pipeline/service/execution.service';
+import { ExecutionsTransformerService } from '../pipeline/service/executions.transformer.service';
+import { HelpContentsRegistry, IHelpContents } from 'core/help';
 import { InfrastructureSearchService } from '../search/infrastructure/infrastructureSearch.service';
 import { InsightFilterStateModel } from '../insight/insightFilterState.model';
 import { LoadBalancerFilterModel } from '../loadBalancer/filter/loadBalancerFilter.model';
@@ -30,6 +30,7 @@ import { ManualJudgmentService } from '../pipeline/config/stages/manualJudgment/
 import { NamingService } from '../naming/naming.service';
 import { NotifierService } from '../widgets/notifier/notifier.service';
 import { OverrideRegistry } from '../overrideRegistry/override.registry';
+import { PagerDutyWriter } from '../pagerDuty/pagerDuty.write.service';
 import { PipelineConfigProvider } from '../pipeline/config/pipelineConfigProvider';
 import { PipelineConfigService } from '../pipeline/config/services/pipelineConfig.service';
 import { PipelineConfigValidator } from '../pipeline/config/validation/pipelineConfig.validator';
@@ -47,6 +48,7 @@ import { VariableInputService } from '../pipeline/config/templates/inputs/variab
 import { VariableValidatorService } from '../pipeline/config/templates/validators/variableValidator.service';
 import { ViewStateCacheService } from '../cache/viewStateCache.service';
 import { WaypointService } from '../utils/waypoints/waypoint.service';
+import { VersionSelectionService } from '../cloudProvider/versionSelection/versionSelection.service';
 
 export abstract class ReactInject {
   protected $injector: IInjectorService;
@@ -86,6 +88,7 @@ export class CoreReactInject extends ReactInject {
   public get executionFilterModel() { return this.$injector.get('executionFilterModel') as ExecutionFilterModel; }
   public get executionFilterService() { return this.$injector.get('executionFilterService') as ExecutionFilterService; }
   public get executionService() { return this.$injector.get('executionService') as ExecutionService; }
+  public get executionsTransformer() { return this.$injector.get('executionsTransformer') as ExecutionsTransformerService; }
   public get helpContents() { return this.$injector.get('helpContents') as IHelpContents }
   public get helpContentsRegistry() { return this.$injector.get('helpContentsRegistry') as HelpContentsRegistry; }
   public get infrastructureSearchService() { return this.$injector.get('infrastructureSearchService') as InfrastructureSearchService; }
@@ -93,11 +96,12 @@ export class CoreReactInject extends ReactInject {
   public get loadBalancerFilterModel() { return this.$injector.get('loadBalancerFilterModel') as LoadBalancerFilterModel; }
   public get loadBalancerFilterService() { return this.$injector.get('loadBalancerFilterService') as LoadBalancerFilterService; }
   public get manualJudgmentService() { return this.$injector.get('manualJudgmentService') as ManualJudgmentService; }
-  public get modalService() { return this.$injector.get('$uibModal') as IModalService; }
+  public get modalService(): IModalService { return this.$injector.get('$uibModal') as IModalService; }
   public get MultiselectModel() { return this.$injector.get('MultiselectModel') as any; }
   public get namingService() { return this.$injector.get('namingService') as NamingService; }
   public get notifierService() { return this.$injector.get('notifierService') as NotifierService; }
   public get overrideRegistry() { return this.$injector.get('overrideRegistry') as OverrideRegistry; }
+  public get pagerDutyWriter() { return this.$injector.get('pagerDutyWriter') as PagerDutyWriter; }
   public get pipelineConfig() { return this.$injector.get('pipelineConfig') as PipelineConfigProvider; }
   public get pipelineConfigService() { return this.$injector.get('pipelineConfigService') as PipelineConfigService; }
   public get pipelineConfigValidator() { return this.$injector.get('pipelineConfigValidator') as PipelineConfigValidator; }
@@ -113,6 +117,7 @@ export class CoreReactInject extends ReactInject {
   public get urlBuilderService() { return this.$injector.get('urlBuilderService') as UrlBuilderService; }
   public get variableInputService() { return this.$injector.get('variableInputService') as VariableInputService; }
   public get variableValidatorService() { return this.$injector.get('variableValidatorService') as VariableValidatorService; }
+  public get versionSelectionService() { return this.$injector.get('versionSelectionService') as VersionSelectionService; }
   public get viewStateCache() { return this.$injector.get('viewStateCache') as ViewStateCacheService; }
   public get waypointService() { return this.$injector.get('waypointService') as WaypointService; }
 

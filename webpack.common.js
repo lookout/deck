@@ -13,6 +13,7 @@ const CACHE_INVALIDATE = JSON.stringify({
 });
 
 const NODE_MODULE_PATH = path.join(__dirname, 'node_modules');
+const SETTINGS_PATH = process.env.SETTINGS_PATH || './settings.js';
 
 function configure(IS_TEST) {
 
@@ -49,6 +50,8 @@ function configure(IS_TEST) {
         '@spinnaker/google': path.join(__dirname, 'app', 'scripts', 'modules', 'google', 'src'),
         'kubernetes': path.join(__dirname, 'app', 'scripts', 'modules', 'kubernetes', 'src'),
         '@spinnaker/kubernetes': path.join(__dirname, 'app', 'scripts', 'modules', 'kubernetes', 'src'),
+        'openstack': path.join(__dirname, 'app', 'scripts', 'modules', 'openstack', 'src'),
+        '@spinnaker/openstack': path.join(__dirname, 'app', 'scripts', 'modules', 'openstack', 'src'),
         'coreImports': path.resolve(__dirname, 'app', 'scripts', 'modules', 'core', 'src', 'presentation', 'less', 'imports', 'commonImports.less'),
       }
     },
@@ -157,7 +160,7 @@ function configure(IS_TEST) {
 
   if (!IS_TEST) {
     config.entry = {
-      settings: './settings.js',
+      settings: SETTINGS_PATH,
       settingsLocal: './settings-local.js',
       halconfig: './halconfig/settings.js',
       app: './app/scripts/app.ts',
@@ -171,12 +174,19 @@ function configure(IS_TEST) {
     };
 
     config.plugins.push(...[
+      new webpack.EnvironmentPlugin({
+        ENTITY_TAGS_ENABLED: 'true',
+        FIAT_ENABLED: 'false',
+        INFRA_STAGES: 'false',
+        TIMEZONE: 'America/Los_Angeles',
+        NODE_ENV: 'development',
+      }),
       new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.bundle.js'}),
       new webpack.optimize.CommonsChunkPlugin('init'),
       new HtmlWebpackPlugin({
         title: 'Spinnaker',
         template: './app/index.deck',
-        favicon: 'app/favicon.ico',
+        favicon: process.env.NODE_ENV === 'production' ? 'app/prod-favicon.ico' : 'app/dev-favicon.ico',
         inject: true,
 
         // default order is based on webpack's compile process
@@ -189,6 +199,11 @@ function configure(IS_TEST) {
         }
       })
     ]);
+
+    if (process.env.NODE_ENV === 'production') {
+      config.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+      config.plugins.push(new webpack.optimize.UglifyJsPlugin({ include: /vendor/, sourceMap: true }));
+    }
   }
 
   // this is temporary and will be deprecated in WP3.  moving forward,

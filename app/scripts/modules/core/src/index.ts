@@ -12,7 +12,6 @@ export * from './cluster';
 export * from './config';
 export * from './confirmationModal';
 
-export * from './delivery';
 export * from './deploymentStrategy';
 export * from './domain';
 
@@ -20,6 +19,8 @@ export * from './entityTag';
 // TODO: try pushing this export back down; for some unknown reason, it causes grief with the library (the export
 // is found by the TS compiler, but not at runtime)
 export * from './entityTag/notifications/EntityNotifications';
+
+export * from './event/EventBus';
 
 export * from './filterModel';
 
@@ -56,6 +57,7 @@ export * from './scheduler';
 export * from './search';
 export * from './securityGroup';
 export * from './serverGroup';
+export * from './serverGroupManager';
 export * from './serviceAccount';
 export * from './storage';
 export * from './subnet';

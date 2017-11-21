@@ -31,16 +31,21 @@
           Server Group Actions <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" uib-dropdown-menu role="menu">
-          <li ng-if="ctrl.canResizeServerGroup()">
-            <a href ng-click="ctrl.resizeServerGroup()">
-              Resize
+          <li>
+            <a href ng-click="ctrl.editServerGroup()">
+              Edit
+            </a>
+          </li>
+          <li ng-if="ctrl.canScaleServerGroup()">
+            <a href ng-click="ctrl.scaleServerGroup()">
+              Scale
             </a>
           </li>
           <li>
             <a href ng-click="ctrl.deleteServerGroup()">
               Delete
             </a>
-          <li>
+          </li>
         </ul>
       </div>
       <div class="clearfix"></div>
@@ -48,7 +53,7 @@
   </div>
 
   <div class="content" ng-if="!ctrl.state.loading">
-    <div class="band band-info" ng-if="ctrl.serverGroup.isDisabled || ctrl.serverGroup.disabled">Disabled</div>
+    <kubernetes-manifest-status status="ctrl.manifest.status"></kubernetes-manifest-status>
     <server-group-running-tasks-details server-group="ctrl.serverGroup" application="ctrl.serverGroup.moniker.app"></server-group-running-tasks-details>
     <collapsible-section heading="Information" expanded="true">
       <dl class="dl-horizontal dl-flex">

@@ -10,8 +10,9 @@ import { SECURITY_GROUP_TRANSFORMER_SERVICE, SecurityGroupTransformerService } f
 import { ENTITY_TAGS_READ_SERVICE, EntityTagsReader } from 'core/entityTag/entityTags.read.service';
 import { SETTINGS } from 'core/config/settings';
 import { SEARCH_SERVICE, SearchService, ISearchResults } from 'core/search/search.service';
-import { ISecurityGroupSearchResult } from './SecurityGroupSearchResultFormatter';
+import { ISecurityGroupSearchResult } from './securityGroupSearchResultType';
 import { ProviderServiceDelegate, PROVIDER_SERVICE_DELEGATE } from 'core/cloudProvider/providerService.delegate';
+import { IMoniker } from 'core/naming/IMoniker';
 
 export interface ISecurityGroupsByAccount {
   [account: string]: {
@@ -61,6 +62,7 @@ export interface ISecurityGroupSummary {
   id: string;
   name: string;
   vpcId: string;
+  moniker?: IMoniker;
 }
 
 export interface ISecurityGroupsByAccountSourceData {
@@ -118,7 +120,6 @@ export class SecurityGroupReader {
     return this.providerServiceDelegate
       .getDelegate<any>(container.provider || container.type || container.cloudProvider, 'securityGroup.reader')
       .resolveIndexedSecurityGroup(index, container, securityGroupId);
-
   }
 
   private addLoadBalancerSecurityGroups(application: Application): ISecurityGroupProcessorResult {
@@ -287,7 +288,29 @@ export class SecurityGroupReader {
   }
 
   public getAllSecurityGroups(): IPromise<ISecurityGroupsByAccountSourceData> {
-    return this.API.one('securityGroups').useCache(this.infrastructureCaches.get('securityGroups')).get();
+    // Because these are cached in local storage, we unfortunately need to remove the moniker, as it triples the size
+    // of the object being stored, which blows out our LS quota for a sufficiently large footprint
+    const cache = this.infrastructureCaches.get('securityGroups');
+    const cached = !!cache ? cache.get('allGroups') : null;
+    if (cached) {
+      return this.$q.resolve(cached);
+    }
+    return this.API.one('securityGroups').useCache().get()
+      .then((groupsByAccount: ISecurityGroupsByAccountSourceData) => {
+          Object.keys(groupsByAccount).forEach(account => {
+            Object.keys(groupsByAccount[account]).forEach(provider => {
+              Object.keys(groupsByAccount[account][provider]).forEach(region => {
+                groupsByAccount[account][provider][region].forEach(group => {
+                  delete group.moniker;
+                })
+              })
+            })
+          });
+        if (cache) {
+          cache.put('allGroups', groupsByAccount);
+        }
+        return groupsByAccount;
+      });
   }
 
   public getApplicationSecurityGroup(application: Application,

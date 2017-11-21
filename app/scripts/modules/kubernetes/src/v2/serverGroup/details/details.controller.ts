@@ -1,9 +1,10 @@
-import { IController, module } from 'angular';
+import { IController, IScope, module } from 'angular';
 import { IModalService } from 'angular-ui-bootstrap';
 
 import {
   Application,
   CONFIRMATION_MODAL_SERVICE,
+  IManifest,
   IServerGroup,
   SERVER_GROUP_READER,
   SERVER_GROUP_WARNING_MESSAGE_SERVICE,
@@ -12,6 +13,7 @@ import {
 } from '@spinnaker/core';
 
 import { IKubernetesServerGroup } from './IKubernetesServerGroup';
+import { KubernetesManifestService } from '../../manifest/manifest.service';
 
 interface IServerGroupFromStateParams {
   accountId: string;
@@ -22,12 +24,21 @@ interface IServerGroupFromStateParams {
 class KubernetesServerGroupDetailsController implements IController {
   public state = { loading: true };
   public serverGroup: IKubernetesServerGroup;
+  public manifest: IManifest;
 
   constructor(serverGroup: IServerGroupFromStateParams,
               public app: Application,
               private $uibModal: IModalService,
+              private $scope: IScope,
+              private kubernetesManifestService: KubernetesManifestService,
               private serverGroupReader: ServerGroupReader) {
     'ngInject';
+
+    this.kubernetesManifestService.makeManifestRefresher(this.app, this.$scope, {
+      account: serverGroup.accountId,
+      location: serverGroup.region,
+      name: serverGroup.name,
+    }, this);
 
     this.app
       .ready()
@@ -35,17 +46,36 @@ class KubernetesServerGroupDetailsController implements IController {
       .catch(() => this.autoClose());
   }
 
-  public canResizeServerGroup(): boolean {
+  public canScaleServerGroup(): boolean {
     return this.serverGroup.kind !== 'DaemonSet';
   }
 
-  public resizeServerGroup(): void {
+  public scaleServerGroup(): void {
     this.$uibModal.open({
-      templateUrl: require('./resize/resize.html'),
-      controller: 'kubernetesV2ServerGroupResizeCtrl',
+      templateUrl: require('../../manifest/scale/scale.html'),
+      controller: 'kubernetesV2ManifestScaleCtrl',
       controllerAs: 'ctrl',
       resolve: {
-        serverGroup: this.serverGroup,
+        coordinates: {
+          name: this.serverGroup.name,
+          namespace: this.serverGroup.namespace,
+          account: this.serverGroup.account
+        },
+        currentReplicas: this.serverGroup.manifest.spec.replicas,
+        application: this.app
+      }
+    });
+  }
+
+  public editServerGroup(): void {
+    this.$uibModal.open({
+      templateUrl: require('../../manifest/wizard/manifestWizard.html'),
+      size: 'lg',
+      controller: 'kubernetesV2ManifestEditCtrl',
+      controllerAs: 'ctrl',
+      resolve: {
+        sourceManifest: this.serverGroup.manifest,
+        sourceMoniker: this.serverGroup.moniker,
         application: this.app
       }
     });

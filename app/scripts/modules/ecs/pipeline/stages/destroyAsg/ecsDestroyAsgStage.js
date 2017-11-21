@@ -2,7 +2,7 @@
 
 const angular = require('angular');
 
-import { PipelineTemplates, StageConstants } from '@spinnaker/core';
+import { StageConstants } from '@spinnaker/core';
 
 module.exports = angular.module('spinnaker.ecs.pipeline.stage.ecs.destroyAsgStage', [])
   .config(function(pipelineConfigProvider) {
@@ -11,7 +11,6 @@ module.exports = angular.module('spinnaker.ecs.pipeline.stage.ecs.destroyAsgStag
       alias: 'destroyAsg',
       cloudProvider: 'ecs',
       templateUrl: require('./destroyAsgStage.html'),
-      executionDetailsUrl: PipelineTemplates.destroyAsgExecutionDetails,
       executionStepLabelUrl: require('./destroyAsgStepLabel.html'),
       accountExtractor: (stage) => [stage.context.credentials],
       configAccountExtractor: (stage) => [stage.credentials],

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { ExecutionDetailsSection, IExecutionDetailsSectionProps } from 'core/pipeline/config/stages/core';
 import { NgReact } from 'core/reactShims';
-import { StageExecutionLogs, StageFailureMessage } from 'core/delivery/details';
+import { StageExecutionLogs, StageFailureMessage } from 'core/pipeline/details';
 import { ServerGroupStageContext } from '../core/ServerGroupStageContext';
 
 export function DisableClusterExecutionDetails(props: IExecutionDetailsSectionProps) {
@@ -16,7 +16,7 @@ export function DisableClusterExecutionDetails(props: IExecutionDetailsSectionPr
             <dt>Account</dt>
             <dd><AccountTag account={stage.context.credentials}/></dd>
             <dt>Region</dt>
-            <dd>{stage.context.region || stage.context.regions.join(', ')}</dd>
+            <dd>{stage.context.region || (stage.context.regions || []).join(', ')}</dd>
             <dt>Cluster</dt>
             <dd>{stage.context.cluster}</dd>
             <dt>Keep Enabled</dt>

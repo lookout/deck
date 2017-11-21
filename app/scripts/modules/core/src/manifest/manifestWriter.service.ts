@@ -28,6 +28,46 @@ export class ManifestWriter {
       description
     });
   }
+
+  public scaleManifest(command: any, application: Application): IPromise<ITask> {
+    const description = 'Scale manifest';
+    command.type = 'scaleManifest';
+    return this.taskExecutor.executeTask({
+      job: [command],
+      application,
+      description
+    });
+  }
+
+  public undoRolloutManifest(command: any, application: Application): IPromise<ITask> {
+    const description = 'Undo rollout of manifest';
+    command.type = 'undoRolloutManifest';
+    return this.taskExecutor.executeTask({
+      job: [command],
+      application,
+      description
+    });
+  }
+
+  public resumeRolloutManifest(command: any, application: Application): IPromise<ITask> {
+    const description = 'Resume rollout of manifest';
+    command.type = 'resumeRolloutManifest';
+    return this.taskExecutor.executeTask({
+      job: [command],
+      application,
+      description
+    });
+  }
+
+  public pauseRolloutManifest(command: any, application: Application): IPromise<ITask> {
+    const description = 'Pause rollout of manifest';
+    command.type = 'pauseRolloutManifest';
+    return this.taskExecutor.executeTask({
+      job: [command],
+      application,
+      description
+    });
+  }
 }
 
 export const MANIFEST_WRITER = 'spinnaker.core.manifest.write.service';
