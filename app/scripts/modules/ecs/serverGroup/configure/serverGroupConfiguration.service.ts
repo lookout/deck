@@ -123,7 +123,7 @@ export class EcsServerGroupConfigurationService {
 
     return this.$q.all({
       credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('ecs'),
-      loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
+      loadBalancers: this.loadBalancerReader.listLoadBalancers('ecs'),
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs'),
       ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
@@ -278,7 +278,7 @@ export class EcsServerGroupConfigurationService {
 
   public refreshLoadBalancers(command: IEcsServerGroupCommand, skipCommandReconfiguration?: boolean) {
     return this.cacheInitializer.refreshCache('loadBalancers').then(() => {
-      return this.loadBalancerReader.listLoadBalancers('aws').then((loadBalancers) => {
+      return this.loadBalancerReader.listLoadBalancers('ecs').then((loadBalancers) => {
         command.backingData.loadBalancers = loadBalancers;
         if (!skipCommandReconfiguration) {
           this.configureLoadBalancerOptions(command);
