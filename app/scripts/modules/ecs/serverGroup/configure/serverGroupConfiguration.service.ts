@@ -122,7 +122,7 @@ export class EcsServerGroupConfigurationService {
     };
 
     return this.$q.all({
-      credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('aws'), // TODO(Bruno Carrier) : This should use the 'ecs' value, but load balancers are a mess in there.
+      credentialsKeyedByAccount: this.accountService.getCredentialsKeyedByAccount('ecs'),
       loadBalancers: this.loadBalancerReader.listLoadBalancers('aws'),
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs'),
@@ -169,7 +169,7 @@ export class EcsServerGroupConfigurationService {
 
   public configureAvailableMetricAlarms(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
-      .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
+      .filter({ accountName: command.credentials })
       .flattenDeep<MetricAlarmDescriptor>()
       .filter({ region: command.region })
       .flattenDeep<MetricAlarmDescriptor>()
@@ -184,8 +184,7 @@ export class EcsServerGroupConfigurationService {
 
   public configureAvailableIamRoles(command: IEcsServerGroupCommand): void {
     command.backingData.filtered.iamRoles = chain(command.backingData.iamRoles)
-      .filter({ accountName: 'continuous-delivery-ecs' }) // TODO(Bruno Carrier): delete this line and enable the line below once accounts are properly handled after load balancers are resolved
-      // .filter({ accountName: command.credentials })
+      .filter({ accountName: command.credentials })
       .map('name')
       .value();
   }
