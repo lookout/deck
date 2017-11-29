@@ -19,9 +19,15 @@
           ECS Cluster name <help-field key="ecs.serverGroup.clusterName"></help-field>
         </div>
         <div class="col-md-7">
-          <ui-select ng-model="command.ecsClusterName" class="form-control input-sm" required on-select="fieldChanged()">
+          <div class="form-control-static" ng-if="!command.backingData.filtered.ecsClusters.length">
+            No ECS clusters found in the selected account/region
+          </div>
+          <ui-select ng-model="command.ecsClusterName"
+                     ng-if="command.backingData.filtered.ecsClusters.length"
+                     class="form-control input-sm"
+                     required on-select="fieldChanged()">
             <ui-select-match>{{$select.selected}}</ui-select-match>
-            <ui-select-choices repeat="ecsClusterName in command.backingData.ecsClusters | filter: $select.search">
+            <ui-select-choices repeat="ecsClusterName in command.backingData.filtered.ecsClusters | filter: $select.search">
               <span ng-bind-html="ecsClusterName"></span>
             </ui-select-choices>
           </ui-select>
