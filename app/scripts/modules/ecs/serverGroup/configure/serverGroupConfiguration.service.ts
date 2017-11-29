@@ -134,8 +134,6 @@ export class EcsServerGroupConfigurationService {
       backingData.accounts = keys(backingData.credentialsKeyedByAccount);
       backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
       command.backingData = backingData as IEcsServerGroupCommandBackingData;
-      console.log('command.backingData: ');
-      console.log(command.backingData)
       this.configureVpcId(command);
       this.configureAvailableIamRoles(command);
       this.configureAvailableMetricAlarms(command);
