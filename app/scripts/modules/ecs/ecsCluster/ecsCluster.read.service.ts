@@ -1,12 +1,13 @@
 import { module } from 'angular';
 
 import { API_SERVICE, Api } from 'core/api/api.service';
+import { EcsClusterDescriptor } from './EcsCluster';
 
 export class EscClusterReader {
 public constructor(private API: Api) { 'ngInject'; }
 
-  public listClusters(account: string, region: string): ng.IPromise<string[]> {
-    return this.API.all('ecsClusters').all(account).all(region).getList();
+  public listClusters(): ng.IPromise<EcsClusterDescriptor[]> {
+    return this.API.all('ecs').all('ecsClusters').getList();
   }
 
 }

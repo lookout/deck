@@ -32,6 +32,7 @@ import { IRoleDescriptor } from '../../iamRoles/IRole';
 import { MetricAlarmDescriptor } from '../../metricAlarm/MetricAlarm';
 import { PlacementStrategyService } from '../../placementStrategy/placementStrategy.service';
 import { PlacementStrategy } from '../../placementStrategy/PlacementStrategy';
+import { EcsClusterDescriptor } from '../../ecsCluster/EcsCluster';
 
 export interface IEcsServerGroupCommandDirty extends IServerGroupCommandDirty {
   targetGroup?: string;
@@ -51,7 +52,7 @@ export interface IEcsServerGroupCommandBackingDataFiltered extends IServerGroupC
 export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBackingData {
   filtered: IEcsServerGroupCommandBackingDataFiltered;
   targetGroups: string[];
-  ecsClusters: string[];
+  ecsClusters: EcsClusterDescriptor[];
   iamRoles: IRoleDescriptor[];
   metricAlarms: MetricAlarmDescriptor[];
 }
@@ -126,7 +127,7 @@ export class EcsServerGroupConfigurationService {
       loadBalancers: this.loadBalancerReader.listLoadBalancers('ecs'),
       subnets: this.subnetReader.listSubnets(),
       iamRoles: this.iamRoleReader.listRoles('ecs'),
-      ecsClusters: this.ecsClusterReader.listClusters('continuous-delivery-ecs', 'us-west-2'),
+      ecsClusters: this.ecsClusterReader.listClusters(),
       metricAlarms: this.metricAlarmReader.listMetricAlarms(),
     }).then((backingData: Partial<IEcsServerGroupCommandBackingData>) => {
       let loadBalancerReloader = this.$q.when(null);
@@ -136,6 +137,7 @@ export class EcsServerGroupConfigurationService {
       this.configureVpcId(command);
       this.configureAvailableIamRoles(command);
       this.configureAvailableMetricAlarms(command);
+      this.configureAvailableEcsClusters(command);
 
       if (command.loadBalancers && command.loadBalancers.length) {
         // verify all load balancers are accounted for; otherwise, try refreshing load balancers cache
@@ -179,6 +181,14 @@ export class EcsServerGroupConfigurationService {
           alarmArn: metricAlarm.alarmArn,
         } as MetricAlarmDescriptor;
       })
+      .value();
+  }
+
+  public configureAvailableEcsClusters(command: IEcsServerGroupCommand): void {
+    command.backingData.filtered.ecsClusters = chain(command.backingData.ecsClusters)
+      .filter({ account: command.credentials ,
+                region: command.region })
+      .map('name')
       .value();
   }
 
@@ -322,6 +332,7 @@ export class EcsServerGroupConfigurationService {
         extend(result.dirty, command.subnetChanged().dirty);
         this.configureAvailabilityZones(command);
         this.configureAvailableMetricAlarms(command);
+        this.configureAvailableEcsClusters(command);
       } else {
         filteredData.regionalAvailabilityZones = null;
       }
@@ -335,6 +346,7 @@ export class EcsServerGroupConfigurationService {
       if (command.credentials) {
         this.configureAvailableIamRoles(command);
         this.configureAvailableMetricAlarms(command);
+        this.configureAvailableEcsClusters(command);
 
         const regionsForAccount: IAccountDetails = backingData.credentialsKeyedByAccount[command.credentials] || { regions: [] } as IAccountDetails;
         backingData.filtered.regions = regionsForAccount.regions;
