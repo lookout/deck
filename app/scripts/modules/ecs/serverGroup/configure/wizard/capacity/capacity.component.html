@@ -75,7 +75,11 @@
       <b>Autoscaling policy</b> <help-field key="ecs.capacity.autoscalingPolicies"></help-field>
     </div>
     <div class="col-md-8">
+      <div class="form-control-static" ng-if="!$ctrl.command.backingData.filtered.metricAlarms.length">
+        No autoscaling policies found in the selected account/region
+      </div>
       <ui-select multiple
+                 ng-if="$ctrl.command.backingData.filtered.metricAlarms.length"
                  ng-model="$ctrl.command.autoscalingPolicies"
                  class="form-control input-sm">
         <ui-select-match>{{$item.alarmName}}</ui-select-match>
