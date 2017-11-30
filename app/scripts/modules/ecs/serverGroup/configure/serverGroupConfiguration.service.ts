@@ -170,11 +170,12 @@ export class EcsServerGroupConfigurationService {
   }
 
   public configureAvailableMetricAlarms(command: IEcsServerGroupCommand): void {
+    const previouslyFiltered = command.backingData.filtered.metricAlarms;
     command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
-      .filter({ accountName: command.credentials })
-      .flattenDeep<MetricAlarmDescriptor>()
-      .filter({ region: command.region })
-      .flattenDeep<MetricAlarmDescriptor>()
+      .filter({
+        accountName: command.credentials,
+        region: command.region
+      })
       .map(metricAlarm => {
         return {
           alarmName: metricAlarm.alarmName,
@@ -182,6 +183,22 @@ export class EcsServerGroupConfigurationService {
         } as MetricAlarmDescriptor;
       })
       .value();
+
+    /* TODO: Determine if it's needed to detect which (if not all) metricAlarms/Autoscaling Policies have become invalid due to account/region change.
+    const result: IEcsServerGroupCommandResult = { dirty: {} };
+    const currentAutoscalingPolicies = command.autoscalingPolicies;
+    const newAutoscalingPolicies = command.backingData.filtered.metricAlarms;
+
+    if (currentAutoscalingPolicies) {
+      const matched = insersection(newAutoscalingPolicies, currentAutoscalingPolicies);
+      const removedAutoscalingPolicies = xor(matched, currentAutoscalingPolicies)
+      command.autoscalingPolicies = intersection(newAutoscalingPolicies, matched);
+
+      if (removedAutoscalingPolicies.length) {
+        result.dirty.autoscalingPolicies = removedAutoscalingPolicies;
+      }
+    }
+    */
   }
 
   public configureAvailableEcsClusters(command: IEcsServerGroupCommand): void {
