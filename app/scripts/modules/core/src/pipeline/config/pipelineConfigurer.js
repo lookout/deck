@@ -317,6 +317,9 @@ module.exports = angular.module('spinnaker.core.pipeline.config.pipelineConfigur
       if (stageIndex > 0) {
         this.setViewState({ stageIndex: $scope.viewState.stageIndex - 1 });
       }
+      if (stageIndex === $scope.viewState.stageIndex && stageIndex === 0) {
+        $scope.$broadcast('pipeline-json-edited');
+      }
       if (!$scope.renderablePipeline.stages.length) {
         this.navigateTo({section: 'triggers'});
       }
@@ -373,7 +376,7 @@ module.exports = angular.module('spinnaker.core.pipeline.config.pipelineConfigur
     };
 
     this.getPipelineExecutions = () => {
-      executionService.getExecutionsForConfigIds($scope.pipeline.application, $scope.pipeline.id, 5)
+      executionService.getExecutionsForConfigIds($scope.pipeline.application, [$scope.pipeline.id], 5)
         .then(executions => {
           executions.forEach(execution => executionsTransformer.addBuildInfo(execution));
           $scope.pipelineExecutions = executions;
