@@ -1,6 +1,7 @@
 export * from './account';
 export * from './api';
 export * from './application';
+export * from './artifact';
 export * from './authentication';
 
 export * from './cache';
@@ -46,6 +47,7 @@ export * from './orchestratedItem';
 export * from './overrideRegistry';
 
 export * from './pageTitle';
+export * from './pagerDuty';
 export * from './pipeline';
 export * from './presentation';
 export * from './pubsub';

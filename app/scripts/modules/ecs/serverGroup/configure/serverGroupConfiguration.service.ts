@@ -87,16 +87,16 @@ export class EcsServerGroupConfigurationService {
   }
 
   public configureUpdateCommand(command: IEcsServerGroupCommand): void {
-    console.log('bruno bruno bruno');
-
     command.backingData = {
       // terminationPolicies: clone(this.terminationPolicies)
     } as IEcsServerGroupCommandBackingData;
   }
 
+  // TODO (Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
   public configureCommand(application: Application, command: IEcsServerGroupCommand): IPromise<void> {
     this.applyOverrides('beforeConfiguration', command);
-    console.log(application); // TODO (Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
+    // The bellow console.log was added to suppress the `TS6133: 'application' is declared but its value is never read.` error.
+    console.log(typeof(application));
 
     command.toggleSuspendedProcess = (process: string): void => {
       command.suspendedProcesses = command.suspendedProcesses || [];
@@ -147,7 +147,6 @@ export class EcsServerGroupConfigurationService {
         }
       }
 
-      console.log(command.backingData);
       return this.$q.all([loadBalancerReloader]).then(() => {
         this.applyOverrides('afterConfiguration', command);
         this.attachEventHandlers(command);
@@ -170,7 +169,7 @@ export class EcsServerGroupConfigurationService {
   }
 
   public configureAvailableMetricAlarms(command: IEcsServerGroupCommand): void {
-    const previouslyFiltered = command.backingData.filtered.metricAlarms;
+    // const previouslyFiltered = command.backingData.filtered.metricAlarms;
     command.backingData.filtered.metricAlarms = chain(command.backingData.metricAlarms)
       .filter({
         accountName: command.credentials,
@@ -331,8 +330,6 @@ export class EcsServerGroupConfigurationService {
   }
 
   public attachEventHandlers(command: IEcsServerGroupCommand): void {
-    console.log('bruno look at these handlers attaching');
-
     command.subnetChanged = (): IServerGroupCommandResult => {
       const result = this.configureVpcId(command);
       extend(result.dirty, this.configureLoadBalancerOptions(command).dirty);
