@@ -40,7 +40,7 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
 
           var credentials = asyncData.credentialsKeyedByAccount[defaultCredentials];
 
-          var defaultIamRole = 'poc-role';
+          var defaultIamRole = 'None (No IAM role)';
           defaultIamRole = defaultIamRole.replace('{{application}}', application.name);
 
 
@@ -58,7 +58,6 @@ module.exports = angular.module('spinnaker.ecs.serverGroupCommandBuilder.service
             selectedProvider: 'ecs',
             iamRole: defaultIamRole,
             availabilityZones: availabilityZones,
-            iamRoles: [],
             autoscalingPolicies: [],
             placementStrategyName: '',
             placementStrategySequence: [],

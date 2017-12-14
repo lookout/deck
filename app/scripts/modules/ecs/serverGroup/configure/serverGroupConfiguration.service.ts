@@ -213,6 +213,9 @@ export class EcsServerGroupConfigurationService {
       .filter({ accountName: command.credentials })
       .map('name')
       .value();
+    if (command.backingData.filtered.iamRoles.length > 0) {
+      command.backingData.filtered.iamRoles.splice(0, 0, 'None (No IAM role)');
+    }
   }
 
   public configureSubnetPurposes(command: IEcsServerGroupCommand): IServerGroupCommandResult {
