@@ -214,7 +214,7 @@ export class EcsServerGroupConfigurationService {
       .map('name')
       .value();
     if (command.backingData.filtered.iamRoles.length > 0) {
-      command.backingData.filtered.iamRoles.push('None (No IAM role)');
+      command.backingData.filtered.iamRoles.splice(0,0, 'None (No IAM role)');
     }
   }
 
