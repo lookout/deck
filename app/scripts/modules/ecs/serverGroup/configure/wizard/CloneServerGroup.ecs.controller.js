@@ -40,7 +40,8 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     $scope.pages = {
       templateSelection: overrideRegistry.getTemplate('ecs.serverGroup.templateSelection', require('./templateSelection/templateSelection.html')),
       basicSettings: overrideRegistry.getTemplate('ecs.serverGroup.basicSettings', require('./location/basicSettings.html')),
-      capacity: overrideRegistry.getTemplate('ecs.serverGroup.capacity', require('./capacity/capacity.html')),
+      verticalScaling: overrideRegistry.getTemplate('ecs.serverGroup.verticalScaling', require('./verticalScaling/verticalScaling.html')),
+      horizontalScaling: overrideRegistry.getTemplate('ecs.serverGroup.horizontalScaling', require('./horizontalScaling/horizontalScaling.html')),
       loadBalancers: overrideRegistry.getTemplate('ecs.serverGroup.loadBalancers', require('./loadBalancers/loadBalancers.html')),
       advancedSettings: overrideRegistry.getTemplate('ecs.serverGroup.advancedSettings', require('./advancedSettings/advancedSettings.html')),
     };
