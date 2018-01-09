@@ -7,6 +7,8 @@ const helpContents: {[key: string]: string} = {
   'kubernetes.serverGroup.containers': `
       (Required) Select at least one image to run in this server group (pod).
       If multiple images are selected, they will be colocated and replicated equally.`,
+  'kubernetes.serverGroup.initContainers': `
+      (Optional) Select at least one image to run in this server group as an init container (pod).`,
   'kubernetes.serverGroup.terminationGracePeriodSeconds': '(Required) Termination grace period in <b>seconds</b>. You can customize the termination grace period setting (terminationGracePeriodSeconds). Because server groups (pods) represent running processes on nodes in the cluster, it is important to allow those processes to gracefully terminate when they are no longer needed (vs. being violently killed and having no chance to clean up). Default is <b>30</b> seconds.',
   'kubernetes.serverGroup.autoscaling.enabled': 'If selected, a horizontal autoscaler will be attached to this replica set.',
   'kubernetes.serverGroup.autoscaling.min': 'The smallest number of pods to be deployed.',
@@ -160,6 +162,10 @@ const helpContents: {[key: string]: string} = {
       <p>
         <b>artifact:</b> The manifest is read from an artifact supplied/created upstream. The expected artifact must be referenced here, and will be bound at runtime.
       </p>
+  `,
+  'kubernetes.manifest.undoRollout.revisionsBack': `
+      <p>How many revisions to rollback from the current active revision. This is not a hard-coded revision to rollout.</p>
+      <p>For example: If you specify "1", and this stage executes, the prior revision will be active upon success.</p>
   `,
 };
 

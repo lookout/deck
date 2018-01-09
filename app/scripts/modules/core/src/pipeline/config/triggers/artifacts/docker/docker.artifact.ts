@@ -1,15 +1,8 @@
-import { IController, module } from 'angular';
+import { module } from 'angular';
 
 import { PIPELINE_CONFIG_PROVIDER } from 'core/pipeline/config/pipelineConfigProvider';
 import { IArtifact } from 'core/domain/IArtifact';
 import { PipelineConfigProvider } from 'core/pipeline';
-
-class DockerArtifactController implements IController {
-  constructor(public artifact: IArtifact) {
-    'ngInject';
-    this.artifact.type = 'docker/image';
-  }
-}
 
 export const DOCKER_ARTIFACT = 'spinnaker.core.pipeline.trigger.artifact.docker';
 module(DOCKER_ARTIFACT, [
@@ -19,7 +12,11 @@ module(DOCKER_ARTIFACT, [
     label: 'Docker',
     description: 'A Docker image to be deployed.',
     key: 'docker',
-    controller: 'dockerArtifactCtrl',
+    controller(artifact: IArtifact) {
+      'ngInject';
+      this.artifact = artifact;
+      this.artifact.type = 'docker/image';
+    },
     controllerAs: 'ctrl',
     template: `
 <div class="col-md-12">
@@ -38,5 +35,5 @@ module(DOCKER_ARTIFACT, [
 </div>
 `,
   });
-}).controller('dockerArtifactCtrl', DockerArtifactController);
+});
 

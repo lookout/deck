@@ -10,9 +10,10 @@ import {
   TaskMonitorBuilder
 } from '@spinnaker/core';
 import { IManifestCoordinates } from '../IManifestCoordinates';
+import { KUBERNETES_SCALE_MANIFEST_SETTINGS_FORM } from './scaleSettingsForm.component';
 
 interface IScaleCommand {
-  name: string;
+  manifestName: string;
   location: string;
   account: string;
   reason: string;
@@ -41,7 +42,7 @@ class KubernetesManifestScaleController implements IController {
     });
 
     this.command = {
-      name: coordinates.name,
+      manifestName: coordinates.name,
       location: coordinates.namespace,
       account: coordinates.account,
       reason: null,
@@ -72,5 +73,6 @@ export const KUBERNETES_MANIFEST_SCALE_CTRL = 'spinnaker.kubernetes.v2.manifest.
 module(KUBERNETES_MANIFEST_SCALE_CTRL, [
   TASK_MONITOR_BUILDER,
   MANIFEST_WRITER,
+  KUBERNETES_SCALE_MANIFEST_SETTINGS_FORM,
 ])
   .controller('kubernetesV2ManifestScaleCtrl', KubernetesManifestScaleController);

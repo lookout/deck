@@ -3,8 +3,8 @@
     <div ng-if="state.requiresTemplateSelection">
       <ng-include src="pages.templateSelection"></ng-include>
     </div>
-    <div ng-if="!state.loaded" style="height: 200px">
-      <h3 us-spinner="{radius:30, width:8, length: 16}"></h3>
+    <div ng-if="!state.loaded" style="height: 200px" class="horizontal center middle">
+      <loading-spinner size="'small'"></loading-spinner>
     </div>
     <v2-modal-wizard ng-if="state.loaded && !state.requiresTemplateSelection"
                      heading="{{title}}"
@@ -31,6 +31,11 @@
       <div ng-repeat="container in command.containers">
         <v2-wizard-page key="container-{{$index}}" label="Container {{container.image}}" done="true">
           <kubernetes-container-configurer command="command" index="$index" container="container"></kubernetes-container-configurer>
+        </v2-wizard-page>
+      </div>
+      <div ng-repeat="initContainer in command.initContainers">
+        <v2-wizard-page key="init-container-{{$index}}" label="Init Container {{initContainer.image}}" done="true">
+          <kubernetes-container-configurer init-container="true" command="command" index="$index" container="initContainer"></kubernetes-container-configurer>
         </v2-wizard-page>
       </div>
     </v2-modal-wizard>

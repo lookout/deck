@@ -103,6 +103,13 @@
       <kubernetes-container-environment-variables env-vars="container.envVars">
       </kubernetes-container-environment-variables>
     </div>
+    <div class="form-group">
+      <div class="sm-label-left">
+        <b>Environment From</b>
+      </div>
+      <kubernetes-container-environment-from env-from="container.envFrom">
+      </kubernetes-container-environment-from>
+    </div>
   </collapsible-section>
 
   <collapsible-section heading="Resources" expanded="false" subsection="true">
@@ -253,7 +260,7 @@
       class="glyphicon glyphicon-plus-sign"></span> Add New Volume Mount
     </button>
   </collapsible-section>
-  <collapsible-section heading="Probes" expanded="false" subsection="true">
+  <collapsible-section heading="Probes" expanded="false" subsection="true" ng-if="!initContainer">
     <kubernetes-container-probe container="container" command="command" probetype="'readinessProbe'" heading="'Readiness'"></kubernetes-container-probe>
     <hr>
     <kubernetes-container-probe container="container" command="command" probetype="'livenessProbe'" heading="'Liveness'"></kubernetes-container-probe>
@@ -262,7 +269,7 @@
     <kubernetes-security-context-selector component="container">
     </kubernetes-security-context-selector>
   </collapsible-section>
-  <collapsible-section heading="Lifecycle Hooks" expanded="false" subsection="true">
+  <collapsible-section heading="Lifecycle Hooks" expanded="false" subsection="true" ng-if="!initContainer">
     <kubernetes-lifecycle-hook-configurer on-handler-change="containerController.setPostStartHandler(handler)"
                                           handler="container.lifecycle.postStart">
       PostStart <help-field key="kubernetes.containers.lifecycle.postStart"></help-field>

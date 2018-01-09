@@ -127,12 +127,17 @@ function configure(IS_TEST) {
             { loader: 'expose-loader?jQuery' },
           ],
         },
+        {
+          test: /ui-sortable/,
+          use: ['imports-loader?$UI=jquery-ui/ui/widgets/sortable']
+        }
       ],
     },
     watch: IS_TEST,
     devServer: IS_TEST ? {
       stats: 'errors-only',
     } : {
+      disableHostCheck: true,
       port: process.env.DECK_PORT || 9000,
       host: process.env.DECK_HOST || 'localhost',
       https: process.env.DECK_HTTPS === 'true',
@@ -161,7 +166,7 @@ function configure(IS_TEST) {
   if (!IS_TEST) {
     config.entry = {
       settings: SETTINGS_PATH,
-      settingsLocal: './settings-local.js',
+      'settings-local': './settings-local.js',
       halconfig: './halconfig/settings.js',
       app: './app/scripts/app.ts',
       vendor: [
@@ -175,10 +180,6 @@ function configure(IS_TEST) {
 
     config.plugins.push(...[
       new webpack.EnvironmentPlugin({
-        ENTITY_TAGS_ENABLED: 'true',
-        FIAT_ENABLED: 'false',
-        INFRA_STAGES: 'false',
-        TIMEZONE: 'America/Los_Angeles',
         NODE_ENV: 'development',
       }),
       new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.bundle.js'}),
@@ -194,7 +195,7 @@ function configure(IS_TEST) {
         // settings.js is put at the end of the <script> blocks
         // which breaks the booting of the app.
         chunksSortMode: (a, b) => {
-          const chunks = ['init', 'vendor', 'halconfig', 'settings', 'settingsLocal', 'app'];
+          const chunks = ['init', 'vendor', 'halconfig', 'settings', 'settings-local', 'app'];
           return chunks.indexOf(a.names[0]) - chunks.indexOf(b.names[0]);
         }
       })

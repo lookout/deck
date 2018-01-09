@@ -2,6 +2,7 @@
 
 const angular = require('angular');
 import { KUBERNETES_LIFECYCLE_HOOK_CONFIGURER } from 'kubernetes/container/lifecycleHook.component';
+import { KUBERNETES_CONTAINER_ENVIRONMENT_FROM } from 'kubernetes/container/environmentFrom.component';
 
 module.exports = angular.module('spinnaker.kubernetes.pipeline.stage.runJobStage.configure', [
   require('kubernetes/container/commands.component.js').name,
@@ -11,7 +12,8 @@ module.exports = angular.module('spinnaker.kubernetes.pipeline.stage.runJobStage
   require('kubernetes/container/ports.component.js').name,
   require('kubernetes/container/resources.component.js').name,
   require('kubernetes/container/probe.directive.js').name,
-  KUBERNETES_LIFECYCLE_HOOK_CONFIGURER
+  KUBERNETES_LIFECYCLE_HOOK_CONFIGURER,
+  KUBERNETES_CONTAINER_ENVIRONMENT_FROM,
 ])
   .controller('kubernetesConfigureJobController', function($scope, $uibModalInstance, accountService, kubernetesImageReader, pipelineConfigService, $filter,
                                                            stage, pipeline) {
@@ -60,6 +62,12 @@ module.exports = angular.module('spinnaker.kubernetes.pipeline.stage.runJobStage
       };
     }).filter(image => !!image);
 
+    this.triggerImages = this.pipeline.triggers.filter(trigger => trigger.type === 'docker')
+      .map(image => {
+        image.fromTrigger = true;
+        return image;
+      });
+
     this.searchImages = (query) => {
       kubernetesImageReader.findImages({
         provider: 'dockerRegistry',
@@ -67,11 +75,8 @@ module.exports = angular.module('spinnaker.kubernetes.pipeline.stage.runJobStage
         q: query
       }).then((data) => {
 
-        if (this.pipeline.triggers) {
-          data = data.concat(this.pipeline.triggers.map((image) => {
-            image.fromTrigger = true;
-            return image;
-          }));
+        if (this.triggerImages) {
+          data = data.concat(this.triggerImages);
         }
 
         if (this.contextImages) {
@@ -114,6 +119,7 @@ module.exports = angular.module('spinnaker.kubernetes.pipeline.stage.runJobStage
             livenessProbe: null,
             readinessProbe: null,
             envVars: [],
+            envFrom: [],
             command: [],
             args: [],
             volumeMounts: [],

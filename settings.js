@@ -90,6 +90,7 @@ window.spinnakerSettings = {
         proxy: 'localhost:8001',
         internalDNSNameTemplate: '{{name}}.{{namespace}}.svc.cluster.local',
         instanceLinkTemplate: '{{host}}/api/v1/proxy/namespaces/{{namespace}}/pods/{{name}}',
+        apiPrefix: 'api/v1/proxy/namespaces/kube-system/services/kubernetes-dashboard/#',
       },
     },
     dcos: {
@@ -100,7 +101,8 @@ window.spinnakerSettings = {
     appengine: {
       defaults: {
         account: 'my-appengine-account',
-      }
+        containerImageUrlDeployments: false,
+      },
     }
   },
   whatsNew: {
@@ -127,6 +129,7 @@ window.spinnakerSettings = {
   authTtl: 600000,
   gitSources: ['stash', 'github', 'bitbucket'],
   triggerTypes: ['git', 'pipeline', 'docker', 'cron', 'jenkins', 'travis', 'pubsub'],
+  searchVersion: 1,
   feature: {
     canary: canaryEnabled,
     entityTags: entityTagsEnabled,
