@@ -142,7 +142,6 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     });
     }
 
-    // TODO: Move to service
     function initializeSelectOptions() {
       processCommandUpdateResult($scope.command.credentialsChanged());
       processCommandUpdateResult($scope.command.regionChanged());
@@ -155,30 +154,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     function processCommandUpdateResult(result) {
-      // if (result.dirty.loadBalancers) {
-      //   v2modalWizardService.markDirty('load-balancers');
-      // }
-      // if (result.dirty.targetGroups) {
-      //   v2modalWizardService.markDirty('target-groups');
-      // }
-      // if (result.dirty.securityGroups) {
-      //   v2modalWizardService.markDirty('security-groups');
-      // }
-      // if (result.dirty.availabilityZones) {
-      //   v2modalWizardService.markDirty('capacity');
-      // }
-      // if (result.dirty.instanceType) {
-      //   v2modalWizardService.markDirty('instance-type');
-      // }
-      // if (result.dirty.keyPair) {
-      //   v2modalWizardService.markDirty('advanced');
-      //   v2modalWizardService.markIncomplete('advanced');
-      // }
-      if (result) {
-        v2modalWizardService.markComplete('advanced');
-      } else {
-        v2modalWizardService.markComplete('advanced');
-      }
+      // TODO(Bruno Carrier) - Implement marking sections either dirty or complete
     }
 
     function initializeCommand() {
@@ -186,16 +162,7 @@ module.exports = angular.module('spinnaker.ecs.cloneServerGroup.controller', [
     }
 
     this.isValid = function () {
-      return true;
-      // $scope.command &&
-      //   ($scope.command.viewState.disableImageSelection || $scope.command.amiName) &&
-      //   ($scope.command.application) &&
-      //   ($scope.command.credentials) && ($scope.command.instanceType) &&
-      //   ($scope.command.region) && ($scope.command.availabilityZones) &&
-      //   ($scope.command.capacity.min >= 0) && ($scope.command.capacity.max >= 0) &&
-      //   ($scope.command.capacity.desired >= 0) &&
-      //   $scope.form.$valid &&
-      //   v2modalWizardService.isComplete();
+      return true;  // TODO(Bruno Carrier) - Implement validation of the form
     };
 
     this.showSubmitButton = function () {
