@@ -55,6 +55,7 @@ module(HELP_CONTENTS, [])
           <li>Trigger</li>
           <li>Context - server groups, bakery results, etc.</li>
         </ul>`,
+    'pipeline.config.expectedArtifact': 'Artifacts required for trigger to execute.  Only one of the artifacts need to be present for the trigger to execute',
     'pipeline.config.artifact.help': `
         <p>There are certain types of triggers (e.g. Pub/Sub triggers) that can produce artifacts and inject them into the execution context for a pipeline.</p>
         <p>You can specify artifacts that your pipeline expects to be present in the execution context in this section.</p>`,
@@ -214,7 +215,7 @@ module(HELP_CONTENTS, [])
     'pipeline.config.findAmi.cluster': 'The cluster to look at when selecting the image to use in this pipeline.',
     'pipeline.config.findAmi.imageNamePattern': 'A regex used to match the name of the image. Must result in exactly one match to succeed. Empty is treated as match any.',
     'pipeline.config.dependsOn': 'Declares which stages must be run <em>before</em> this stage begins.',
-    'pipeline.config.parallel.cancel.queue': '<p>If concurrent pipeline execution is disabled, then the pipelines that are in the waiting queue will get canceled by default. <br><br>Check this box if you want to keep them in the queue.</p>',
+    'pipeline.config.parallel.cancel.queue': '<p>If concurrent pipeline execution is disabled, then the pipelines that are in the waiting queue will get canceled when the next execution starts. <br><br>Check this box if you want to keep them in the queue.</p>',
     'pipeline.config.timeout': `
         <p>Allows you to override the amount of time the stage can run before failing.</p>
         <p><b>Note:</b> this represents the overall time the stage has to complete (the sum of all the task times).</p>`,
@@ -273,6 +274,9 @@ module(HELP_CONTENTS, [])
         <p>By default, the bakery will <b>not</b> create a new image if the contents of the package have not changed;
           instead, it will return the previously baked image.</p>
         <p>Select this option to force the bakery to create a new image, regardless of whether or not the selected package exists.</p>`,
+    'execution.dryRun': `
+        <p>Select this option to run the pipeline without <em>really</em> executing anything.</p>
+        <p>This is a good way to test parameter-driven behavior, expressions, optional stages, etc.</p>`,
     'user.verification': `
         Typing into this verification field is annoying! But it serves as a reminder that you are
         changing something in an account deemed important, and prevents you from accidentally changing something
