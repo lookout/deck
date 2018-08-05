@@ -26,7 +26,7 @@ module.exports = angular
     require('../configure/serverGroupCommandBuilder.service.js').name,
     require('./resize/resizeServerGroup.controller').name,
     require('./rollback/rollbackServerGroup.controller').name,
-    // require('./events/events.controller').name,
+    require('./events/events.controller').name,
   ])
   .controller('ecsServerGroupDetailsCtrl', function(
     $scope,
