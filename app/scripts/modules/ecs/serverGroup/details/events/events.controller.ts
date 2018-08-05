@@ -8,7 +8,7 @@ import { IModalServiceInstance } from 'angular-ui-bootstrap';
 
 // import { ServerGroupReader } from '../../../../core/src/serverGroup/serverGroupReader.service';
 import { IServerGroup } from '../../../../core/src/domain/index';
-import { VIEW_EVENTS_LINK_COMPONENT } from './events.component';
+// import { VIEW_EVENTS_LINK_COMPONENT } from './events.component';
 
 export interface IScalingActivitiesViewState {
   loading: boolean;
@@ -96,6 +96,4 @@ export class EventsController implements IController {
 }
 
 export const EVENTS_CTRL = 'spinnaker.ecs.serverGroup.events.controller';
-module.exports = angular
-  .module(EVENTS_CTRL, [VIEW_EVENTS_LINK_COMPONENT])
-  .controller('EventsController', EventsController);
+module.exports = angular.module(EVENTS_CTRL, []).controller('EventsController', EventsController);
