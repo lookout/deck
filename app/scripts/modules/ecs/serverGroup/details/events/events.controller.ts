@@ -1,7 +1,7 @@
 import { IController, module } from 'angular';
 import { IModalServiceInstance } from 'angular-ui-bootstrap';
 
-import { ServerGroupReader } from '../../../../core/src/serverGroup/serverGroupReader.service';
+import { ServerGroupEventsReader } from './serverGroupEventsReader.service';
 import { IServerGroup } from '../../../../core/src/domain/index';
 
 export interface IScalingActivitiesViewState {
@@ -9,30 +9,15 @@ export interface IScalingActivitiesViewState {
   error: boolean;
 }
 
-export interface IScalingEvent {
-  description: string;
-  availabilityZone: string;
-}
-
-export interface IScalingEventSummary {
-  cause: string;
-  events: IScalingEvent[];
-  startTime: number;
-  statusCode: string;
-  isSuccessful: boolean;
-}
-
-export interface IRawScalingActivity {
-  details: string;
-  description: string;
-  cause: string;
-  statusCode: string;
-  startTime: number;
+export interface IEventDescription {
+  createdAt: number;
+  message: string;
+  id: string;
 }
 
 export class EventsController implements IController {
   public viewState: IScalingActivitiesViewState;
-  public activities: IScalingEventSummary[] = [];
+  public events: IEventDescription[] = [];
 
   public constructor(private $uibModalInstance: IModalServiceInstance, public serverGroup: IServerGroup) {
     'ngInject';
@@ -45,9 +30,10 @@ export class EventsController implements IController {
       error: false,
     };
 
-    ServerGroupReader.getScalingActivities(this.serverGroup).then(
-      () => {
+    ServerGroupEventsReader.getEvents(this.serverGroup).then(
+      (rawEvents: IEventDescription[]) => {
         this.viewState.loading = false;
+        this.events = rawEvents;
       },
       () => {
         this.viewState.error = true;
