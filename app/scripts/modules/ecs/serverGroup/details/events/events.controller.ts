@@ -13,6 +13,7 @@ export interface IEventDescription {
   createdAt: number;
   message: string;
   id: string;
+  status: string;
 }
 
 export class EventsController implements IController {
