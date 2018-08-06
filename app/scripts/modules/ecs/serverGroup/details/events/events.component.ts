@@ -1,6 +1,6 @@
 import { IController, IComponentOptions, module } from 'angular';
 import { IModalService } from 'angular-ui-bootstrap';
-import { EventsController } from './events.controller';
+import { EVENTS_CTRL, EventsController } from './events.controller';
 
 class ViewEventsLinkCtrl implements IController {
   public serverGroup: any;
@@ -26,7 +26,7 @@ export class ViewEventsLink implements IComponentOptions {
     serverGroup: '<',
   };
   public controller: any = ViewEventsLinkCtrl;
-  public template = `BBBBBB <a href ng-click="$ctrl.showEvents()">View Events</a>`;
+  public template = `<a href ng-click="$ctrl.showEvents()">View Events</a>`;
 }
 
 export const VIEW_EVENTS_LINK_COMPONENT = 'spinnaker.ecs.serverGroup.details.viewEvents.link';
