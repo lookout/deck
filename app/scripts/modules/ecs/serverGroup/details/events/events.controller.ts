@@ -1,8 +1,4 @@
-'use strict';
-
-const angular = require('angular');
-
-import { IController } from 'angular';
+import { IController, module } from 'angular';
 import { IModalServiceInstance } from 'angular-ui-bootstrap';
 
 import { ServerGroupReader } from '../../../../core/src/serverGroup/serverGroupReader.service';
@@ -65,4 +61,4 @@ export class EventsController implements IController {
 }
 
 export const EVENTS_CTRL = 'spinnaker.ecs.serverGroup.events.controller';
-module.exports = angular.module(EVENTS_CTRL, []).controller('EventsController', EventsController);
+module(EVENTS_CTRL, []).controller('EventsController', EventsController);

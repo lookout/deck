@@ -30,4 +30,4 @@ export class ViewEventsLink implements IComponentOptions {
 }
 
 export const VIEW_EVENTS_LINK_COMPONENT = 'spinnaker.ecs.serverGroup.details.viewEvents.link';
-module(VIEW_EVENTS_LINK_COMPONENT, []).component('viewEventsLink', new ViewEventsLink());
+module(VIEW_EVENTS_LINK_COMPONENT, [EVENTS_CTRL]).component('viewEventsLink', new ViewEventsLink());

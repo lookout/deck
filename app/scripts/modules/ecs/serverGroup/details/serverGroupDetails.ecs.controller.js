@@ -6,8 +6,6 @@ import { FirewallLabels } from '@spinnaker/core';
 
 import { ECS_SERVER_GROUP_TRANSFORMER } from '../serverGroup.transformer';
 
-import { VIEW_EVENTS_LINK_COMPONENT } from './events/events.component';
-
 import {
   AccountService,
   CONFIRMATION_MODAL_SERVICE,
@@ -28,8 +26,6 @@ module.exports = angular
     require('../configure/serverGroupCommandBuilder.service.js').name,
     require('./resize/resizeServerGroup.controller').name,
     require('./rollback/rollbackServerGroup.controller').name,
-    require('./events/events.controller').name,
-    VIEW_EVENTS_LINK_COMPONENT,
   ])
   .controller('ecsServerGroupDetailsCtrl', function(
     $scope,
